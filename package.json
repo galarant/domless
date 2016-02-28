@@ -1,0 +1,32 @@
+{
+  "name": "domless",
+  "version": "0.0.1",
+  "description": "A way to build web interfaces without relying on the DOM. Leverages HTML Canvas and Phaser.",
+  "main": "index.js",
+  "scripts": {
+    "test": "karma start",
+    "watch": "webpack --watch",
+    "serve": "webpack-dev-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/galarant/domless.git"
+  },
+  "keywords": [
+    "canvas"
+  ],
+  "author": "Jeff Revesz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/galarant/domless/issues"
+  },
+  "homepage": "https://github.com/galarant/domless",
+  "devDependencies": {
+    "babel-core": "~6.5.2",
+    "babel-loader": "~6.2.3",
+    "babel-preset-es2015": "~6.5.0",
+    "node-libs-browser": "~1.0.0",
+    "webpack": "~1.12.14",
+    "webpack-dev-server": "~1.14.1"
+  }
+}
