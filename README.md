@@ -3,18 +3,19 @@ set yourself free
 
 ## Setup
 
-### Install dependencies:
+Install dependencies:
+
 `$ npm install`
 
-### Run local server (port 8080):
+Run local server (port 8080):
 
 `$ npm run serve`
 
-### Run active dev rebuild:
+Run active dev rebuild:
 
 `$ npm run watch`
 
-### Run tests:
+Run tests:
 
 `$ npm run test`
 
