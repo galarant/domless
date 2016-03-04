@@ -6,7 +6,7 @@
   "scripts": {
     "test": "karma start",
     "watch": "webpack --watch",
-    "serve": "webpack-dev-server"
+    "serve": "webpack-dev-server --port 8000"
   },
   "repository": {
     "type": "git",
@@ -28,5 +28,8 @@
     "node-libs-browser": "~1.0.0",
     "webpack": "~1.12.14",
     "webpack-dev-server": "~1.14.1"
+  },
+  "dependencies": {
+    "phaser": "~2.4.6"
   }
 }
