@@ -7,16 +7,20 @@ Install dependencies:
 
 `$ npm install`
 
-Run local server (port 8080):
+Run local server (port 8080, automatic rebuilds):
 
-`$ npm run serve`
+`$ npm run dev`
 
-Run active dev rebuild:
+Run production build:
 
-`$ npm run watch`
+`$ npm run build`
 
-Run tests:
+Run tests for core package:
 
 `$ npm run test`
+
+Run tests for demo:
+
+`$ npm run demo-test`
 
 That's it!
