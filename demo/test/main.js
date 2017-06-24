@@ -1,21 +1,26 @@
 import "./before.js";
 
 import { expect } from "chai";
-import { game } from "../main.js";
+import app from "../main.js";
 
 describe("main.js", function() {
-  describe("game", function() {
+  describe("app", function() {
 
     it("should have a Boot state", function() {
-      expect(game.state.states).to.have.property("boot");
+      expect(app.state.states).to.have.property("boot");
     });
 
-    it("should have a Loading state", function() {
-      expect(game.state.states).to.have.property("loading");
+    it("should have a Load state", function() {
+      expect(app.state.states).to.have.property("load");
     });
 
-    it("should have a Play state", function() {
-      expect(game.state.states).to.have.property("play");
+    it("should have a Run state", function() {
+      expect(app.state.states).to.have.property("run");
     });
+
+    it("will start on the Boot state", function() {
+      expect(app.state._pendingState).to.equal("boot");
+    });
+
   });
 });

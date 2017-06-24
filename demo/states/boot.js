@@ -1,17 +1,30 @@
-class BootState extends Phaser.State {
+import domless from "../../src/domless.js";
 
+/**
+ * Starting state for the demo
+ */
+class DemoBootState extends domless.states.BootState {
+
+  /**
+   * Runs once, before the create method for this state
+   */
   preload() {
-    this.game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
-    this.game.scale.pageAlignVertically = true;
-    this.game.scale.pageAlignHorizontally = true;
-    this.game.scale.trackParentInterval = 500;
-    this.load.image("preloader", "static/assets/demo/preloader.png");
+    super.preload();
   }
 
+  /**
+   * Runs once, before the first frame is rendered for this state
+   */
   create() {
-    this.game.state.start("loading");
+    super.create();
   }
 
+  /**
+   * Runs continuously, each time a single frame is rendered for this state
+   */
+  update() {
+    super.update();
+  }
 }
 
-export default BootState;
+export default DemoBootState;
