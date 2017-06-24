@@ -1,15 +1,19 @@
-import BootState from "./states/boot";
-import LoadingState from "./states/loading";
-import PlayState from "./states/play";
+import domless from "../src/domless.js";
+import DemoBootState from "./states/boot.js";
+import DemoLoadState from "./states/load.js";
+import DemoRunState from "./states/run.js";
 
-let game = new Phaser.Game("100%", "100%", Phaser.AUTO, "body");
+/**
+ * Here is where you add your states to the domless app.
+ * Common states are boot, load and run.
+ */
+console.log("=== MY DOMLESS DEMO ===");
 
-// add game states
-game.state.add("boot", BootState);
-game.state.add("loading", LoadingState);
-game.state.add("play", PlayState);
+let app = domless.app;
 
-// start on boot state
-game.state.start("boot");
+app.state.add("boot", DemoBootState);
+app.state.add("load", DemoLoadState);
+app.state.add("run", DemoRunState);
+app.state.start("boot");
 
-export { game };
+export default app;
