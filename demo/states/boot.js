@@ -6,6 +6,14 @@ import domless from "../../src/domless.js";
 class DemoBootState extends domless.states.BootState {
 
   /**
+   * Constructor method for DemoBootState
+   * Returns a new instance of this class
+   */
+  constructor() {
+    super(...arguments);
+  }
+
+  /**
    * Runs once, before the create method for this state
    */
   preload() {

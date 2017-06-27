@@ -5,15 +5,13 @@ import DemoRunState from "./states/run.js";
 
 /**
  * Here is where you add your states to the domless app.
- * Common states are boot, load and run.
+ * Supported states are boot, load and run.
  */
-console.log("=== MY DOMLESS DEMO ===");
+let demoApp = domless.app;
 
-let app = domless.app;
+demoApp.state.add("boot", DemoBootState);
+demoApp.state.add("load", DemoLoadState);
+demoApp.state.add("run", DemoRunState);
+demoApp.state.start("boot");
 
-app.state.add("boot", DemoBootState);
-app.state.add("load", DemoLoadState);
-app.state.add("run", DemoRunState);
-app.state.start("boot");
-
-export default app;
+export default demoApp;

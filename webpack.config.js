@@ -7,27 +7,66 @@ module.exports = {
   // create sourcemaps for the bundle
   devtool: "source-map",
 
-  devServer: {
-    inline: true
-  },
-
   // where does the import chain start
-  entry: "./src/domless.js",
-
-  // where do the bundle files get written to
-  output: {
-    path: path.resolve(__dirname, "static", "dist"),
-    filename: "domless.js"
-  },
+  entry: path.resolve(__dirname, "src", "domless.js"),
 
   // custom translations and stuff
   module: {
-    loaders: [
-      // transpile es6 to es5 during build
+    rules: [
       {
-        test: path.join(__dirname, "src"),
-      }
-    ]
+        test: /\.(xml)$/i,
+        use: [
+          {
+            loader: "url-loader"
+          },
+        ]
+      },
+      {
+        test: /\.(jpe?g|png|gif|svg)$/i,
+        use: [
+          {
+            loader: "url-loader"
+          },
+          {
+            loader: "image-webpack-loader",
+            options: {
+              query: {
+                bypassOnDebug: true,
+                interlaced: false,
+                progressive: true,
+                optimizationLevel: 7,
+                gifsicle: {
+                  interlaced: false
+                },
+                mozjpeg: {
+                  quality: 65
+                },
+                pngquant: {
+                  quality: "65-90",
+                  speed: 4
+                },
+                svgo: {
+                  plugins: [
+                    {
+                      removeViewBox: false
+                    },
+                    {
+                      removeEmptyAttrs: false
+                    }
+                  ]
+                }
+              }
+            }
+          },
+        ]
+      },
+    ],
+  },
+
+  // where to write the bundle in non-dev environments
+  output: {
+    path: path.resolve(__dirname, "static", "dist"),
+    filename: "domless.js"
   },
 
   // other plugins
@@ -35,6 +74,14 @@ module.exports = {
     // Avoid publishing files when compilation fails
     new webpack.NoEmitOnErrorsPlugin()
   ],
+
+  // subsequent import statements resolve in this order
+  resolve: {
+    modules: [
+      path.resolve(__dirname),
+      path.resolve(__dirname, "node_modules")
+    ]
+  },
 
   // output formatting
   stats: {

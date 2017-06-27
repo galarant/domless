@@ -1,8 +1,4 @@
-import "./before.js";
-
 import assert from "assert";
-import "../demo/main.js";
-
 
 describe("Array", function() {
   describe("#indexOf()", function() {

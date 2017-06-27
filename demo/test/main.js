@@ -1,7 +1,10 @@
-import "./before.js";
-
 import { expect } from "chai";
+
+import "./before.js";
 import app from "../main.js";
+
+app.device.canvas = true;
+app.boot();
 
 describe("main.js", function() {
   describe("app", function() {
@@ -16,10 +19,6 @@ describe("main.js", function() {
 
     it("should have a Run state", function() {
       expect(app.state.states).to.have.property("run");
-    });
-
-    it("will start on the Boot state", function() {
-      expect(app.state._pendingState).to.equal("boot");
     });
 
   });
