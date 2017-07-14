@@ -1,6 +1,7 @@
 language: node_js
 node_js:
-  - "6"
+  - "7"
 
-dist: trusty
-sudo: required
+script:
+- npm test
+- npm run test-demo

@@ -1,8 +1,8 @@
 import domless from "../../src/domless.js";
 
-import bgURL from "static/assets/images/bg.png";
-import groundURL from "static/assets/images/ground.png";
-import avatarURL from "static/assets/images/avatar.png";
+import bgURL from "../static/assets/images/bg.png";
+import groundURL from "../static/assets/images/ground.png";
+import avatarURL from "../static/assets/images/avatar.png";
 
 /**
  * Loading state for the demo

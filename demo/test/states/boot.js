@@ -1,20 +1,26 @@
+import { expect } from "chai";
+
 import "../before.js";
 import app from "../../main.js";
+
+app.device.canvas = true;
+app.boot();
 
 let demoBootState = app.state.states["boot"];
 
 describe("states/boot.js", function() {
   describe("DemoBootState", function() {
 
-    it("should have a preload method", function() {
+    it("should run its preload method without error", function() {
       demoBootState.preload();
+      expect(app.state._pendingState).to.equal("load");
     });
 
-    it("should have a create method", function() {
+    it("should run its create method without error", function() {
       demoBootState.create();
     });
 
-    it("should have an update method", function() {
+    it("should its update method without error", function() {
       demoBootState.update();
     });
 

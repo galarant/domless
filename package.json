@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack",
-    "build-demo": "webpack --config webpack-demo.config.js",
-    "test": "mocha-webpack --webpack-config webpack-test.config.js --recursive test",
-    "test-demo": "mocha-webpack --webpack-config webpack-test.config.js --recursive demo/test",
-    "serve-demo": "webpack-dev-server --config webpack-demo.config.js"
+    "build-demo": "webpack --config ./demo/webpack-demo.config.js",
+    "test": "mocha-webpack --webpack-config ./test/webpack-test.config.js --recursive test",
+    "test-demo": "mocha-webpack --webpack-config ./demo/test/webpack-demo-test.config.js --recursive demo/test",
+    "serve-demo": "webpack-dev-server --config ./demo/webpack-demo.config.js"
   },
   "repository": {
     "type": "git",
@@ -24,22 +24,24 @@
   },
   "homepage": "https://github.com/galarant/domless",
   "devDependencies": {
-    "canvas-prebuilt": "1.6.5-prerelease.1",
+    "canvas-prebuilt": "1.4.0",
     "chai": "3.5.0",
     "esdoc": "0.5.2",
     "file-loader": "0.11.1",
     "image-webpack-loader": "3.3.1",
     "jsdom": "9.12.0",
     "mocha": "3.3.0",
-    "mocha-webpack": "1.0.0-beta.1",
+    "mocha-webpack": "0.7.0",
     "url-loader": "0.5.8",
     "webpack": "2.4.1",
+    "webpack-chain": "3.3.0",
     "webpack-dev-server": "2.4.2",
     "webpack-node-externals": "1.5.4",
     "xml-loader": "1.2.1"
   },
   "dependencies": {
     "lodash": "4.17.4",
+    "mocha-webpack": "0.7.0",
     "phaser": "2.6.2"
   }
 }

@@ -4,18 +4,20 @@ var path = require("path");
 var webpack = require("webpack");
 
 module.exports = {
+  // configure the development server
+  devServer: {
+    contentBase: [
+      path.resolve(__dirname),
+      path.resolve(__dirname, ".."),
+    ],
+    publicPath: "/static-demo/dist/",
+  },
+
   // create sourcemaps for the bundle
   devtool: "source-map",
 
-  devServer: {
-    contentBase: [
-      path.join(__dirname, "./demo"),
-      path.join(__dirname, "./")
-    ],
-  },
-
-  // where does the import chain start
-  entry: "./demo/main.js",
+  // where to start the import chain
+  entry: path.resolve(__dirname, "main.js"),
 
   // custom translations and stuff
   module: {
@@ -73,26 +75,22 @@ module.exports = {
   // other plugins
   plugins: [
     // Avoid publishing files when compilation fails
-    new webpack.NoEmitOnErrorsPlugin(),
+    new webpack.NoEmitOnErrorsPlugin()
   ],
 
-  // where do the bundle files get written to
+  // where to write the bundle in non-dev environments
+  // also some extra serve info
   output: {
-    path: path.resolve(__dirname, "static-demo", "dist"),
-    filename: "bundle.js"
+    path: path.resolve(__dirname, "..", "static-demo", "dist"),
+    filename: "demo.js",
   },
 
   resolve: {
     modules: [
-      path.resolve("./"),
-      path.resolve("./demo"),
-      path.resolve("./node_modules")
+      path.resolve(__dirname),
+      path.resolve(__dirname, ".."),
+      path.resolve(__dirname, "..", "node_modules"),
     ]
-  },
-
-  // output formatting
-  stats: {
-    colors: true
-  },
+  }
 
 };
