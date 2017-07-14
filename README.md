@@ -1,4 +1,7 @@
 # domless
+
+[![Build Status](https://travis-ci.org/galarant/domless.svg?branch=master)](https://travis-ci.org/galarant/domless)
+
 set yourself free
 
 ## Setup
