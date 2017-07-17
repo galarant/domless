@@ -9,3 +9,6 @@ node_modules
 
 # Temporary files
 .tmp/
+
+# Test coverage
+coverage/
