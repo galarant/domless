@@ -8,6 +8,7 @@
     "build-demo": "webpack --config ./demo/webpack-demo.config.js",
     "test": "mocha-webpack --webpack-config ./test/webpack-test.config.js --recursive test",
     "test-demo": "mocha-webpack --webpack-config ./demo/test/webpack-demo-test.config.js --recursive demo/test",
+    "ci-test": "istanbul cover mocha-webpack --report lcovonly -- --webpack-config ./test/webpack-test.config.js --recursive test",
     "serve-demo": "webpack-dev-server --config ./demo/webpack-demo.config.js"
   },
   "repository": {
@@ -29,6 +30,7 @@
     "esdoc": "0.5.2",
     "file-loader": "0.11.1",
     "image-webpack-loader": "3.3.1",
+    "istanbul": "0.4.5",
     "jsdom": "9.12.0",
     "mocha": "3.3.0",
     "mocha-webpack": "0.7.0",
