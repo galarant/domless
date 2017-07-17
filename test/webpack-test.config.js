@@ -5,7 +5,7 @@ var path = require("path");
 var parentConfig = require("../webpack.config");
 var nodeExternals = require("webpack-node-externals");
 
-var config = {
+var config = Object.assign(parentConfig, {
 
   // where does the import chain start
   entry: path.resolve(__dirname, "main.js"),
@@ -15,6 +15,21 @@ var config = {
 
   target: "node",
 
-};
+});
 
-module.exports = Object.assign(parentConfig, config);
+config.module.rules.push(
+  {
+    test: /\.js$/,
+    exclude: /node_modules/,
+    use: [
+      {
+        loader: "istanbul-instrumenter-loader",
+        options: {
+          esModules: true
+        }
+      }
+    ]
+  }
+);
+
+module.exports = config;
