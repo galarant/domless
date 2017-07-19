@@ -14,6 +14,14 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.js$/,
+        include: [path.resolve(__dirname), "src"],
+        loader: "babel-loader",
+        options: {
+          presets: ["env"]
+        }
+      },
+      {
         test: /\.(xml)$/i,
         use: [
           {
