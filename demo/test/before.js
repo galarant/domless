@@ -15,8 +15,8 @@ Object.keys(window).forEach((key) => {
 
 });
 
-var PIXI = require("../../static/vendor/phaser/build/pixi.js");
-var p2 = require("../../static/vendor/phaser/build/p2.js");
+var PIXI = require("../../static/vendor/phaser/build/custom/pixi.js");
+var p2 = require("../../static/vendor/phaser/build/custom/p2.js");
 
 global.PIXI = PIXI;
 global.p2 = p2;
