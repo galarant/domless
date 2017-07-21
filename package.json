@@ -47,7 +47,7 @@
   "dependencies": {
     "lodash": "4.17.4",
     "mocha-webpack": "0.7.0",
-    "phaser": "2.6.2"
+    "phaser-ce": "2.8.2"
   },
   "nyc": {
     "include": [
