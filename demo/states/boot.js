@@ -1,9 +1,9 @@
-import domless from "../../src/domless.js";
+import BootState from "../../src/states/boot.js";
 
 /**
  * Starting state for the demo
  */
-class DemoBootState extends domless.states.BootState {
+class DemoBootState extends BootState {
 
   /**
    * Constructor method for DemoBootState

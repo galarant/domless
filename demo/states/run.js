@@ -1,4 +1,6 @@
-import domless from "../../src/domless";
+import RunState from "../../src/states/run.js";
+
+import Touchable from "../../src/components/input/touchable/touchable.js";
 
 import Ground from "../world/physical/ground";
 import Avatar from "../world/physical/avatar";
@@ -6,7 +8,7 @@ import Avatar from "../world/physical/avatar";
 /**
  * Run state for the demo
  */
-class DemoRunState extends domless.states.RunState {
+class DemoRunState extends RunState {
 
   /**
    * Constructor method for DemoRunState
@@ -50,6 +52,12 @@ class DemoRunState extends domless.states.RunState {
     this.app.ground = new Ground(this.app);
     this.app.avatar = new Avatar(this.app);
     this.app.camera.follow(this.app.avatar);
+
+    // add touchable
+    this.touchable = new Touchable(this.app);
+    this.touchable.fixedToCamera = true;
+    this.touchable.cameraOffset.x = 50;
+    this.touchable.cameraOffset.y = 100;
 
   }
 

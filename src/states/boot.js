@@ -10,7 +10,7 @@ class BootState extends Phaser.State {
 
   /**
    * Constructor method for BootState
-   * Sets the loading image
+   * Sets the loading image url
    * Returns a new instance of this class
    */
   constructor() {

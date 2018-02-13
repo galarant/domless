@@ -1,8 +1,13 @@
-let domless = {};
+class DomlessApp extends Phaser.Game {
 
-domless.app = new Phaser.Game("100%", "100%", Phaser.AUTO, "body", null, true);
+  /**
+   * Constructor method for DomlessApp
+   * Creates a specialized Phaser.Game instance and returns it
+   */
+  constructor() {
+    super("100%", "100%", Phaser.AUTO, "body", null, true);
+  }
 
-import * as states from "./states";
-domless.states = states;
+}
 
-export default domless;
+export default DomlessApp;

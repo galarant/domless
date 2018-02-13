@@ -1,6 +1,8 @@
 import defaultFontXMLURL from "static/assets/main/proxima_nova.xml";
 import defaultFontImageURL from "static/assets/main/proxima_nova.png";
 
+import defaultTouchableBodyURL from "static/assets/components/input/touchable/squircle.png";
+
 /**
  * Displays the loading screen for the app
  * Loads the assets in the background
@@ -30,11 +32,15 @@ class LoadState extends Phaser.State {
    * Initializes the loaders for all Domless components
    */
   preload() {
+    console.log("LoadState.preload started");
     super.preload();
     // show the preloader image while assets are loading
-    this.loadingSprite = this.add.sprite(this.app.world.centerX,
-                                         this.app.world.centerY,
-                                         "loading");
+    console.log("GAME TYPE:", typeof this.game);
+    console.log("APP TYPE:", typeof this.app);
+    this.loadingSprite = new Phaser.Sprite(this.app,
+                                           this.app.world.centerX,
+                                           this.app.world.centerY,
+                                           "loading");
 
     this.loadingSprite.anchor.setTo(0.5, 0.5);
 
@@ -42,6 +48,8 @@ class LoadState extends Phaser.State {
     this.load.bitmapFont("proxima_nova",
       defaultFontImageURL,
       defaultFontXMLURL);
+    this.load.image("defaultTouchableBody", defaultTouchableBodyURL);
+    console.log("LoadState.preload done");
   }
 
   /**
