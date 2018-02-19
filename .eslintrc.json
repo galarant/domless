@@ -38,10 +38,7 @@
         "no-console": 0,
         "no-unused-vars": ["error", { "varsIgnorePattern": "React|Component" }],
         "camelcase": "error",
-        "react/jsx-uses-vars": 1,
-        "async-await/space-after-async": 2,
-        "async-await/space-after-await": 2
-
+        "react/jsx-uses-vars": 1
     },
     "globals": {
         "Phaser": false,
@@ -51,7 +48,6 @@
     },
     "plugins": [
         "react",
-        "async-await",
         "jasmine"
     ],
     "settings": {
