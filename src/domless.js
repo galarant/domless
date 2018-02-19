@@ -5,9 +5,9 @@ class DomlessApp extends Phaser.Game {
    * Creates a specialized Phaser.Game instance and returns it
    */
   constructor() {
-    super("100%", "100%", Phaser.AUTO, "body", null, true);
+    super("100%", "100%", Phaser.AUTO, "body", null, true)
   }
 
 }
 
-export default DomlessApp;
+export default DomlessApp

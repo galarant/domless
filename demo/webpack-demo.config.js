@@ -1,7 +1,7 @@
 /* global __dirname */
 
-var path = require("path");
-var webpack = require("webpack");
+var path = require("path")
+var webpack = require("webpack")
 
 module.exports = {
   // configure the development server
@@ -101,4 +101,4 @@ module.exports = {
     ]
   }
 
-};
+}
