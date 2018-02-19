@@ -8,7 +8,7 @@ class RunState extends Phaser.State {
    * Returns a ndw instance of this class
    */
   constructor() {
-    super(...arguments);
+    super(...arguments)
   }
 
   /**
@@ -16,30 +16,30 @@ class RunState extends Phaser.State {
    * this.app is a synonym for this.game
    */
   get app() {
-    return this.game;
+    return this.game
   }
 
   /**
    * Runs before the first frame is rendered for this state
    */
   preload() {
-    super.preload();
+    super.preload()
   }
 
   /**
    * Runs once, before the first frame is rendered for this state
    */
   create() {
-    super.create();
+    super.create()
   }
 
   /**
    * Runs continuously, before each frame is rendered for this state
    */
   update() {
-    super.update();
+    super.update()
   }
 
 }
 
-export default RunState;
+export default RunState

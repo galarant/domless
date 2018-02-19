@@ -20,90 +20,90 @@ export class Button extends Phaser.Group {
     outlineKey="squircle", fillKey="squircle_fill", labelFont="proxima_nova") {
 
     //group attributes
-    super(app, parentGroup);
+    super(app, parentGroup)
 
-    this.keyCode = keyCode;
-    this.tweens = new Phaser.TweenManager(app);
-    this.submitSignal = new Phaser.Signal();
+    this.keyCode = keyCode
+    this.tweens = new Phaser.TweenManager(app)
+    this.submitSignal = new Phaser.Signal()
 
     //add outline sprite
-    this.outlineSprite = new Phaser.Sprite(this.app, 0, 0, outlineKey);
-    this.outlineSprite.width = width;
-    this.outlineSprite.height = height;
-    this.addChild(this.outlineSprite);
+    this.outlineSprite = new Phaser.Sprite(this.app, 0, 0, outlineKey)
+    this.outlineSprite.width = width
+    this.outlineSprite.height = height
+    this.addChild(this.outlineSprite)
 
     //add fill sprite
-    this.fillSprite = new Phaser.Sprite(this.app, 0, 0, fillKey);
-    this.fillSprite.width = width;
-    this.fillSprite.height = height;
-    this.fillSprite.alpha = 0;
-    this.addChild(this.fillSprite);
+    this.fillSprite = new Phaser.Sprite(this.app, 0, 0, fillKey)
+    this.fillSprite.width = width
+    this.fillSprite.height = height
+    this.fillSprite.alpha = 0
+    this.addChild(this.fillSprite)
 
     //add label
     if (label instanceof Phaser.Sprite) {
-      this.label = label;
+      this.label = label
     } else if (typeof(label) === "string") {
       this.label = new Phaser.BitmapText(this.app,
-        this.outlineSprite.width / 2, this.outlineSprite.height / 2,
-        labelFont, label, width / (label.length + 1));
-      this.label.anchor.setTo(0.5, 0.5);
+                                         this.outlineSprite.width / 2, this.outlineSprite.height / 2,
+                                         labelFont, label, width / (label.length + 1))
+      this.label.anchor.setTo(0.5, 0.5)
     } else {
-      throw("Domless Button label must be of type String or type Phaser.Sprite");
+      throw("Domless Button label must be of type String or type Phaser.Sprite")
     }
-    this.addChild(this.label);
+    this.addChild(this.label)
 
     //set up callback functionality
     if (callbackContext) {
-      this.callbackContext = callbackContext;
+      this.callbackContext = callbackContext
     } else {
-      this.callbackContext = this;
+      this.callbackContext = this
     }
 
     if (callback) {
-      this.callback = callback;
+      this.callback = callback
     } else {
-      console.warn("Created a Domless Button with no callback specified");
+      console.warn("Created a Domless Button with no callback specified")
     }
 
-    this.app.input.onDown.add(this.handlePointerInput, this);
+    this.app.input.onDown.add(this.handlePointerInput, this)
 
     if (keyCode) {
-      this.inputKey = this.app.input.keyboard.addKey(this.keyCode);
+      this.inputKey = this.app.input.keyboard.addKey(this.keyCode)
       if (this.callback) {
-        this.inputKey.onDown.add(this.callback, this.callbackContext);
+        this.inputKey.onDown.add(this.callback, this.callbackContext)
       }
-      this.inputKey.onDown.add(this.fill, this);
+      this.inputKey.onDown.add(this.fill, this)
     }
   }
 
   handlePointerOutput(thisPointer) {
     let inXBounds= (
       thisPointer.x >= this.worldPosition.x &&
-      thisPointer.x <= this.worldPosition.x + this.width);
+      thisPointer.x <= this.worldPosition.x + this.width)
     let inYBounds = (
       thisPointer.y >= this.worldPosition.y &&
-      thisPointer.y <= this.worldPosition.y + this.height);
+      thisPointer.y <= this.worldPosition.y + this.height)
     if (inXBounds && inYBounds) {
       if (this.callback) {
-        this.callback.call(this.callbackContext);
+        this.callback.call(this.callbackContext)
       }
-      this.fill.call(this);
+      this.fill.call(this)
     }
   }
 
   fill() {
     //flash the fill sprite with a quick yoyo tween
     if (this.fillSprite) {
-      this.fillSprite.alpha = 0;
+      this.fillSprite.alpha = 0
       this.fillTween = this.app.add.tween(this.fillSprite)
-        .to({alpha: 1.0}, 100, "Linear", true, 0, 0, true);
-      this.tweens.add(this.fillTween);
+        .to({alpha: 1.0}, 100, "Linear", true, 0, 0, true)
+      this.tweens.add(this.fillTween)
     }
   }
 
   destroy() {
-    this.app.input.keyboard.removeKey(this.keyCode);
-    super.destroy();
+    this.app.input.keyboard.removeKey(this.keyCode)
+    super.destroy()
   }
 
 }

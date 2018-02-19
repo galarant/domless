@@ -1,4 +1,4 @@
-import loadingImage from "static/assets/main/preloader.png";
+import loadingImage from "static/assets/main/preloader.png"
 
 /**
  * Starting point for prettymuch everything
@@ -10,12 +10,12 @@ class BootState extends Phaser.State {
 
   /**
    * Constructor method for BootState
-   * Sets the loading image
+   * Sets the loading image url
    * Returns a new instance of this class
    */
   constructor() {
-    super(...arguments);
-    this.loadingImageURL = loadingImage;
+    super(...arguments)
+    this.loadingImageURL = loadingImage
   }
 
   /**
@@ -23,7 +23,7 @@ class BootState extends Phaser.State {
    * this.app is a synonym for this.game
    */
   get app() {
-    return this.game;
+    return this.game
   }
 
   /**
@@ -32,18 +32,18 @@ class BootState extends Phaser.State {
    * Retrieves the loading image from the server
    */
   preload() {
-    super.preload();
-    this.app.scale.scaleMode = Phaser.ScaleManager.RESIZE;
-    this.app.scale.pageAlignVertically = true;
-    this.app.scale.pageAlignHorizontally = true;
-    this.app.scale.trackParentInterval = 500;
-    this.load.image("loading", this.loadingImageURL);
+    super.preload()
+    this.app.scale.scaleMode = Phaser.ScaleManager.RESIZE
+    this.app.scale.pageAlignVertically = true
+    this.app.scale.pageAlignHorizontally = true
+    this.app.scale.trackParentInterval = 500
+    this.load.image("loading", this.loadingImageURL)
   }
 
   /** Runs once, before the first frame is rendered for this state
    */
   create() {
-    super.create();
+    super.create()
   }
 
   /**
@@ -51,11 +51,11 @@ class BootState extends Phaser.State {
    * Starts the LoadState once the loading image has been retrieved
    */
   update() {
-    super.update();
+    super.update()
     if (this.load.hasLoaded) {
-      this.app.state.start("load");
+      this.app.state.start("load")
     }
   }
 }
 
-export default BootState;
+export default BootState

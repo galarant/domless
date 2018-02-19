@@ -24,8 +24,4 @@ Run tests for core package:
 
 `$ npm run test`
 
-Run tests for demo:
-
-`$ npm run test-demo`
-
 That's it!
