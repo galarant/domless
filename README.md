@@ -25,5 +25,3 @@ Run tests for core package:
 `$ npm run test`
 
 That's it!
-
-test
