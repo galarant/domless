@@ -1,10 +1,11 @@
+import Phaser from "phaser"
 /**
  * Runs the app
  */
-class RunState extends Phaser.State {
+class RunScene extends Phaser.Scene {
 
   /**
-   * Constructor method for RunState
+   * Constructor method for RunScene
    * Returns a ndw instance of this class
    */
   constructor() {
@@ -20,21 +21,21 @@ class RunState extends Phaser.State {
   }
 
   /**
-   * Runs before the first frame is rendered for this state
+   * Runs before the first frame is rendered for this scene
    */
   preload() {
     super.preload()
   }
 
   /**
-   * Runs once, before the first frame is rendered for this state
+   * Runs once, before the first frame is rendered for this scene
    */
   create() {
     super.create()
   }
 
   /**
-   * Runs continuously, before each frame is rendered for this state
+   * Runs continuously, before each frame is rendered for this scene
    */
   update() {
     super.update()
@@ -42,4 +43,4 @@ class RunState extends Phaser.State {
 
 }
 
-export default RunState
+export default RunScene

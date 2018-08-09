@@ -1,17 +1,17 @@
-import RunState from "../../src/states/run.js"
+import Phaser from "phaser"
+import RunScene from "../../src/scenes/run.js"
 
 import Touchable from "../../src/components/input/touchable/touchable.js"
 
 import Ground from "../world/physical/ground"
-import Avatar from "../world/physical/avatar"
 
 /**
- * Run state for the demo
+ * Run scene for the demo
  */
-class DemoRunState extends RunState {
+class DemoRunScene extends RunScene {
 
   /**
-   * Constructor method for DemoRunState
+   * Constructor method for DemoRunScene
    * Runs the constructor for the parent class, passing args
    * Returns a new instance of this class
    */
@@ -20,7 +20,7 @@ class DemoRunState extends RunState {
   }
 
   /**
-   * Runs once, before the create method for this state
+   * Runs once, before the create method for this scene
    * Configures the default pointer and keyboard input
    */
   preload() {
@@ -30,18 +30,13 @@ class DemoRunState extends RunState {
   }
 
   /**
-   * Runs once, before the first frame is rendered for this state
+   * Runs once, before the first frame is rendered for this scene
    */
   create() {
     super.create()
 
     // initialize app world
     this.app.world.setBounds(0, 0, this.app.camera.width * 2, this.app.camera.height * 2)
-
-    // initialize physics system
-    this.app.physics.startSystem(Phaser.Physics.BOX2D)
-    this.app.physics.box2d.gravity.y = 500
-    this.app.physics.box2d.setBoundsToWorld()
 
     // add bg
     this.app.bg = this.app.add.tileSprite(0, 0,
@@ -50,8 +45,6 @@ class DemoRunState extends RunState {
 
     // populate this.app world
     this.app.ground = new Ground(this.app)
-    this.app.avatar = new Avatar(this.app)
-    this.app.camera.follow(this.app.avatar)
 
     // add touchable
     this.touchable = new Touchable(this.app)
@@ -62,7 +55,7 @@ class DemoRunState extends RunState {
   }
 
   /**
-   * Runs continuously, each time a single frame is rendered for this state
+   * Runs continuously, each time a single frame is rendered for this scene
    */
   update() {
     super.update()
@@ -70,4 +63,4 @@ class DemoRunState extends RunState {
 
 }
 
-export default DemoRunState
+export default DemoRunScene

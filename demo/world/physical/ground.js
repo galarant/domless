@@ -1,4 +1,6 @@
-class Ground extends Phaser.Sprite {
+import Phaser from "phaser"
+
+class Ground extends Phaser.GameObjects.Sprite {
 
   constructor(game) {
     //sprite attributes
@@ -9,11 +11,6 @@ class Ground extends Phaser.Sprite {
 
     this.width = this.game.world.width
     this.height = height
-
-    //physics attributes
-    game.physics.box2d.enable(this)
-    this.body.setRectangle(this.width, this.height)
-    this.body.static = true
 
     //world stuff
     game.world.add(this)

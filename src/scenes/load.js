@@ -1,3 +1,4 @@
+import Phaser from "phaser"
 import defaultFontXMLURL from "static/assets/main/proxima_nova.xml"
 import defaultFontImageURL from "static/assets/main/proxima_nova.png"
 
@@ -7,12 +8,12 @@ import defaultTouchableFillURL from "static/assets/components/input/touchable/sq
 /**
  * Displays the loading screen for the app
  * Loads the assets in the background
- * Starts the run state when loading is finished
+ * Starts the run scene when loading is finished
  */
-class LoadState extends Phaser.State {
+class LoadingScene extends Phaser.Scene {
 
   /**
-   * Constructor method for LoadState
+   * Constructor method for LoadScene
    * Returns a new instance of this class
    */
   constructor() {
@@ -28,7 +29,7 @@ class LoadState extends Phaser.State {
   }
 
   /**
-   * Runs once, before the create method for this state
+   * Runs once, before the create method for this scene
    * Sets up the loading image for display
    * Initializes the loaders for all Domless components
    */
@@ -51,22 +52,22 @@ class LoadState extends Phaser.State {
   }
 
   /**
-   * Runs once, before the first frame is rendered for this state
+   * Runs once, before the first frame is rendered for this scene
    */
   create() {
     super.create()
   }
 
   /**
-   * Runs continuously, before each frame is rendered for this state
-   * Starts the run state if all assets and components have loaded
+   * Runs continuously, before each frame is rendered for this scene
+   * Starts the run scene if all assets and components have loaded
    */
   update() {
     super.update()
     if(this.load.hasLoaded) {
-      this.app.state.start("run")
+      this.app.scene.start("run")
     }
   }
 }
 
-export default LoadState
+export default LoadingScene

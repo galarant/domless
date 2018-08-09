@@ -1,7 +1,8 @@
+import Phaser from "phaser"
 /**
  * Creates a touchable object in the display
  */
-export class Touchable extends Phaser.Group {
+export class Touchable extends Phaser.GameObjects.Group {
   /**
    * Constructor for the class
    *

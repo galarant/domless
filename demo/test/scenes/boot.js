@@ -1,16 +1,16 @@
 import DomlessApp from "../../../src/domless.js"
-import BootState from "../../../src/states/boot.js"
+import BootScene from "../../../src/scenes/boot.js"
 
-describe("BootState", function() {
+describe("BootScene", function() {
 
   let testApp = new DomlessApp()
-  let bootState = new BootState()
+  let bootScene = new BootScene()
 
   before(function() {
     testApp.device.canvas = true
     testApp.boot()
-    bootState.game = testApp
-    bootState.load = testApp.load
+    bootScene.game = testApp
+    bootScene.load = testApp.load
   })
 
   after(function() {
@@ -18,15 +18,15 @@ describe("BootState", function() {
   })
 
   it("should run its boot preload method without error", function() {
-    bootState.preload()
+    bootScene.preload()
   })
 
   it("should run its boot create method without error", function() {
-    bootState.create()
+    bootScene.create()
   })
 
   it("should run its boot update method without error", function() {
-    bootState.update()
+    bootScene.update()
   })
 
 })
