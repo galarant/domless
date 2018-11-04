@@ -1,9 +1,10 @@
-import Phaser from "phaser"
-import RunScene from "../../src/scenes/run.js"
+//import Phaser from "phaser"
+import RunScene from "../../src/scenes/run"
 
-import Touchable from "../../src/components/input/touchable/touchable.js"
-
-import Ground from "../world/physical/ground"
+import Avatar from "../world/avatar"
+import Ground from "../world/ground"
+import Button from "src/components/input/button"
+import Modal from "src/components/display/modal"
 
 /**
  * Run scene for the demo
@@ -25,8 +26,8 @@ class DemoRunScene extends RunScene {
    */
   preload() {
     super.preload()
-    this.app.input.maxPointers = 1
-    this.app.cursors = this.app.input.keyboard.createCursorKeys()
+    this.input.maxPointers = 1
+    this.cursors = this.input.keyboard.createCursorKeys()
   }
 
   /**
@@ -35,22 +36,47 @@ class DemoRunScene extends RunScene {
   create() {
     super.create()
 
-    // initialize app world
-    this.app.world.setBounds(0, 0, this.app.camera.width * 2, this.app.camera.height * 2)
+    //set up cursor keys
+    this.cursors = this.input.keyboard.createCursorKeys()
 
     // add bg
-    this.app.bg = this.app.add.tileSprite(0, 0,
-                                          this.app.world.width, this.app.world.height, "bg")
-    this.app.bg.tileScale = new Phaser.Point(2.0, 2.0)
+    let appWidth = this.app.config.width
+    let appHeight = this.app.config.height
+    this.bg = this.add.tileSprite(appWidth / 2, appHeight / 2, this.app.config.width, this.app.config.height, "bg")
 
-    // populate this.app world
-    this.app.ground = new Ground(this.app)
+    // add the ground
+    this.ground = new Ground(this)
 
-    // add touchable
-    this.touchable = new Touchable(this.app)
-    this.touchable.fixedToCamera = true
-    this.touchable.cameraOffset.x = 50
-    this.touchable.cameraOffset.y = 100
+    // add the avatar
+    this.avatar = new Avatar(this)
+
+    // add collision between avatar and ground
+    this.physics.add.collider(this.avatar, this.ground)
+
+    // add modal
+    this.modal = new Modal(this, false, true)
+    this.modal.activate()
+
+    // add button
+    let buttonWidth = 100
+    this.button = new Button(
+      this,
+      300, 300,
+      buttonWidth, buttonWidth, "OK", null, null,
+      function() {
+        this.scene.modal.activate()
+      }
+    )
+
+    this.add.tween({
+      targets: [this.button],
+      alpha: 0,
+      duration: 250,
+      yoyo: true,
+      repeat: -1
+    })
+
+    console.log(this)
 
   }
 
@@ -58,7 +84,21 @@ class DemoRunScene extends RunScene {
    * Runs continuously, each time a single frame is rendered for this scene
    */
   update() {
+    // add cursor key interaction
+    if (this.cursors.left.isDown) {
+      this.avatar.body.velocity.x -= 10
+    }
+
+    if (this.cursors.right.isDown) {
+      this.avatar.body.velocity.x += 10
+    }
+
+    if (this.cursors.up.isDown) {
+      this.avatar.body.velocity.y -= 10
+    }
+
     super.update()
+
   }
 
 }

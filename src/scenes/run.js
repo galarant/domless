@@ -23,23 +23,17 @@ class RunScene extends Phaser.Scene {
   /**
    * Runs before the first frame is rendered for this scene
    */
-  preload() {
-    super.preload()
-  }
+  preload() {}
 
   /**
    * Runs once, before the first frame is rendered for this scene
    */
-  create() {
-    super.create()
-  }
+  create() {}
 
   /**
    * Runs continuously, before each frame is rendered for this scene
    */
-  update() {
-    super.update()
-  }
+  update() {}
 
 }
 

@@ -11,7 +11,6 @@ class DemoBootScene extends BootScene {
    */
   constructor() {
     super(...arguments)
-    console.log("DemoBootScene contructor running")
   }
 
   /**
@@ -19,14 +18,13 @@ class DemoBootScene extends BootScene {
    */
   preload() {
     super.preload()
-    console.log("DemoBootScene preload running")
   }
 
   /**
    * Runs once, before the first frame is rendered for this scene
    */
   create() {
-    console.log("DemoBootScene create running")
+    console.log("DemoBootScene create")
     super.create()
   }
 
@@ -35,7 +33,6 @@ class DemoBootScene extends BootScene {
    */
   update() {
     super.update()
-    // console.log("DemoBootScene update running")
   }
 }
 

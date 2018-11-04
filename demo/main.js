@@ -3,6 +3,20 @@ import DemoBootScene from "./scenes/boot.js"
 import DemoLoadScene from "./scenes/load.js"
 import DemoRunScene from "./scenes/run.js"
 
+const CONFIG = {
+  width: 800,
+  height: 600,
+  physics: {
+    default: "arcade",
+    arcade: {
+      gravity: {
+        y: 300,
+      },
+      debug: false
+    }
+  }
+}
+
 /**
  * Here I am defining custom resize behavior for the app.
  * Phaser 3 does not provide options for this, so
@@ -18,7 +32,7 @@ window.onload = function() {
  * Here is where you add your scenes to the domless app.
  * Supported scenes are boot, load and run.
  */
-let demoApp = new DomlessApp()
+let demoApp = new DomlessApp(CONFIG)
 
 demoApp.scene.add("boot", DemoBootScene)
 demoApp.scene.add("load", DemoLoadScene)

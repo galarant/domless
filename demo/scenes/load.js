@@ -1,11 +1,8 @@
 import LoadScene from "../../src/scenes/load.js"
 
-import bgURL from "../static/assets/images/bg.png"
-import groundURL from "../static/assets/images/ground.png"
-import avatarURL from "../static/assets/images/avatar.png"
 
 /**
- * Loading scene for the demo
+ * Load scene for the demo
  */
 class DemoLoadScene extends LoadScene {
 
@@ -16,16 +13,24 @@ class DemoLoadScene extends LoadScene {
    */
   constructor() {
     super(...arguments)
+    this.bgURL = "static/assets/images/bg.png"
+    this.groundURL = "static/assets/images/ground.png"
+    this.avatarURL = "static/assets/images/avatar.png"
+    this.squircleURL = "static/assets/images/squircle.png"
+    this.squircleFillURL = "static/assets/images/squircle_fill.png"
   }
 
   /**
    * Runs once, before the create method for this scene
    */
   preload() {
+    console.log("DemoLoadScene preload")
     super.preload()
-    this.load.image("bg", bgURL)
-    this.load.image("ground", groundURL)
-    this.load.image("avatar", avatarURL)
+    this.load.image("bg", this.bgURL)
+    this.load.image("ground", this.groundURL)
+    this.load.image("avatar", this.avatarURL)
+    this.load.image("squircle", this.squircleURL)
+    this.load.image("squircle_fill", this.squircleFillURL)
   }
 
   /**

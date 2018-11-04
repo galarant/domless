@@ -1,16 +1,11 @@
 import Phaser from "phaser"
-import defaultFontXMLURL from "static/assets/main/proxima_nova.xml"
-import defaultFontImageURL from "static/assets/main/proxima_nova.png"
-
-import defaultTouchableBodyURL from "static/assets/components/input/touchable/squircle.png"
-import defaultTouchableFillURL from "static/assets/components/input/touchable/squircle_fill.png"
 
 /**
  * Displays the loading screen for the app
  * Loads the assets in the background
  * Starts the run scene when loading is finished
  */
-class LoadingScene extends Phaser.Scene {
+class LoadScene extends Phaser.Scene {
 
   /**
    * Constructor method for LoadScene
@@ -18,6 +13,11 @@ class LoadingScene extends Phaser.Scene {
    */
   constructor() {
     super(...arguments)
+    this.defaultFontXMLURL = "static/assets/main/proxima_nova.xml"
+    this.defaultFontImageURL = "static/assets/main/proxima_nova.png"
+
+    this.defaultTouchableBodyURL = "static/assets/components/input/touchable/squircle.png"
+    this.defaultTouchableFillURL = "static/assets/components/input/touchable/squircle_fill.png"
   }
 
   /**
@@ -34,28 +34,24 @@ class LoadingScene extends Phaser.Scene {
    * Initializes the loaders for all Domless components
    */
   preload() {
-    super.preload()
     // show the preloader image while assets are loading
-    this.loadingSprite = new Phaser.Sprite(this.app,
-                                           this.app.world.centerX,
-                                           this.app.world.centerY,
-                                           "loading")
-
-    this.loadingSprite.anchor.setTo(0.5, 0.5)
+    let loadingImage = this.add.image(400, 300, "loading")
+    loadingImage.scaleX = 0.1
+    loadingImage.scaleY = 0.1
 
     // load default domless fonts
     this.load.bitmapFont("proxima_nova",
-                         defaultFontImageURL,
-                         defaultFontXMLURL)
-    this.load.image("defaultTouchableBody", defaultTouchableBodyURL)
-    this.load.image("defaultTouchableFill", defaultTouchableFillURL)
+                         this.defaultFontImageURL,
+                         this.defaultFontXMLURL)
+    this.load.image("defaultTouchableBody", this.defaultTouchableBodyURL)
+    this.load.image("defaultTouchableFill", this.defaultTouchableFillURL)
   }
 
   /**
    * Runs once, before the first frame is rendered for this scene
    */
   create() {
-    super.create()
+    this.counter = 0
   }
 
   /**
@@ -63,11 +59,16 @@ class LoadingScene extends Phaser.Scene {
    * Starts the run scene if all assets and components have loaded
    */
   update() {
-    super.update()
-    if(this.load.hasLoaded) {
-      this.app.scene.start("run")
+    this.counter += 0.1
+    let progress = this.counter * this.load.progress
+    if (progress >= 1.0) {
+      console.log("LOADING FINISHED")
+      this.scene.start("run")
+      this.scene.stop()
+    } else {
+      console.log("Loading Progress:", progress)
     }
   }
 }
 
-export default LoadingScene
+export default LoadScene
