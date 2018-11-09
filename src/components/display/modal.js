@@ -48,7 +48,7 @@ class Modal extends Phaser.Scene {
       this.submitButton = new Button(
         this, 0, 0,
         this.width / 12, this.width / 12, 
-        "\u27A4", Phaser.Input.Keyboard.KeyCodes.RIGHT,
+        "\u27A4", false, Phaser.Input.Keyboard.KeyCodes.RIGHT,
         null, null, null, this.deactivateEvent
       )
       this.textDisplay.x -= this.submitButton.width / 2 - 10

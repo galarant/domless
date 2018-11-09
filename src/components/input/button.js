@@ -22,6 +22,7 @@ class Button extends Phaser.GameObjects.Container {
     label="OK",
     keyCode=null,
     value=label,
+    fill=true,
     callback=null,
     callbackScope=null,
     eventName="domlessButtonPress",
@@ -59,20 +60,22 @@ class Button extends Phaser.GameObjects.Container {
     this.add(this.outlineSprite)
 
     // draw the fill sprite if it doesn't exist already
-    let fillSpriteKey = `fillSquircle${width}${height}`
-    if (!scene.textures.exists(fillSpriteKey)) {
-      scene.domlessGraphics
-        .clear()
-        .fillStyle(0xffffff)
-        .fillRoundedRect(2, 2, width, height, 15)
-        .generateTexture(fillSpriteKey, width + 4, height + 4)
-        .clear()
-    }
+    if (fill) {
+      let fillSpriteKey = `fillSquircle${width}${height}`
+      if (!scene.textures.exists(fillSpriteKey)) {
+        scene.domlessGraphics
+          .clear()
+          .fillStyle(0xffffff)
+          .fillRoundedRect(2, 2, width, height, 15)
+          .generateTexture(fillSpriteKey, width + 4, height + 4)
+          .clear()
+      }
 
-    // add the fillSprite to the container
-    this.fillSprite = scene.add.sprite(0, 0, fillSpriteKey)
-    this.fillSprite.alpha = 0
-    this.add(this.fillSprite)
+      // add the fillSprite to the container
+      this.fillSprite = scene.add.sprite(0, 0, fillSpriteKey)
+      this.fillSprite.alpha = 0
+      this.add(this.fillSprite)
+    }
 
     //add label
     this.label = scene.add.text(0, 0, label)
@@ -87,6 +90,8 @@ class Button extends Phaser.GameObjects.Container {
     } else {
       this.callbackScope = this
     }
+
+    this.on("pointerdown", this.handleInput)
 
     if (callback) {
       this.callback = callback
@@ -103,7 +108,6 @@ class Button extends Phaser.GameObjects.Container {
 
     // accept pointer input
     this.setInteractive()
-    this.on("pointerdown", this.handleInput)
       
     // accept keyboard input
     if (this.keyCode) {

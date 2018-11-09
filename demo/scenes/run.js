@@ -62,7 +62,8 @@ class DemoRunScene extends RunScene {
     this.button = new Button(
       this,
       300, 300,
-      buttonWidth, buttonWidth, "OK", null, null,
+      buttonWidth, buttonWidth, "OK", false,
+      null, null,
       function() {
         this.scene.modal.activate()
       }
