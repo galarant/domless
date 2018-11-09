@@ -1,4 +1,5 @@
 import { expect } from "chai"
+import Phaser from "phaser"
 import DomlessApp from "../../../src/domless.js"
 
 import Touchable from "../../../src/components/input/touchable/touchable.js"

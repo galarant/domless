@@ -1,5 +1,6 @@
 import { jsdom } from "jsdom"
 import canvas from "canvas-prebuilt"
+import Phaser from "phaser"
 
 const doc = jsdom("<!doctype html><html><body></body></html>")
 const win = doc.defaultView
@@ -14,13 +15,3 @@ Object.keys(window).forEach((key) => {
   }
 
 })
-
-var PIXI = require("../../static/vendor/phaser/build/custom/pixi.js")
-var p2 = require("../../static/vendor/phaser/build/custom/p2.js")
-
-global.PIXI = PIXI
-global.p2 = p2
-
-var Phaser = require("../../static/vendor/phaser/build/phaser.js")
-
-global.Phaser = Phaser

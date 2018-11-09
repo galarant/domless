@@ -1,16 +1,16 @@
 import DomlessApp from "../../../src/domless.js"
-import RunState from "../../../src/states/run.js"
+import RunScene from "../../../src/scenes/run.js"
 
-describe("DemoRunState", function() {
+describe("DemoRunScene", function() {
 
   let testApp = new DomlessApp()
-  let runState = new RunState()
+  let runScene = new RunScene()
 
   before(function() {
     testApp.device.canvas = true
     testApp.boot()
-    runState.game = testApp
-    runState.load = testApp.load
+    runScene.game = testApp
+    runScene.load = testApp.load
   })
 
   after(function() {
@@ -18,15 +18,15 @@ describe("DemoRunState", function() {
   })
 
   it("should run its run preload method without error", function() {
-    runState.preload()
+    runScene.preload()
   })
 
   it("should run its run create method without error", function() {
-    runState.create()
+    runScene.create()
   })
 
   it("should run its run update method without error", function() {
-    runState.update()
+    runScene.update()
   })
 
 })
