@@ -5,6 +5,7 @@ import Avatar from "../world/avatar"
 import Ground from "../world/ground"
 import Button from "src/components/input/button"
 import Modal from "src/components/display/modal"
+import TextDisplay from "src/components/display/text_display"
 
 /**
  * Run scene for the demo
@@ -55,18 +56,26 @@ class DemoRunScene extends RunScene {
 
     // add modal
     this.modal = new Modal(this, false, true)
-    this.modal.activate()
 
     // add button
     let buttonWidth = 100
     this.button = new Button(
       this,
-      300, 300,
+      100, 100,
       buttonWidth, buttonWidth, "OK", false,
       null, null,
       function() {
         this.scene.modal.activate()
       }
+    )
+
+    this.textDisplay = new TextDisplay(
+      this, 
+      300, 300,
+      400, 200,
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In id porta augue. Etiam sollicitudin metus vel ipsum interdum congue. Morbi ac lacus metus. Morbi et velit tincidunt, suscipit quam eget, pretium sem. Nunc in aliquam libero. Aliquam cursus tortor lectus.",
+      24, "Helvetica",
+      true, true, "words"
     )
 
     this.add.tween({
