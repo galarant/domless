@@ -21,7 +21,9 @@ class TextDisplay extends Phaser.GameObjects.Container {
     fontSize=24,
     fontFamily="Helvetica",
     outline=true,
-    cursor=true
+    cursor=true,
+    progressive=false,
+    progressiveDelay=75
   ) {
 
     // group attributes
@@ -63,11 +65,13 @@ class TextDisplay extends Phaser.GameObjects.Container {
     this.add(this.content)
 
     // add cursor
-    if (cursor) {
-      this.cursor = this.scene.add.text(0, 0, "_", this.defaultStyles)
-      this.cursor.setOrigin(0, 0)
-      //this.cursor.setBackgroundColor("green")
-      this.add(this.cursor)
+    this.cursor = this.scene.add.text(0, 0, "_", this.defaultStyles)
+    this.cursor.setOrigin(0, 0)
+    this.add(this.cursor)
+
+    if (!cursor) {
+      this.cursor.setAlpha(0)
+    } else {
       this.scene.add.tween({
         targets: [this.cursor],
         alpha: 0,
@@ -75,10 +79,9 @@ class TextDisplay extends Phaser.GameObjects.Container {
         yoyo: true,
         repeat: -1
       })
-    } else {
-      this.cursor = false
     }
 
+    // set custom word wrapping to account for cursor
     this.content.setWordWrapCallback(
       function(text) {
         let wrappedText = this.content.basicWordWrap(
@@ -90,18 +93,41 @@ class TextDisplay extends Phaser.GameObjects.Container {
       }, this
     )
 
-    // calc space pixel width for cursor
+    // calc pixel width of space char, for cursor
     let testNoSpace = this.scene.add.text(0, 0, "II", this.defaultStyles)
     let testSpace = this.scene.add.text(0, 0, "I I", this.defaultStyles)
     this.spacePixelWidth = testSpace.width - testNoSpace.width
     testNoSpace.destroy()
     testSpace.destroy()
 
+    // set up listener for button press event
     this.scene.events.on("domlessButtonPress", function(buttonChar, keyCode) {
       this.addText(buttonChar, keyCode)
     }, this)
     
-    this.addText(initialText)
+    // populate initial text, or timer if progressive
+    if (progressive) {
+      if (progressive === "words") {
+        this.progressiveText = initialText.split(" ")
+        this.progressiveText.forEach(function(currentVal, index, theArray) {
+          theArray[index] += " "
+        })
+      } else if (progressive === "letters") {
+        this.progressiveText = initialText.split("")
+      }
+      this.progressiveTimer = this.scene.time.addEvent(
+        {
+          delay: progressiveDelay,
+          repeat: this.progressiveText.length - 1,
+          callback: function() {
+            this.addText(this.progressiveText.shift())
+          },
+          callbackScope: this
+        }
+      )
+    } else {
+      this.addText(initialText)
+    }
 
   }
 
