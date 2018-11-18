@@ -3,8 +3,8 @@ import RunScene from "../../src/scenes/run"
 
 import Avatar from "../world/avatar"
 import Ground from "../world/ground"
-import Button from "src/components/input/button"
-import Modal from "src/components/display/modal"
+//import Button from "src/components/input/button"
+//import Modal from "src/components/display/modal"
 import TextDisplay from "src/components/display/text_display"
 
 /**
@@ -55,9 +55,10 @@ class DemoRunScene extends RunScene {
     this.physics.add.collider(this.avatar, this.ground)
 
     // add modal
-    this.modal = new Modal(this, false, true)
+    //this.modal = new Modal(this, false, true)
 
     // add button
+    /*
     let buttonWidth = 100
     this.button = new Button(
       this,
@@ -69,15 +70,6 @@ class DemoRunScene extends RunScene {
       }
     )
 
-    this.textDisplay = new TextDisplay(
-      this, 
-      300, 300,
-      400, 200,
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In id porta augue. Etiam sollicitudin metus vel ipsum interdum congue. Morbi ac lacus metus. Morbi et velit tincidunt, suscipit quam eget, pretium sem. Nunc in aliquam libero. Aliquam cursus tortor lectus.",
-      24, "Helvetica",
-      true, true, "words"
-    )
-
     this.add.tween({
       targets: [this.button],
       alpha: 0,
@@ -85,6 +77,35 @@ class DemoRunScene extends RunScene {
       yoyo: true,
       repeat: -1
     })
+    */
+
+    this.textDisplay = new TextDisplay(
+      this, 
+      300, 300,
+      400, 200,
+      [
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        "Suspendisse pulvinar fermentum semper.",
+        "Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
+        "Foobar..."
+      ],
+      //"Lorem ipsum dolor sit amet",
+      //"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse pulvinar fermentum semper. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Praesent ultrices semper velit non malesuada. Quisque lectus ipsum, ullamcorper eget ante quis, consectetur tempor erat. Phasellus eu justo non arcu molestie pellentesque eget nec sapien. Aliquam vestibulum neque nunc, in porttitor nulla feugiat tincidunt. Mauris vitae ex vel enim efficitur ultrices sed quis nisl. Quisque commodo rutrum nulla, ac iaculis felis bibendum tempor. Integer sodales viverra eros, commodo fringilla mauris volutpat tincidunt. Mauris pharetra, erat vitae luctus mattis, est lectus sollicitudin eros, non mollis nisl enim vel lacus. Interdum et malesuada fames ac ante ipsum primis in faucibus. Vivamus ultricies fringilla ante. Sed neque sem, facilisis eget erat sed, tincidunt semper turpis. Aenean quis hendrerit ex. Nullam mollis et erat a tincidunt. Mauris faucibus pharetra sapien, at placerat ipsum malesuada ultricies. Sed pellentesque massa eu lobortis fermentum. Quisque imperdiet leo nec auctor faucibus. Praesent mollis lacus nulla, sed aliquam velit blandit quis. Vestibulum vehicula neque lectus, sed sollicitudin risus pellentesque condimentum. Morbi tempor nunc lacus, at scelerisque dolor viverra eu.",
+      24, "Helvetica",
+      true, true, false
+    )
+
+    /*
+    let testSprite = this.add.sprite(300, 300, "loading")
+    testSprite.setScale(0.25, 0.25)
+    let maskShape = this.add.graphics(0, 0)
+    maskShape
+      .fillStyle(0x000000, 0)
+      .fillCircle(300, 300, 50)
+    let mask = testSprite.createGeometryMask(maskShape)
+    testSprite.mask = mask
+    */
+
 
     console.log(this)
 
