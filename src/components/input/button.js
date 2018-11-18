@@ -26,7 +26,9 @@ class Button extends Phaser.GameObjects.Container {
     callback=null,
     callbackScope=null,
     eventName="domlessButtonPress",
-    eventArgs=[value, keyCode]
+    eventArgs=[value, keyCode],
+    fontSize=24,
+    outline=true
   ) {
 
     //group attributes
@@ -43,21 +45,24 @@ class Button extends Phaser.GameObjects.Container {
     this.keyCode = keyCode
     this.eventName = eventName
     this.eventArgs = eventArgs
+    this.fontSize = fontSize
 
     // draw the outline sprite if it doesn't exist already
-    let outlineSpriteKey = `outlineSquircle${width}${height}`
-    if (!scene.textures.exists(outlineSpriteKey)) {
-      scene.domlessGraphics
-        .clear()
-        .lineStyle(1.2, 0xffffff)
-        .strokeRoundedRect(2, 2, width, height, 15)
-        .generateTexture(outlineSpriteKey, width + 4, height + 4)
-        .clear()
-    }
+    if (outline) {
+      let outlineSpriteKey = `outlineSquircle${width}${height}`
+      if (!scene.textures.exists(outlineSpriteKey)) {
+        scene.domlessGraphics
+          .clear()
+          .lineStyle(1.2, 0xffffff)
+          .strokeRoundedRect(2, 2, width, height, 15)
+          .generateTexture(outlineSpriteKey, width + 4, height + 4)
+          .clear()
+      }
 
-    // add the outlineSprite to the container
-    this.outlineSprite = scene.add.sprite(0, 0, outlineSpriteKey)
-    this.add(this.outlineSprite)
+      // add the outlineSprite to the container
+      this.outlineSprite = scene.add.sprite(0, 0, outlineSpriteKey)
+      this.add(this.outlineSprite)
+    }
 
     // draw the fill sprite if it doesn't exist already
     if (fill) {
@@ -80,7 +85,7 @@ class Button extends Phaser.GameObjects.Container {
     //add label
     this.label = scene.add.text(0, 0, label)
     this.label.setOrigin(0.5, 0.5)
-    this.label.setFontSize(this.width * this.height / 200)
+    this.label.setFontSize(this.fontSize)
     this.label.setFontFamily("Helvetica")
     this.add(this.label)
 
