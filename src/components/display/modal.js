@@ -1,6 +1,6 @@
 import _ from "lodash"
 import Phaser from "phaser"
-import TextDisplay from "./text_display"
+import TextField from "./text_field"
 import Keyboard from "../input/keyboard"
 import Button from "../input/button"
 
@@ -40,18 +40,17 @@ class Modal extends Phaser.Scene {
     //show the content, centered on the screen
     if (this.isKeyboardModal) {
       this.content = this.add.container(0, 0)
-      this.textDisplay = new TextDisplay(
-        this, this.width / 2, this.height / 6,
-        this.width * 0.75, this.height / 4,
-        "", 24, "Helvetica", true
-      )
       this.submitButton = new Button(
         this, 0, 0,
         this.width / 12, this.width / 12, 
         "\u27A4", false, Phaser.Input.Keyboard.KeyCodes.RIGHT,
         null, null, null, this.deactivateEvent
       )
-      this.textDisplay.x -= this.submitButton.width / 2 - 10
+      this.textDisplay = new TextField(
+        this, this.width / 2 - this.submitButton.width / 2 - 10, this.height / 6,
+        this.width * 0.75, this.height / 4,
+        "", 24, "Helvetica", true
+      )
       this.submitButton.x = this.textDisplay.x + this.textDisplay.width / 2 + this.submitButton.width / 2 + 20
       this.submitButton.y = this.textDisplay.y
       this.submitButton.label.setFontSize(this.submitButton.width)
