@@ -6,7 +6,7 @@ import Ground from "../world/ground"
 //import Button from "src/components/input/button"
 import Modal from "src/components/display/modal"
 import Dialogue from "src/components/display/dialogue"
-import TextField from "src/components/display/text_field"
+//import TextField from "src/components/display/text_field"
 
 /**
  * Run scene for the demo
@@ -60,19 +60,11 @@ class DemoRunScene extends RunScene {
       this, false, true
     )
 
-    //this.modal.activate()
-    this.textField = new TextField(
-      this,
-      300, 150,
-      400, 100,
-      "foobar"
-    )
-
     // add dialogue
     this.dialogue = new Dialogue(
       this, 
-      300, 400,
-      400, 100,
+      300, 150,
+      400, 200,
       [
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
         "Suspendisse pulvinar fermentum semper.",
@@ -80,7 +72,7 @@ class DemoRunScene extends RunScene {
         "Foobar..."
       ],
       24, "Helvetica",
-      true, false
+      true, "letters", 25
     )
     console.log(this)
 

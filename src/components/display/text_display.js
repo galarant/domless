@@ -73,7 +73,7 @@ class TextDisplay extends Phaser.GameObjects.Container {
      */ 
     this.content = this.scene.add.text(x - this.width / 2, y - this.height / 2, "", this.defaultStyles)
     this.content.setOrigin(0, 0)
-    this.content.setBackgroundColor("purple")
+    //this.content.setBackgroundColor("purple")
 
     // set up a mask on the content
     // this will hide overflow text when we scroll
@@ -85,7 +85,7 @@ class TextDisplay extends Phaser.GameObjects.Container {
       //.fillRect(0, 0, this.height, this.width)
       .fillRect(x - this.width / 2, y - this.height / 2, this.width, this.height)
     this.contentMask = this.createGeometryMask(maskShape)
-    //this.content.setMask(this.contentMask)
+    this.content.setMask(this.contentMask)
 
     // add pagination buttons
     let pageUpPosition = [this.width / 2, -this.height / 2]
