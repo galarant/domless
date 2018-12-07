@@ -3,7 +3,7 @@ import RunScene from "../../src/scenes/run"
 
 import Avatar from "../world/avatar"
 import Ground from "../world/ground"
-//import Button from "src/components/input/button"
+import Button from "src/components/input/button"
 import Modal from "src/components/display/modal"
 import Dialogue from "src/components/display/dialogue"
 //import TextField from "src/components/display/text_field"
@@ -57,22 +57,39 @@ class DemoRunScene extends RunScene {
 
     // add modal
     this.modal = new Modal(
-      this, false, true
+      this,
+      {
+        defaultDeactivate: false,
+        isKeyboardModal: true
+      }
+    )
+
+    // add button
+    this.button = new Button(
+      this,
+      {
+        x: 600, y: 150,
+        fill: false,
+        callback: function() { this.modal.activate() },
+        callbackScope: this
+      }
     )
 
     // add dialogue
     this.dialogue = new Dialogue(
       this, 
-      300, 150,
-      400, 200,
-      [
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-        "Suspendisse pulvinar fermentum semper.",
-        "Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
-        "Foobar..."
-      ],
-      24, "Helvetica",
-      true, "letters", 25
+      {
+        x: 300, y: 150,
+        width: 400, height: 200,
+        pages: [
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+          "Suspendisse pulvinar fermentum semper.",
+          "Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
+          "Foobar..."
+        ],
+        progressive: "letters",
+        progressiveDelay: 25
+      }
     )
     console.log(this)
 

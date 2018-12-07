@@ -16,19 +16,15 @@ class Button extends Phaser.GameObjects.Container {
    */
   constructor(
     scene,
-    x, y,
-    width=60,
-    height=60,
-    label="OK",
-    keyCode=null,
-    value=label,
-    fill=true,
-    callback=null,
-    callbackScope=null,
-    eventName="domlessButtonPress",
-    eventArgs=[value, keyCode],
-    fontSize=24,
-    outline=true
+    {
+      x, y,
+      width=60, height=60, fontSize=24,
+      label="OK", keyCode=null, value=label,
+      fill=true, outline=true,
+      callback=null, callbackScope=null,
+      eventName="domlessButtonPress",
+      eventArgs=[value, keyCode]
+    }
   ) {
 
     //group attributes

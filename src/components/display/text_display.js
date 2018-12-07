@@ -14,13 +14,13 @@ class TextDisplay extends Phaser.GameObjects.Container {
    */
   constructor(
     scene,
-    x, y,
-    width=400,
-    height=200,
-    initialText="",
-    fontSize=24,
-    fontFamily="Helvetica",
-    outline=true
+    {
+      x, y,
+      width=400, height=200,
+      initialText="",
+      fontSize=24, fontFamily="Helvetica",
+      outline=true
+    }
   ) {
 
     // set up basic attributes
@@ -102,11 +102,14 @@ class TextDisplay extends Phaser.GameObjects.Container {
     // add pageUp button
     this.pageUpButton = new Button(
       this.scene,
-      pageUpPosition[0], pageUpPosition[1],
-      30, 30,
-      pageUpLabel, Phaser.Input.Keyboard.KeyCodes.UP, null, 
-      false, this.pageUp, this, "domlessTextDisplayPageUp",
-      [], 24, false
+      {
+        x: pageUpPosition[0], y: pageUpPosition[1],
+        width: 30, height: 30,
+        label: pageUpLabel, keyCode: Phaser.Input.Keyboard.KeyCodes.UP, value: null, 
+        fill: false, outline: false,
+        callback: this.pageUp, callbackScope: this,
+        eventName: "domlessTextDisplayPageUp", eventArgs: []
+      }
     )
     this.add(this.pageUpButton)
     this.pageUpButton.disableInput(true)
@@ -114,11 +117,14 @@ class TextDisplay extends Phaser.GameObjects.Container {
     // add pageDown button
     this.pageDownButton = new Button(
       this.scene,
-      pageDownPosition[0], pageDownPosition[1],
-      30, 30,
-      pageDownLabel, Phaser.Input.Keyboard.KeyCodes.DOWN, null, 
-      false, this.pageDown, this, "domlessTextDisplayPageDown",
-      [], 24, false
+      {
+        x: pageDownPosition[0], y: pageDownPosition[1],
+        width: 30, height: 30,
+        label: pageDownLabel, keyCode: Phaser.Input.Keyboard.KeyCodes.DOWN, value: null, 
+        fill: false, outline: false,
+        callback: this.pageDown, callbackScope: this,
+        eventName: "domlessTextDisplayPageDown", eventArgs: []
+      }
     )
     this.add(this.pageDownButton)
 

@@ -14,19 +14,28 @@ class Dialogue extends TextDisplay {
    */
   constructor(
     scene,
-    x, y,
-    width=400,
-    height=200,
-    pages=[],
-    fontSize=24,
-    fontFamily="Helvetica",
-    outline=true,
-    progressive=false,
-    progressiveDelay=75
+    {
+      x, y,
+      width=400, height=400,
+      pages=[], fontSize=24,
+      fontFamily="Helvetica",
+      outline=true,
+      progressive=false,
+      progressiveDelay=75
+    }
   ) {
 
     // group attributes
-    super(scene, x, y, width, height, "", fontSize, fontFamily, outline)
+    super(
+      scene,
+      {
+        x: x, y: y,
+        width: width, height: height,
+        initialText: "",
+        fontSize: fontSize, fontFamily: fontFamily,
+        outline: outline
+      }
+    )
 
     this.pages = pages
     this.progressive = progressive
@@ -46,11 +55,6 @@ class Dialogue extends TextDisplay {
     this.promptNextPageTween.pause()
     this.pageDownButton.disableInput(true)
     this.pageBreaks = [0]
-
-    // set up listener for button press event
-    this.scene.events.on("domlessButtonPress", function(buttonChar, keyCode) {
-      this.addText(buttonChar, keyCode)
-    }, this)
 
     this.addPage()
     
