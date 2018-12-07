@@ -13,11 +13,13 @@ class Modal extends Phaser.Scene {
    */
   constructor(
     calledFrom,
-    defaultDeactivate=true,
-    isKeyboardModal=false,
-    key="domlessModal",
-    content="PAUSED",
-    deactivateEvent=key + "Deactivate"
+    {
+      defaultDeactivate=true,
+      isKeyboardModal=false,
+      key="domlessModal",
+      content="PAUSED",
+      deactivateEvent=key + "Deactivate"
+    }
   ) {
 
     //basic initialization
@@ -41,20 +43,24 @@ class Modal extends Phaser.Scene {
     if (this.isKeyboardModal) {
       this.content = this.add.container(0, 0)
       this.submitButton = new Button(
-        this, 0, 0,
-        this.width / 12, this.width / 12, 
-        "\u27A4", false, Phaser.Input.Keyboard.KeyCodes.RIGHT,
-        null, null, null, this.deactivateEvent
+        this,
+        {
+          x: 0, y: 0,
+          width: this.width / 12, height: this.width / 12, fontSize: this.width / 12,
+          label: "\u27A4", keyCode: Phaser.Input.Keyboard.KeyCodes.RIGHT,
+          fill: false, outline: false,
+          eventName: this.deactivateEvent, eventArgs: []
+        }
       )
       this.textDisplay = new TextField(
-        this, this.width / 2 - this.submitButton.width / 2 - 10, this.height / 6,
-        this.width * 0.75, this.height / 4,
-        "", 24, "Helvetica", true
+        this, 
+        {
+          x: this.width / 2 - this.submitButton.width / 2 - 10, y: this.height / 6,
+          width: this.width * 0.75, height: this.height / 4
+        }
       )
       this.submitButton.x = this.textDisplay.x + this.textDisplay.width / 2 + this.submitButton.width / 2 + 20
       this.submitButton.y = this.textDisplay.y
-      this.submitButton.label.setFontSize(this.submitButton.width)
-      this.submitButton.outlineSprite.alpha = 0
       this.keyboard = new Keyboard(this)
       this.content.add(this.textDisplay)
       this.content.add(this.submitButton)

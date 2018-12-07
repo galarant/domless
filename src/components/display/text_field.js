@@ -15,17 +15,26 @@ class TextField extends TextDisplay {
    */
   constructor(
     scene,
-    x, y,
-    width=400,
-    height=200,
-    initialText="",
-    fontSize=24,
-    fontFamily="Helvetica",
-    outline=true
+    {
+      x, y,
+      width=400, height=200,
+      initialText="",
+      fontSize=24, fontFamily="Helvetica",
+      outline=true
+    }
   ) {
 
     // group attributes
-    super(scene, x, y, width, height, "", fontSize, fontFamily, outline)
+    super(
+      scene,
+      {
+        x: x, y: y,
+        width: width, height: height,
+        initialText: "",
+        fontSize: fontSize, fontFamily: fontFamily,
+        outline: outline
+      }
+    )
 
     // add cursor
     this.cursor = this.scene.add.text(x - this.width / 2, y - this.height / 2, "_", this.defaultStyles)

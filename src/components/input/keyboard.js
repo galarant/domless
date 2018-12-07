@@ -368,18 +368,19 @@ class Keyboard extends Phaser.GameObjects.Container {
         if (keyConfig[2] !== undefined) {
           thisKeyWidth = keyboard.keyWidth * keyConfig[2] + keyboard.keySpacing * (keyConfig[2] - 1)
         }
-        let buttonLabel = keyConfig[0]
-        let buttonKeyCode = keyConfig[1]
-        let buttonValue = (keyConfig[3] !== undefined ? keyConfig[3] : keyConfig[0])
-        let buttonFill = (keyConfig[4] !== undefined ? keyConfig[4] : true)
-        let buttonCallback = (keyConfig[5] !== undefined ? keyConfig[5] : null)
-        let buttonCallbackContext = (keyConfig[6] !== undefined ? keyConfig[6] : null)
-        let button = new Button(
-          keyboard.scene, keyPosX + thisKeyWidth / 2, 0,
-          thisKeyWidth, keyboard.keyHeight,
-          buttonLabel, buttonKeyCode, buttonValue, buttonFill,
-          buttonCallback, buttonCallbackContext
-        )
+        let buttonConfig = {
+          x: keyPosX + thisKeyWidth / 2,
+          y: 0,
+          width: thisKeyWidth,
+          height: keyboard.keyHeight,
+          label: keyConfig[0],
+          keyCode: keyConfig[1],
+          value: (keyConfig[3] !== undefined ? keyConfig[3] : keyConfig[0]),
+          fill: (keyConfig[4] !== undefined ? keyConfig[4] : true),
+          callback: (keyConfig[5] !== undefined ? keyConfig[5] : null),
+          callbackScope: (keyConfig[6] !== undefined ? keyConfig[6] : null)
+        }
+        let button = new Button(keyboard.scene, buttonConfig)
         keyPosX += thisKeyWidth + keyboard.keySpacing
         keyRow.add(button)
       })

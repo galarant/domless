@@ -14,19 +14,28 @@ class Dialogue extends TextDisplay {
    */
   constructor(
     scene,
-    x, y,
-    width=400,
-    height=200,
-    pages=[],
-    fontSize=24,
-    fontFamily="Helvetica",
-    outline=true,
-    progressive=false,
-    progressiveDelay=75
+    {
+      x, y,
+      width=400, height=400,
+      pages=[], fontSize=24,
+      fontFamily="Helvetica",
+      outline=true,
+      progressive=false,
+      progressiveDelay=75
+    }
   ) {
 
     // group attributes
-    super(scene, x, y, width, height, "", fontSize, fontFamily, outline)
+    super(
+      scene,
+      {
+        x: x, y: y,
+        width: width, height: height,
+        initialText: "",
+        fontSize: fontSize, fontFamily: fontFamily,
+        outline: outline
+      }
+    )
 
     this.pages = pages
     this.progressive = progressive
@@ -47,11 +56,6 @@ class Dialogue extends TextDisplay {
     this.pageDownButton.disableInput(true)
     this.pageBreaks = [0]
 
-    // set up listener for button press event
-    this.scene.events.on("domlessButtonPress", function(buttonChar, keyCode) {
-      this.addText(buttonChar, keyCode)
-    }, this)
-
     this.addPage()
     
   }
@@ -71,10 +75,19 @@ class Dialogue extends TextDisplay {
     
     // populate page, or set up timers if progressive
     if (this.progressive) {
+      // disable page up while we are tweening text
+      this.pageUpButton.disableInput(true)
+
+      // disable page down while we are tweening text
+      this.pageDownButton.disableInput(true)
+      this.promptNextPageTween.stop()
+
       if (this.progressive === "words") {
         this.progressiveText = thisPageText.split(" ")
         this.progressiveText.forEach(function(currentVal, index, theArray) {
-          theArray[index] += " "
+          if (!currentVal.endsWith("\n")) {
+            theArray[index] += " "
+          }
         })
       } else if (this.progressive === "letters") {
         this.progressiveText = thisPageText.split("")
@@ -84,6 +97,9 @@ class Dialogue extends TextDisplay {
           delay: this.progressiveDelay,
           repeat: this.progressiveText.length - 1,
           callback: function() {
+            let progressiveChunk = this.progressiveText.shift()
+            this.content.setText(this.content.text + progressiveChunk)
+            this.content.updateText()
             if (!this.progressiveText.length) {
               this.promptNextPage()
             }
@@ -105,11 +121,15 @@ class Dialogue extends TextDisplay {
       if (this.pageUpButton.alpha) {
         this.pageUpButton.disableInput(true)
       }
-      // enable page down and blink it
+      // enable page down and tween it
       this.pageDownButton.enableInput(true)
       this.promptNextPageTween.restart()
     } else {
-      // we are at the bottom
+      // enable page up
+      if (!this.pageUpButton.alpha) {
+        this.pageUpButton.enableInput(true)
+      }
+      // stop tweening the pageDown
       this.promptNextPageTween.stop()
       this.pageDownButton.disableInput(true)
     }
