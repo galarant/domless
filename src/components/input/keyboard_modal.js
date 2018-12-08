@@ -2,7 +2,7 @@ import Phaser from "phaser"
 import TextField from "./text_field"
 import Keyboard from "../input/keyboard"
 import Button from "../input/button"
-import Modal from "./modal.js"
+import Modal from "../display/modal.js"
 
 /**
  * Pauses all other scenes, dims the screen and brings up a modal with variable content
