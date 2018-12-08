@@ -357,9 +357,11 @@ class Keyboard extends Phaser.GameObjects.Container {
   }
 
   initializeKeys(keyModeConfig) {
-    let keyContainer = this.scene.add.container(this.width / 2, this.height / 2)
+    let keyContainer = this.scene.add.container(0, 0)
     let keyConfigRowCounter = 0
     let keyboard = this
+    this.add(keyContainer)
+
     _.each(keyModeConfig, function(keyConfigRow) {
       let keyRow = keyboard.scene.add.container(0, 0)
       let keyPosX = 0

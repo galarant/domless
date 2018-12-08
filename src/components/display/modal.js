@@ -1,8 +1,5 @@
 import _ from "lodash"
 import Phaser from "phaser"
-import TextField from "./text_field"
-import Keyboard from "../input/keyboard"
-import Button from "../input/button"
 
 /**
  * Pauses all other scenes, dims the screen and brings up a modal with variable content
@@ -15,11 +12,10 @@ class Modal extends Phaser.Scene {
     calledFrom,
     {
       defaultDeactivate=true,
-      isKeyboardModal=false,
       key="domlessModal",
       content="PAUSED",
       deactivateEvent=key + "Deactivate"
-    }
+    } = {}
   ) {
 
     //basic initialization
@@ -37,36 +33,10 @@ class Modal extends Phaser.Scene {
       0x000000, 1
     )
     this.deactivateEvent = deactivateEvent
-    this.isKeyboardModal = isKeyboardModal
 
     //show the content, centered on the screen
-    if (this.isKeyboardModal) {
-      this.content = this.add.container(0, 0)
-      this.submitButton = new Button(
-        this,
-        {
-          x: 0, y: 0,
-          width: this.width / 12, height: this.width / 12, fontSize: this.width / 12,
-          label: "\u27A4", keyCode: Phaser.Input.Keyboard.KeyCodes.RIGHT,
-          fill: false, outline: false,
-          eventName: this.deactivateEvent, eventArgs: []
-        }
-      )
-      this.textDisplay = new TextField(
-        this, 
-        {
-          x: this.width / 2 - this.submitButton.width / 2 - 10, y: this.height / 6,
-          width: this.width * 0.75, height: this.height / 4
-        }
-      )
-      this.submitButton.x = this.textDisplay.x + this.textDisplay.width / 2 + this.submitButton.width / 2 + 20
-      this.submitButton.y = this.textDisplay.y
-      this.keyboard = new Keyboard(this)
-      this.content.add(this.textDisplay)
-      this.content.add(this.submitButton)
-      this.content.add(this.keyboard)
-    } else if (typeof(content) === "string") {
-      this.content = new Phaser.GameObjects.Text(this, 0, 0, this.content)
+    if (typeof(content) === "string") {
+      this.content = this.add.text(0, 0, this.content)
       this.content.setOrigin(0.5, 0.5)
       this.content.setFontSize(this.width / 20)
       this.content.setFontFamily("Helvetica")
@@ -77,7 +47,6 @@ class Modal extends Phaser.Scene {
     }
 
     this.content.setAlpha(0)
-    this.sys.displayList.add(this.content)
 
     // set up default deactivation behavior
     // deactivates the modal on tap or space bar

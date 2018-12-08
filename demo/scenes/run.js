@@ -4,7 +4,7 @@ import RunScene from "../../src/scenes/run"
 import Avatar from "../world/avatar"
 import Ground from "../world/ground"
 import Button from "src/components/input/button"
-import Modal from "src/components/display/modal"
+import KeyboardModal from "src/components/display/keyboard_modal"
 import Dialogue from "src/components/display/dialogue"
 //import TextField from "src/components/display/text_field"
 
@@ -56,13 +56,7 @@ class DemoRunScene extends RunScene {
     this.physics.add.collider(this.avatar, this.ground)
 
     // add modal
-    this.modal = new Modal(
-      this,
-      {
-        defaultDeactivate: false,
-        isKeyboardModal: true
-      }
-    )
+    this.modal = new KeyboardModal(this)
 
     // add button
     this.button = new Button(
