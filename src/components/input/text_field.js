@@ -85,11 +85,6 @@ class TextField extends TextDisplay {
 
     let lastLineContent = _.last(wrappedText).trimRight().slice(0, -1)
     let lastLine = this.scene.add.text(0, 0, lastLineContent, this.defaultStyles)
-    /*
-    let lastLineCleaned = lastLineContent.replace(/(^ +| +$)/g, "").replace(/ {2,}\b/g, " ")
-    let lastLineSpaces = lastLineContent.length - lastLineCleaned.length
-    let lastLineWidth = lastLine.width + lastLineSpaces * this.spacePixelWidth
-    */
     this.cursor.x = this.content.x + lastLine.width - this.content.padding.right * 2
     lastLine.destroy()
 
