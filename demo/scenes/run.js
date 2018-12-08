@@ -4,9 +4,8 @@ import RunScene from "../../src/scenes/run"
 import Avatar from "../world/avatar"
 import Ground from "../world/ground"
 import Button from "src/components/input/button"
-import KeyboardModal from "src/components/display/keyboard_modal"
+import KeyboardModal from "src/components/input/keyboard_modal"
 import Dialogue from "src/components/display/dialogue"
-//import TextField from "src/components/display/text_field"
 
 /**
  * Run scene for the demo
