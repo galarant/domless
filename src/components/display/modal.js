@@ -45,8 +45,7 @@ class Modal extends Phaser.Scene {
       this.content = content 
       this.content.setPosition(this.width / 2, this.height / 2)
     }
-
-    this.content.setAlpha(0)
+    this.setContentAlpha(0)
 
     // set up default deactivation behavior
     // deactivates the modal on tap or space bar
@@ -108,7 +107,7 @@ class Modal extends Phaser.Scene {
       alpha: 0.8
     })
     this.dimTween.setCallback("onComplete", function() {
-      this.content.setAlpha(1)
+      this.setContentAlpha(1)
     }, [], this)
 
   }
@@ -118,7 +117,7 @@ class Modal extends Phaser.Scene {
     if (this.isKeyboardModal) {
       this.returnValue = this.textDisplay.content
     }
-    this.content.setAlpha(0)
+    this.setContentAlpha(0)
     this.unDimTween = this.add.tween({
       targets: [this.dimmerRect],
       ease: "Linear",
@@ -132,6 +131,17 @@ class Modal extends Phaser.Scene {
       },
       [], this
     )
+  }
+
+  setContentAlpha(alpha) {
+    if (Array.isArray(this.content)) {
+      _.forEach(this.content, function(c) {
+        c.setAlpha(alpha)
+      })
+    } else {
+      this.content.setAlpha(alpha)
+    }
+
   }
 
 }

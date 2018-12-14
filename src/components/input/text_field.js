@@ -39,7 +39,7 @@ class TextField extends TextDisplay {
     // add cursor
     this.cursor = this.scene.add.text(x - this.width / 2, y - this.height / 2, "_", this.defaultStyles)
     this.cursor.setOrigin(0, 0)
-    this.cursor.setMask(this.contentMask)
+    this.add(this.cursor)
 
     this.scene.add.tween({
       targets: [this.cursor],
@@ -93,12 +93,12 @@ class TextField extends TextDisplay {
     if (this.content.height > this.height) {
       contentHeight = this.height
     }
-    this.cursor.y = this.y - this.height / 2 + contentHeight - this.cursor.height
+    this.cursor.y = -this.height / 2 + contentHeight - this.cursor.height
 
     // modify cursor position if we overflowed a line
     if (this.cursor.x + this.cursor.width > this.x + this.width / 2) {
       this.cursor.x = this.content.x - this.content.width / 2
-      this.cursor.y = this.y - this.height / 2 + contentHeight
+      this.cursor.y = -this.height / 2 + contentHeight
     }
 
   }
@@ -114,15 +114,15 @@ class TextField extends TextDisplay {
     }
     this.content.updateText()
     if (this.content.height > this.height) {
-      this.content.y = this.y - (this.height / 2 + (this.content.height - this.height))
+      this.content.y = -(this.height / 2 + (this.content.height - this.height))
     } else {
-      this.content.y = this.y - this.height / 2
+      this.content.y = -this.height / 2
     }
     this.placeCursor()
 
     // enable the pageUp button if we have overflow content
     // and it is not already enabled
-    if (this.content.y < this.y - this.height / 2 && !this.pageUpButton.alpha) {
+    if (this.content.y < -this.height / 2 && !this.pageUpButton.alpha) {
       this.pageUpButton.enableInput(true)
     }
   }
@@ -133,8 +133,8 @@ class TextField extends TextDisplay {
 
     // modify behavior if we are near the top of the content
     let disablePageUp = false
-    if (this.content.y >= this.y - this.height - this.height / 2) {
-      scrollY = this.y - this.content.y - this.height / 2
+    if (this.content.y >= -this.height - this.height / 2) {
+      scrollY = -this.content.y - this.height / 2
       disablePageUp = true
     }
 
@@ -149,8 +149,8 @@ class TextField extends TextDisplay {
 
     // modify behavior if we are near the bottom of the content
     let disablePageDown = false
-    if (contentBottom <= this.y + this.height + this.height / 2) {
-      scrollY = contentBottom - this.y - this.height / 2
+    if (contentBottom <= this.height + this.height / 2) {
+      scrollY = contentBottom - this.height / 2
       disablePageDown = true
     }
 

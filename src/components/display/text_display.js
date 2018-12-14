@@ -67,11 +67,10 @@ class TextDisplay extends Phaser.GameObjects.Container {
     // add content
     /**
      * TODO: Unfortunately because of the container child masking issue in Phaser 3,
-     * we cannot add the content directly as a child of the container.
-     * Thus if the container mutates, we will need to manually mutate the content, cursor and mask along with it.
+     * we have to constrain the entire container with the same mask
      * For more info refer to: https://github.com/photonstorm/phaser/issues/3673
      */ 
-    this.content = this.scene.add.text(x - this.width / 2, y - this.height / 2, "", this.defaultStyles)
+    this.content = this.scene.add.text(-this.width / 2, -this.height / 2, "", this.defaultStyles)
     this.content.setOrigin(0, 0)
     //this.content.setBackgroundColor("purple")
 
@@ -83,21 +82,16 @@ class TextDisplay extends Phaser.GameObjects.Container {
       .clear()
       .fillStyle(0x000000, 0)
       //.fillRect(0, 0, this.height, this.width)
-      .fillRect(x - this.width / 2, y - this.height / 2, this.width, this.height)
+      .fillRect(x - this.width / 2 - 1, y - this.height / 2 - 1, this.width + 10, this.height + 2)
     this.contentMask = this.createGeometryMask(maskShape)
-    this.content.setMask(this.contentMask)
+    this.setMask(this.contentMask)
+    this.add(this.content)
 
     // add pagination buttons
-    let pageUpPosition = [this.width / 2, -this.height / 2]
+    let pageUpPosition = [this.width / 2 + 2, -this.height / 2 + 8]
     let pageUpLabel = "\u2BAD"
-    let pageDownPosition = [this.width / 2, this.height / 2]
+    let pageDownPosition = [this.width / 2 + 2, this.height / 2 - 7]
     let pageDownLabel = "\u2BAF"
-    if (this.pagination === "horizontal") {
-      pageUpPosition = [-this.width / 2, this.height / 2]
-      pageUpLabel = "\u2BA8"
-      pageDownPosition = [this.width / 2, this.height / 2]
-      pageDownLabel = "\u2BA9"
-    }
 
     // add pageUp button
     this.pageUpButton = new Button(
@@ -112,6 +106,7 @@ class TextDisplay extends Phaser.GameObjects.Container {
       }
     )
     this.add(this.pageUpButton)
+    this.pageUpButton.clearMask()
     this.pageUpButton.disableInput(true)
 
     // add pageDown button

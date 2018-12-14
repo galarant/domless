@@ -31,7 +31,7 @@ class KeyboardModal extends Modal {
 
     //destroy default content and set up keyboard content
     this.content.destroy()
-    this.content = this.add.container(0, 0)
+    this.content = []
     this.submitButton = new Button(
       this,
       {
@@ -52,9 +52,9 @@ class KeyboardModal extends Modal {
     this.submitButton.x = this.textDisplay.x + this.textDisplay.width / 2 + this.submitButton.width / 2 + 20
     this.submitButton.y = this.textDisplay.y
     this.keyboard = new Keyboard(this)
-    this.content.add(this.textDisplay)
-    this.content.add(this.submitButton)
-    this.content.add(this.keyboard)
+    this.content.push(this.textDisplay)
+    this.content.push(this.submitButton)
+    this.content.push(this.keyboard)
   }
 
   deactivate() {
