@@ -139,7 +139,7 @@ class Dialogue extends TextDisplay {
   pageUp() {
     // get max page break less than current Y position
     let disablePageUp = false
-    let currentY = this.y - this.height / 2 - this.content.y
+    let currentY = -this.height / 2 - this.content.y
     let pageBreak = _.max(_.filter(this.pageBreaks, function(o) { return o < currentY }))
 
     // disable the pageUp button if we are at the first page break
@@ -158,7 +158,7 @@ class Dialogue extends TextDisplay {
   pageDown() {
     // get min page break greater than current Y position
     let disablePageDown = false
-    let currentY = this.y - this.height / 2 - this.content.y
+    let currentY = -this.height / 2 - this.content.y
     let pageBreak = _.min(_.filter(this.pageBreaks, function(o) { return o > currentY }))
 
     // disable the pageDown button if we are at the last page break
