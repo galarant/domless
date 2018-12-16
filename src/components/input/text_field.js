@@ -52,7 +52,7 @@ class TextField extends TextDisplay {
     // set custom word wrapping to account for cursor
     this.content.setWordWrapCallback(
       function(text) {
-        let wrappedText = this.content.basicWordWrap(
+        let wrappedText = this.content.advancedWordWrap(
           (this.cursor ? text + "_" : text),
           this.content.context,
           this.width - this.content.padding.right * 2
@@ -78,7 +78,7 @@ class TextField extends TextDisplay {
   }
 
   placeCursor() {
-    let wrappedText = this.content.basicWordWrap(
+    let wrappedText = this.content.advancedWordWrap(
       this.content.text + "_",
       this.content.context,
       this.width - this.content.padding.right * 2).split("\n")
@@ -121,9 +121,13 @@ class TextField extends TextDisplay {
     this.placeCursor()
 
     // enable the pageUp button if we have overflow content
-    // and it is not already enabled
-    if (this.content.y < -this.height / 2 && !this.pageUpButton.alpha) {
-      this.pageUpButton.enableInput(true)
+    // and it is not already enabled. Otherwise disable.
+    if (this.content.y < -this.height / 2) {
+      if (!this.pageUpButton.alpha) {
+        this.pageUpButton.enableInput(true)
+      }
+    } else if (this.pageUpButton.alpha) {
+      this.pageUpButton.disableInput(true)
     }
   }
 
