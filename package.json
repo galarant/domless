@@ -6,7 +6,6 @@
   "scripts": {
     "build": "webpack",
     "build-demo": "webpack --config ./demo/webpack-demo.config.js",
-    "test": "nyc --reporter=lcov --reporter=text mocha-webpack --webpack-config ./demo/test/webpack-demo-test.config.js --recursive demo/test",
     "serve-demo": "webpack-dev-server --config ./demo/webpack-demo.config.js"
   },
   "repository": {
@@ -23,34 +22,15 @@
   },
   "homepage": "https://github.com/galarant/domless",
   "devDependencies": {
-    "babel-core": "6.25.0",
-    "babel-loader": "7.1.1",
-    "babel-preset-env": "1.6.0",
-    "canvas-prebuilt": "1.6.5-prerelease.1",
-    "chai": "3.5.0",
-    "esdoc": "0.5.2",
-    "file-loader": "0.11.1",
-    "image-webpack-loader": "3.3.1",
-    "istanbul": "0.4.5",
-    "istanbul-instrumenter-loader": "2.0.0",
-    "jsdom": "9.12.0",
-    "mocha": "3.3.0",
-    "mocha-webpack": "0.7.0",
-    "nyc": "11.0.3",
-    "url-loader": "0.5.8",
-    "webpack": "2.4.1",
-    "webpack-chain": "3.3.0",
-    "webpack-dev-server": "2.4.2",
-    "webpack-node-externals": "1.5.4",
-    "xml-loader": "1.2.1"
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-preset-env": "^1.7.0",
+    "webpack": "^4.27.1",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.10"
   },
   "dependencies": {
-    "lodash": "4.17.4",
-    "phaser": "^3.14.0"
-  },
-  "nyc": {
-    "instrument": false,
-    "report-dir": "./coverage",
-    "sourceMap": false
+    "lodash": "^4.17.11",
+    "phaser": "^3.15.1"
   }
 }
