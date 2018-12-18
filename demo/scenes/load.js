@@ -1,10 +1,9 @@
-import LoadScene from "../../src/scenes/load.js"
-
+import Phaser from "phaser"
 
 /**
  * Load scene for the demo
  */
-class DemoLoadScene extends LoadScene {
+class DemoLoadScene extends Phaser.Scene {
 
   /**
    * Constructor method for DemoLoadScene
@@ -24,27 +23,27 @@ class DemoLoadScene extends LoadScene {
    * Runs once, before the create method for this scene
    */
   preload() {
-    console.log("DemoLoadScene preload")
-    super.preload()
     this.load.image("bg", this.bgURL)
     this.load.image("ground", this.groundURL)
     this.load.image("avatar", this.avatarURL)
     this.load.image("squircle", this.squircleURL)
     this.load.image("squircle_fill", this.squircleFillURL)
+    this.add.image(400, 300, "loading")
   }
 
   /**
    * Runs once, before the first frame is rendered for this scene
    */
-  create() {
-    super.create()
-  }
+  create() {}
 
   /**
    * Runs continuously, each time a single frame is rendered for this scene
    */
   update() {
-    super.update()
+    if (this.load.progress >= 1.0) {
+      this.scene.start("run")
+      this.scene.stop()
+    }
   }
 }
 

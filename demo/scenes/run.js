@@ -1,5 +1,4 @@
-//import Phaser from "phaser"
-import RunScene from "../../src/scenes/run"
+import Phaser from "phaser"
 
 import Avatar from "../world/avatar"
 import Ground from "../world/ground"
@@ -10,13 +9,17 @@ import Dialogue from "src/components/display/dialogue"
 /**
  * Run scene for the demo
  */
-class DemoRunScene extends RunScene {
+class DemoRunScene extends Phaser.Scene {
 
   /**
    * Constructor method for DemoRunScene
    * Runs the constructor for the parent class, passing args
    * Returns a new instance of this class
    */
+  get app() {
+    return this.game
+  }
+
   constructor() {
     super(...arguments)
   }
@@ -26,7 +29,6 @@ class DemoRunScene extends RunScene {
    * Configures the default pointer and keyboard input
    */
   preload() {
-    super.preload()
     this.input.maxPointers = 1
     this.cursors = this.input.keyboard.createCursorKeys()
   }
@@ -35,7 +37,6 @@ class DemoRunScene extends RunScene {
    * Runs once, before the first frame is rendered for this scene
    */
   create() {
-    super.create()
 
     //set up cursor keys
     this.cursors = this.input.keyboard.createCursorKeys()
@@ -104,8 +105,6 @@ class DemoRunScene extends RunScene {
     if (this.cursors.up.isDown) {
       this.avatar.body.velocity.y -= 10
     }
-
-    super.update()
 
   }
 
