@@ -20,7 +20,8 @@ class TextField extends TextDisplay {
       width=400, height=200,
       initialText="",
       fontSize=24, fontFamily="Helvetica",
-      outline=true
+      outline=true,
+      helpText="Tap the screen or type on your keyboard"
     }
   ) {
 
@@ -48,6 +49,11 @@ class TextField extends TextDisplay {
       yoyo: true,
       repeat: -1
     })
+
+    // set up help text
+    this.helpText = this.scene.add.text(-this.width / 2, -this.height / 2, helpText, this.defaultStyles)
+    this.helpText.setColor("gray")
+    this.add(this.helpText)
 
     // set custom word wrapping to account for cursor
     this.content.setWordWrapCallback(
@@ -128,6 +134,13 @@ class TextField extends TextDisplay {
       }
     } else if (this.pageUpButton.alpha) {
       this.pageUpButton.disableInput(true)
+    }
+    if (this.content.text) {
+      if (this.helpText.alpha) {
+        this.helpText.setAlpha(0)
+      }
+    } else if (!this.helpText.alpha){
+      this.helpText.setAlpha(1)
     }
   }
 
