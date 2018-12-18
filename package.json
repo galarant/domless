@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack",
     "build-demo": "webpack --config ./demo/webpack-demo.config.js",
-    "serve-demo": "webpack-dev-server --config ./demo/webpack-demo.config.js"
+    "serve-demo": "webpack-dev-server --config ./demo/webpack-demo.config.js --mode development"
   },
   "repository": {
     "type": "git",

@@ -1,9 +1,10 @@
-import DomlessApp from "../src/domless.js"
+import Phaser from "phaser"
 import DemoBootScene from "./scenes/boot.js"
 import DemoLoadScene from "./scenes/load.js"
 import DemoRunScene from "./scenes/run.js"
 
 const CONFIG = {
+  type: Phaser.AUTO,
   width: 800,
   height: 600,
   physics: {
@@ -32,7 +33,7 @@ window.onload = function() {
  * Here is where you add your scenes to the domless app.
  * Supported scenes are boot, load and run.
  */
-let demoApp = new DomlessApp(CONFIG)
+let demoApp = new Phaser.Game(CONFIG)
 
 demoApp.scene.add("boot", DemoBootScene)
 demoApp.scene.add("load", DemoLoadScene)

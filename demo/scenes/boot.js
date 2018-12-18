@@ -1,9 +1,9 @@
-import BootScene from "../../src/scenes/boot.js"
+import Phaser from "phaser"
 
 /**
  * Starting scene for the demo
  */
-class DemoBootScene extends BootScene {
+class DemoBootScene extends Phaser.Scene {
 
   /**
    * Constructor method for DemoBootScene
@@ -11,28 +11,29 @@ class DemoBootScene extends BootScene {
    */
   constructor() {
     super(...arguments)
+    this.loadingImageURL = "static/assets/images/preloader.png"
   }
 
   /**
    * Runs once, before the create method for this scene
    */
   preload() {
-    super.preload()
+    this.load.image("loading", this.loadingImageURL)
   }
 
   /**
    * Runs once, before the first frame is rendered for this scene
    */
-  create() {
-    console.log("DemoBootScene create")
-    super.create()
-  }
+  create() {}
 
   /**
    * Runs continuously, each time a single frame is rendered for this scene
    */
   update() {
-    super.update()
+    if (this.load.progress >= 1) {
+      this.scene.start("load")
+      this.scene.stop()
+    }
   }
 }
 
