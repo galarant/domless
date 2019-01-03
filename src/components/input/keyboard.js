@@ -15,17 +15,16 @@ class Keyboard extends Phaser.GameObjects.Container {
    */
   constructor(
     scene,
-    x=scene.game.config.width/2,
-    y=scene.game.config.height/2,
-    width=scene.game.config.width,
-    height=scene.game.config.height
+    {
+      x=scene.game.config.width/2,
+      y=scene.game.config.height/2,
+    } = {}
   ) {
 
     //container attributes and basic setup
     super(scene, x, y)
     scene.sys.displayList.add(this)
-    this.width = width
-    this.height = height
+    this.width = scene.game.config.width
 
     if (!this.scene.sys.game.device.os.desktop) {
       this.keyWidth = Math.round(this.width / 12)
@@ -35,6 +34,9 @@ class Keyboard extends Phaser.GameObjects.Container {
     this.keyHeight = this.keyWidth
     this.keySpacing = 0.15 * this.keyWidth
 
+    // always assume 5 rows for now
+    // this should be customized later
+    this.height = this.keyHeight * 5 + this.keySpacing * 7
     let keyboard = this
 
     /** 

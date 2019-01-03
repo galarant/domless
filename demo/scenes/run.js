@@ -5,6 +5,7 @@ import Ground from "../world/ground"
 import Button from "src/components/input/button"
 import KeyboardModal from "src/components/input/keyboard_modal"
 import Dialogue from "src/components/display/dialogue"
+import KeyboardDrawer from "src/components/input/keyboard_drawer"
 
 /**
  * Run scene for the demo
@@ -58,13 +59,22 @@ class DemoRunScene extends Phaser.Scene {
     // add modal
     this.modal = new KeyboardModal(this)
 
+    // add drawer
+    this.drawer = new KeyboardDrawer(this)
+
     // add button
     this.button = new Button(
       this,
       {
         x: 600, y: 150,
         fill: false,
-        callback: function() { this.modal.activate() },
+        callback: function() {
+          if (this.drawer.activated) {
+            this.drawer.deactivate()
+          } else (
+            this.drawer.activate()
+          )
+        },
         callbackScope: this
       }
     )
@@ -85,7 +95,6 @@ class DemoRunScene extends Phaser.Scene {
         progressiveDelay: 25
       }
     )
-    console.log(this)
 
   }
 
