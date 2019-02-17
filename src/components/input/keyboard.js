@@ -400,7 +400,7 @@ class Keyboard extends Phaser.GameObjects.Container {
   disableKeys(keyContainer) {
     _.each(keyContainer.list, function(keyRow) {
       _.each(keyRow.list, function(key) {
-        key.disableInput(true)
+        key.deactivate(true)
       })
     })
   }
@@ -408,7 +408,7 @@ class Keyboard extends Phaser.GameObjects.Container {
   enableKeys(keyContainer) {
     _.each(keyContainer.list, function(keyRow) {
       _.each(keyRow.list, function(key) {
-        key.enableInput(true)
+        key.activate(true)
       })
     })
   }

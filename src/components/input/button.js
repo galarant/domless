@@ -1,8 +1,8 @@
-import Phaser from "phaser"
+import Element from "../element"
 /**
  * Draws an interactive button in the display
  */
-class Button extends Phaser.GameObjects.Container {
+class Button extends Element {
   /**
    * @param {object} scene - The container Phaser.Scene
    * @param {number} x - The x position of the Button in the game world
@@ -21,62 +21,29 @@ class Button extends Phaser.GameObjects.Container {
       width=60, height=60, fontSize=24,
       label="OK", keyCode=null, value=label,
       fill=true, outline=true,
-      callback=null, callbackScope=null,
+      callback=null, callbackArgs=[], callbackScope=null,
       eventName="domlessButtonPress",
       eventArgs=[value, keyCode]
     }
   ) {
 
     //group attributes
-    super(scene, x, y)
+    super(
+      scene, x, y, 
+      {
+        width: width,
+        height: height,
+        outline: outline,
+        fill: fill
+      }
+    )
+
     scene.sys.displayList.add(this)
 
-    // set up domless graphics engine if it doesn't already exist
-    if (!scene.domlessGraphics) {
-      scene.domlessGraphics = scene.add.graphics()
-    }
-
-    this.width = width
-    this.height = height
     this.keyCode = keyCode
     this.eventName = eventName
     this.eventArgs = eventArgs
     this.fontSize = fontSize
-
-    // draw the outline sprite if it doesn't exist already
-    if (outline) {
-      let outlineSpriteKey = `outlineSquircle${width}${height}`
-      if (!scene.textures.exists(outlineSpriteKey)) {
-        scene.domlessGraphics
-          .clear()
-          .lineStyle(1.2, 0xffffff)
-          .strokeRoundedRect(2, 2, width, height, 15)
-          .generateTexture(outlineSpriteKey, width + 4, height + 4)
-          .clear()
-      }
-
-      // add the outlineSprite to the container
-      this.outlineSprite = scene.add.sprite(0, 0, outlineSpriteKey)
-      this.add(this.outlineSprite)
-    }
-
-    // draw the fill sprite if it doesn't exist already
-    if (fill) {
-      let fillSpriteKey = `fillSquircle${width}${height}`
-      if (!scene.textures.exists(fillSpriteKey)) {
-        scene.domlessGraphics
-          .clear()
-          .fillStyle(0xffffff)
-          .fillRoundedRect(2, 2, width, height, 15)
-          .generateTexture(fillSpriteKey, width + 4, height + 4)
-          .clear()
-      }
-
-      // add the fillSprite to the container
-      this.fillSprite = scene.add.sprite(0, 0, fillSpriteKey)
-      this.fillSprite.alpha = 0
-      this.add(this.fillSprite)
-    }
 
     //add label
     this.label = scene.add.text(0, 0, label)
@@ -98,58 +65,31 @@ class Button extends Phaser.GameObjects.Container {
       this.callback = callback
     }
 
-    this.enableInput()
+    this.callbackArgs = callbackArgs
 
-  }
-
-  enableInput(unhide=false) {
-    if (unhide) {
-      this.setAlpha(1)
-    }
-
-    // accept pointer input
-    this.setInteractive()
-      
-    // accept keyboard input
-    if (this.keyCode) {
-      this.scene.input.keyboard.on("keydown", this.handleInput, this)
-    }
-  }
-
-  disableInput(hide=false) {
-    if (hide) {
-      this.setAlpha(0)
-    }
-
-    // stop accepting pointer input
-    this.disableInteractive()
-      
-    // stop accepting keyboard input
-    if (this.keyCode) {
-      this.scene.input.keyboard.removeListener("keydown", this.handleInput, this)
-    }
   }
 
   handleInput(event) {
     if (event.type === "keydown" && event.keyCode !== this.keyCode) {
       return
     }
-    if (this.callback) {
-      this.callback.call(this.callbackScope)
-    }
     if (this.eventName) {
       this.scene.events.emit(this.eventName, ...this.eventArgs)
     }
-    this.fill.call(this)
+    this.flashFill()
+
+    if (this.callback) {
+      this.callback.call(this.callbackScope, ...this.callbackArgs)
+    }
   }
 
-  fill() {
+  flashFill() {
     //flash the fill sprite with a quick yoyo tween
-    if (this.fillSprite) {
-      this.scene.tweens.killTweensOf(this.fillSprite)
-      this.fillSprite.alpha = 0
+    if (this.fill) {
+      this.scene.tweens.killTweensOf(this.fill)
+      this.fill.alpha = 0
       this.fillTween = this.scene.add.tween({
-        targets: [this.fillSprite],
+        targets: [this.fill],
         ease: "Linear",
         duration: 100,
         delay: 0,
