@@ -2,10 +2,8 @@ import Phaser from "phaser"
 
 import Avatar from "../world/avatar"
 import Ground from "../world/ground"
-import Button from "src/components/input/button"
-import KeyboardModal from "src/components/input/keyboard_modal"
-import Dialogue from "src/components/display/dialogue"
-import KeyboardDrawer from "src/components/input/keyboard_drawer"
+import Button from "src/components/input/button.js"
+
 
 /**
  * Run scene for the demo
@@ -56,45 +54,27 @@ class DemoRunScene extends Phaser.Scene {
     // add collision between avatar and ground
     this.physics.add.collider(this.avatar, this.ground)
 
-    // add modal
-    this.modal = new KeyboardModal(this)
-
-    // add drawer
-    this.drawer = new KeyboardDrawer(this)
-
-    // add button
     this.button = new Button(
       this,
       {
-        x: 600, y: 150,
-        fill: false,
+        x: 200, y: 200,
+      }
+    )
+
+    this.button2 = new Button(
+      this,
+      {
+        x: 300, y: 300,
         callback: function() {
-          if (this.drawer.activated) {
-            this.drawer.deactivate()
-          } else (
-            this.drawer.activate()
-          )
+          this.button.stretch({targetWidth: 120, targetHeight: 120})
         },
         callbackScope: this
       }
     )
 
-    // add dialogue
-    this.dialogue = new Dialogue(
-      this, 
-      {
-        x: 300, y: 150,
-        width: 400, height: 200,
-        pages: [
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-          "Suspendisse pulvinar fermentum semper.",
-          "Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
-          "Foobar..."
-        ],
-        progressive: "letters",
-        progressiveDelay: 25
-      }
-    )
+
+    console.log(this)
+
 
   }
 

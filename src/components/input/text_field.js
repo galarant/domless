@@ -111,7 +111,7 @@ class TextField extends TextDisplay {
 
   addText(extraText, keyCode) {
 
-    this.pageDownButton.disableInput(true)
+    this.pageDownButton.deactivate(true)
 
     if (keyCode === Phaser.Input.Keyboard.KeyCodes.BACKSPACE) {
       this.content.setText(this.content.text.slice(0, -1))
@@ -130,10 +130,10 @@ class TextField extends TextDisplay {
     // and it is not already enabled. Otherwise disable.
     if (this.content.y < -this.height / 2) {
       if (!this.pageUpButton.alpha) {
-        this.pageUpButton.enableInput(true)
+        this.pageUpButton.activate(true)
       }
     } else if (this.pageUpButton.alpha) {
-      this.pageUpButton.disableInput(true)
+      this.pageUpButton.deactivate(true)
     }
     if (this.content.text) {
       if (this.helpText.alpha) {

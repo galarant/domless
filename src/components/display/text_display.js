@@ -1,9 +1,10 @@
 import Phaser from "phaser"
 import Button from "../input/button"
+import Element from "../element"
 /**
  * Draws an interactive button in the display
  */
-class TextDisplay extends Phaser.GameObjects.Container {
+class TextDisplay extends Element {
   /**
    * @param {object} scene - The container Phaser.Scene
    * @param {number} x - The x position of the TextDisplay in the game world
@@ -81,7 +82,6 @@ class TextDisplay extends Phaser.GameObjects.Container {
     maskShape
       .clear()
       .fillStyle(0x000000, 0)
-      //.fillRect(0, 0, this.height, this.width)
       .fillRect(x - this.width / 2 - 1, y - this.height / 2 - 1, this.width + 10, this.height + 2)
     this.contentMask = this.createGeometryMask(maskShape)
     this.setMask(this.contentMask)
@@ -107,7 +107,7 @@ class TextDisplay extends Phaser.GameObjects.Container {
     )
     this.add(this.pageUpButton)
     this.pageUpButton.clearMask()
-    this.pageUpButton.disableInput(true)
+    this.pageUpButton.deactivate(true)
 
     // add pageDown button
     this.pageDownButton = new Button(
@@ -142,11 +142,11 @@ class TextDisplay extends Phaser.GameObjects.Container {
           // possibly disable the pageUp button
           // and call the custom callback if one was supplied
           if (disablePageUp) {
-            this.pageUpButton.disableInput(true)
+            this.pageUpButton.deactivate(true)
           }
           // enable the pageDown button if it is disabled
           if (!this.pageDownButton.alpha) {
-            this.pageDownButton.enableInput(true)
+            this.pageDownButton.activate(true)
           }
           if (scrollTweenCallback) {
             scrollTweenCallback.call(this)
@@ -171,11 +171,11 @@ class TextDisplay extends Phaser.GameObjects.Container {
           // possibly disable the pageDown button
           // and call the custom callback if one was supplied
           if (disablePageDown) {
-            this.pageDownButton.disableInput(true)
+            this.pageDownButton.deactivate(true)
           }
           // enable the pageUp button if it is disabled
           if (!this.pageUpButton.alpha) {
-            this.pageUpButton.enableInput(true)
+            this.pageUpButton.activate(true)
           }
           if (scrollTweenCallback) {
             scrollTweenCallback.call(this)
