@@ -4,7 +4,7 @@ import TextDisplay from "../display/text_display"
 /**
  * Draws an interactive button in the display
  */
-class TextField extends TextDisplay {
+class TextInput extends TextDisplay {
   /**
    * @param {object} scene - The container Phaser.Scene
    * @param {number} x - The x position of the TextDisplay in the game world
@@ -176,4 +176,4 @@ class TextField extends TextDisplay {
   }
 }
 
-export default TextField
+export default TextInput
