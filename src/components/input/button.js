@@ -23,14 +23,17 @@ class Button extends Element {
       fill=true, outline=true,
       callback=null, callbackArgs=[], callbackScope=null,
       eventName="domlessButtonPress",
-      eventArgs=[value, keyCode]
+      eventArgs=[value, keyCode],
+      stopPropagation=true
     }
   ) {
 
     //group attributes
     super(
-      scene, x, y, 
-      {
+      scene,
+      { 
+        x: x,
+        y: y, 
         width: width,
         height: height,
         outline: outline,
@@ -66,11 +69,12 @@ class Button extends Element {
     }
 
     this.callbackArgs = callbackArgs
+    this.stopPropagation = stopPropagation
 
   }
 
-  handleInput(event) {
-    if (event.type === "keydown" && event.keyCode !== this.keyCode) {
+  handleInput(pointer, localX, localY, event) {
+    if (pointer.type === "keydown" && pointer.keyCode !== this.keyCode) {
       return
     }
     if (this.eventName) {
@@ -81,6 +85,11 @@ class Button extends Element {
     if (this.callback) {
       this.callback.call(this.callbackScope, ...this.callbackArgs)
     }
+
+    if (event && this.stopPropagation) {
+      event.stopPropagation()
+    }
+
   }
 
   flashFill() {

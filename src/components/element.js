@@ -10,12 +10,13 @@ class Element extends Phaser.GameObjects.Container {
    * @param {number} x - The x position of the Element in the game world
    * @param {number} y - The y position of the Element in the game world
    */
-  constructor(scene, x, y,
-    {
+  constructor(scene,
+    { 
+      x, y,
       width=60,
       height=60,
       outline=true,
-      fill=false
+      fill=false,
     } = {}
   ) {
 
@@ -70,7 +71,7 @@ class Element extends Phaser.GameObjects.Container {
   }
 
   // provides common deactivation behavior for all elements
-  deactivate(hide=false) {
+  deactivate(hide=false, disableInteractive=true) {
     if (this.active) {
       // hide the element if desired
       if (hide) {
@@ -81,7 +82,9 @@ class Element extends Phaser.GameObjects.Container {
       this.setActive(false)
 
       // disable pointer input
-      this.disableInteractive()
+      if (disableInteractive) {
+        this.disableInteractive()
+      }
         
       // disable keyboard input
       if (this.keyCode && this.handleInput) {

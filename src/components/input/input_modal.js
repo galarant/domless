@@ -1,5 +1,5 @@
 import Phaser from "phaser"
-import TextInput from "./text_input"
+import TextField from "./text_field"
 import Keyboard from "./keyboard"
 import Button from "./button"
 import Modal from "../display/modal.js"
@@ -42,7 +42,7 @@ class InputModal extends Modal {
       this.sys.displayList.add(this.inputField)
       this.sys.displayList.add(this.textField)
     } else {
-      this.textField = new TextInput(
+      this.textField = new TextField(
         this, 
         {
           x: this.width / 2 - this.submitButton.width / 2 - 10, y: this.height / 6,

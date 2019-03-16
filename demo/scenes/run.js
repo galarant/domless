@@ -2,7 +2,7 @@ import Phaser from "phaser"
 
 import Avatar from "../world/avatar"
 import Ground from "../world/ground"
-import Button from "src/components/input/button.js"
+import TextField from "src/components/input/text_field"
 
 
 /**
@@ -54,27 +54,17 @@ class DemoRunScene extends Phaser.Scene {
     // add collision between avatar and ground
     this.physics.add.collider(this.avatar, this.ground)
 
-    this.button = new Button(
+    // add textField as test
+    this.textField = new TextField(
       this,
       {
-        x: 200, y: 200,
+        x: 300,
+        y: 200,
+        height: 50
       }
     )
-
-    this.button2 = new Button(
-      this,
-      {
-        x: 300, y: 300,
-        callback: function() {
-          this.button.stretch({targetWidth: 120, targetHeight: 120})
-        },
-        callbackScope: this
-      }
-    )
-
 
     console.log(this)
-
 
   }
 
