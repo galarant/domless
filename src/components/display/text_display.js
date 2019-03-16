@@ -25,8 +25,19 @@ class TextDisplay extends Element {
   ) {
 
     // set up basic attributes
-    super(scene, x, y)
+    super(
+      scene,
+      {
+        x: x,
+        y: y,
+        width: width,
+        height: height,
+        outline: outline
+      }
+    )
+
     scene.sys.displayList.add(this)
+    scene.sys.updateList.add(this)
 
     this.width = width
     this.height = height
@@ -47,23 +58,6 @@ class TextDisplay extends Element {
     let testlineHeight = this.scene.add.text(0, 0, "foobar", this.defaultStyles)
     this.lineHeight = testlineHeight.height
     testlineHeight.destroy()
-
-    // set up outline sprite if we need one
-    if (outline) {
-      // draw the outline sprite if it doesn't exist already
-      let outlineSpriteKey = `outlineSquircle${width}${height}`
-      if (!this.scene.textures.exists(outlineSpriteKey)) {
-        this.scene.domlessGraphics
-          .clear()
-          .lineStyle(1.2, 0xffffff)
-          .strokeRoundedRect(2, 2, width, height, 15)
-          .generateTexture(outlineSpriteKey, width + 4, height + 4)
-          .clear()
-      }
-      // add the outlineSprite to the container
-      this.outlineSprite = this.scene.add.sprite(0, 0, outlineSpriteKey)
-      this.add(this.outlineSprite)
-    }
 
     // add content
     /**
@@ -183,6 +177,10 @@ class TextDisplay extends Element {
         }, [], this
       )
     }
+  }
+
+  preUpdate() {
+    // delegated to child classes that need it
   }
 
 }

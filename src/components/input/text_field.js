@@ -1,10 +1,12 @@
 import Phaser from "phaser"
 import _ from "lodash"
 import TextDisplay from "../display/text_display"
+import KeyboardDrawer from "./keyboard_drawer"
+
 /**
  * Draws an interactive button in the display
  */
-class TextInput extends TextDisplay {
+class TextField extends TextDisplay {
   /**
    * @param {object} scene - The container Phaser.Scene
    * @param {number} x - The x position of the TextDisplay in the game world
@@ -21,7 +23,8 @@ class TextInput extends TextDisplay {
       initialText="",
       fontSize=24, fontFamily="Helvetica",
       outline=true,
-      helpText="Tap the screen or type on your keyboard"
+      helpText="This is the help text",
+      editMode="drawer"
     }
   ) {
 
@@ -41,14 +44,6 @@ class TextInput extends TextDisplay {
     this.cursor = this.scene.add.text(x - this.width / 2, y - this.height / 2, "_", this.defaultStyles)
     this.cursor.setOrigin(0, 0)
     this.add(this.cursor)
-
-    this.scene.add.tween({
-      targets: [this.cursor],
-      alpha: 0,
-      duration: 250,
-      yoyo: true,
-      repeat: -1
-    })
 
     // set up help text
     this.helpText = this.scene.add.text(-this.width / 2, -this.height / 2, helpText, this.defaultStyles)
@@ -76,11 +71,74 @@ class TextInput extends TextDisplay {
 
     // set up listener for button press event
     this.scene.events.on("domlessButtonPress", function(buttonChar, keyCode) {
-      this.addText(buttonChar, keyCode)
+      if (this.active) {
+        this.addText(buttonChar, keyCode)
+      }
     }, this)
 
+    // activate on click inside / deactivate on click outside
+    this.scene.input.on("pointerdown", this.pointerListener, this)
+    this.deactivate()
+
     this.addText(initialText)
+
+    this.editMode = editMode
+    if (this.editMode === "drawer" && !this.scene.keyboardDrawer) {
+      this.scene.keyboardDrawer = new KeyboardDrawer(this.scene)
+    }
     
+  }
+
+  pointerListener(pointer, currentlyOver) {
+    if (_.includes(currentlyOver, this)) {
+      this.activate()
+    } else {
+      this.deactivate()
+    }
+  }
+    
+
+  activate() {
+    if (!this.active) {
+      super.activate()
+      if (this.cursor) {
+        this.cursor.setAlpha(1)
+        this.cursorTween = this.scene.add.tween(
+          {
+            targets: [this.cursor],
+            alpha: 0,
+            duration: 250,
+            yoyo: true,
+            repeat: -1
+          }
+        )
+      }
+      if (this.helpText) {
+        this.helpText.setAlpha(0)
+      }
+      if (this.editMode === "drawer") {
+        this.scene.keyboardDrawer.activate(this)
+      }
+    }
+  }  
+
+  deactivate() {
+    if (this.active) {
+      // deactivate but don't disable interactive
+      super.deactivate(false, false)
+      if (this.cursor) {
+        this.cursor.setAlpha(0)
+      }
+      if (this.cursorTween) {
+        this.cursorTween.stop()
+      }
+      if (this.helpText && !this.content.text) {
+        this.helpText.setAlpha(1)
+      }
+      if (this.editMode === "drawer") {
+        this.scene.keyboardDrawer.deactivate(this)
+      }
+    }
   }
 
   placeCursor() {
@@ -135,13 +193,6 @@ class TextInput extends TextDisplay {
     } else if (this.pageUpButton.alpha) {
       this.pageUpButton.deactivate(true)
     }
-    if (this.content.text) {
-      if (this.helpText.alpha) {
-        this.helpText.setAlpha(0)
-      }
-    } else if (!this.helpText.alpha){
-      this.helpText.setAlpha(1)
-    }
   }
 
   pageUp() {
@@ -174,6 +225,8 @@ class TextInput extends TextDisplay {
     // tween it by calling the parent method
     super.pageDown(scrollY, null, disablePageDown)
   }
+
+
 }
 
-export default TextInput
+export default TextField
