@@ -59,7 +59,7 @@ class DemoRunScene extends Phaser.Scene {
       this,
       {
         x: 300,
-        y: 200,
+        y: 400,
         height: 50
       }
     )
