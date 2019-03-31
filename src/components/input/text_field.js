@@ -1,5 +1,6 @@
 import Phaser from "phaser"
 import _ from "lodash"
+
 import TextDisplay from "../display/text_display"
 import KeyboardDrawer from "./keyboard_drawer"
 
@@ -21,10 +22,17 @@ class TextField extends TextDisplay {
       x, y,
       width=400, height=200,
       initialText="",
-      fontSize=24, fontFamily="Helvetica",
+      styles={
+        fontSize: 24,
+        fontFamily: "Helvetica",
+        align: "left",
+        padding: {top: 10, left: 10, right: 10, bottom: 10},
+        wordWrap: {width: width}
+      },
       outline=true,
       helpText="This is the help text",
-      editMode="drawer"
+      editMode="drawer",
+      submitOnEnter=false,
     }
   ) {
 
@@ -35,18 +43,18 @@ class TextField extends TextDisplay {
         x: x, y: y,
         width: width, height: height,
         initialText: "",
-        fontSize: fontSize, fontFamily: fontFamily,
-        outline: outline
+        styles: styles,
+        outline: outline,
       }
     )
 
     // add cursor
-    this.cursor = this.scene.add.text(x - this.width / 2, y - this.height / 2, "_", this.defaultStyles)
+    this.cursor = this.scene.add.text(x - this.width / 2, y - this.height / 2, "_", this.styles)
     this.cursor.setOrigin(0, 0)
     this.add(this.cursor)
 
     // set up help text
-    this.helpText = this.scene.add.text(-this.width / 2, -this.height / 2, helpText, this.defaultStyles)
+    this.helpText = this.scene.add.text(-this.width / 2, -this.height / 2, helpText, this.styles)
     this.helpText.setColor("gray")
     this.add(this.helpText)
 
@@ -63,8 +71,8 @@ class TextField extends TextDisplay {
     )
 
     // calc pixel width of space char, for cursor
-    let testNoSpace = this.scene.add.text(0, 0, "II", this.defaultStyles)
-    let testSpace = this.scene.add.text(0, 0, "I I", this.defaultStyles)
+    let testNoSpace = this.scene.add.text(0, 0, "II", this.styles)
+    let testSpace = this.scene.add.text(0, 0, "I I", this.styles)
     this.spacePixelWidth = testSpace.width - testNoSpace.width
     testNoSpace.destroy()
     testSpace.destroy()
@@ -78,18 +86,35 @@ class TextField extends TextDisplay {
 
     // activate on click inside / deactivate on click outside
     this.scene.input.on("pointerdown", this.pointerListener, this)
-    this.deactivate()
 
     this.addText(initialText)
 
     this.editMode = editMode
+    this.submitOnEnter = submitOnEnter
     if (this.editMode === "drawer" && !this.scene.keyboardDrawer) {
-      this.scene.keyboardDrawer = new KeyboardDrawer(this.scene)
+      this.scene.keyboardDrawer = new KeyboardDrawer(
+        this.scene,
+        {
+          enterLabel: this.submitOnEnter ? "OK" : "\u23CE"
+        }
+      )
     }
+
+    this.deactivate()
     
   }
 
   pointerListener(pointer, currentlyOver) {
+    // don't do anything if we are tweening the keyboard drawer
+    if (
+      this.scene.keyboardDrawer &&
+      this.scene.keyboardDrawer.slideTween.progress > 0 &&
+      this.scene.keyboardDrawer.slideTween.progress < 1
+    ) {
+      return
+    }
+
+    // activate on click inside this, deactivate on click outside
     if (_.includes(currentlyOver, this)) {
       this.activate()
     } else {
@@ -148,7 +173,7 @@ class TextField extends TextDisplay {
       this.width - this.content.padding.right * 2).split("\n")
 
     let lastLineContent = _.last(wrappedText).trimRight().slice(0, -1)
-    let lastLine = this.scene.add.text(0, 0, lastLineContent, this.defaultStyles)
+    let lastLine = this.scene.add.text(0, 0, lastLineContent, this.styles)
     this.cursor.x = this.content.x + lastLine.width - this.content.padding.right * 2
     lastLine.destroy()
 
@@ -173,6 +198,8 @@ class TextField extends TextDisplay {
 
     if (keyCode === Phaser.Input.Keyboard.KeyCodes.BACKSPACE) {
       this.content.setText(this.content.text.slice(0, -1))
+    } else if (keyCode === Phaser.Input.Keyboard.KeyCodes.ENTER && this.submitOnEnter) {
+      this.deactivate()
     } else if (extraText) {
       this.content.setText(this.content.text + extraText)
     }
@@ -193,6 +220,15 @@ class TextField extends TextDisplay {
     } else if (this.pageUpButton.alpha) {
       this.pageUpButton.deactivate(true)
     }
+  }
+
+  clearText() {
+    this.pageDownButton.deactivate(true)
+    this.pageUpButton.deactivate(true)
+    this.content.setText("")
+    this.content.updateText()
+    this.content.y = -this.height / 2
+    this.placeCursor()
   }
 
   pageUp() {

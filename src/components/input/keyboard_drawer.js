@@ -1,5 +1,4 @@
 import Keyboard from "./keyboard"
-//import Button from "./button"
 import Drawer from "../display/drawer"
 
 /**
@@ -9,16 +8,26 @@ class KeyboardDrawer extends Drawer {
   /**
    * @param {object} scene - The container Phaser.Scene
    */
-  constructor(scene) {
+  constructor(
+    scene,
+    {
+      enterLabel="\u23CE"
+    }
+  ) {
 
     // initialize with keyboard
-    let content = new Keyboard(scene, {})
+    let content = new Keyboard(
+      scene,
+      {
+        enterLabel: enterLabel
+      }
+    )
     super(
       scene,
       {
         edge: "bottom",
         content: content,
-        size: content.height
+        size: content.height,
       }
     )
     content.y -= content.keyHeight + content.keySpacing

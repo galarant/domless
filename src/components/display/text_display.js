@@ -19,8 +19,14 @@ class TextDisplay extends Element {
       x, y,
       width=400, height=200,
       initialText="",
-      fontSize=24, fontFamily="Helvetica",
-      outline=true
+      outline=true,
+      styles={
+        fontSize: 24,
+        fontFamily: "Helvetica",
+        align: "left",
+        padding: {top: 10, left: 10, right: 10, bottom: 10},
+        wordWrap: {width: width}
+      }
     }
   ) {
 
@@ -42,20 +48,14 @@ class TextDisplay extends Element {
     this.width = width
     this.height = height
     this.initialText = initialText
-    this.defaultStyles = {
-      fontSize: fontSize,
-      fontFamily: fontFamily,
-      align: "left",
-      padding: {top: 10, left: 10, right: 10, bottom: 10},
-      wordWrap: {width: this.width}
-    }
+    this.styles = styles
 
     if (!this.scene.domlessGraphics) {
       this.scene.domlessGraphics = this.scene.add.graphics()
     }
 
     // calc height of one text row
-    let testlineHeight = this.scene.add.text(0, 0, "foobar", this.defaultStyles)
+    let testlineHeight = this.scene.add.text(0, 0, "foobar", this.styles)
     this.lineHeight = testlineHeight.height
     testlineHeight.destroy()
 
@@ -65,7 +65,7 @@ class TextDisplay extends Element {
      * we have to constrain the entire container with the same mask
      * For more info refer to: https://github.com/photonstorm/phaser/issues/3673
      */ 
-    this.content = this.scene.add.text(-this.width / 2, -this.height / 2, "", this.defaultStyles)
+    this.content = this.scene.add.text(-this.width / 2, -this.height / 2, "", this.styles)
     this.content.setOrigin(0, 0)
     //this.content.setBackgroundColor("purple")
 
@@ -76,7 +76,7 @@ class TextDisplay extends Element {
     maskShape
       .clear()
       .fillStyle(0x000000, 0)
-      .fillRect(x - this.width / 2 - 1, y - this.height / 2 - 1, this.width + 10, this.height + 2)
+      .fillRect(x - this.width / 2 - 1, y - this.height / 2 - 1, this.width + 50, this.height + 2)
     this.contentMask = this.createGeometryMask(maskShape)
     this.setMask(this.contentMask)
     this.add(this.content)

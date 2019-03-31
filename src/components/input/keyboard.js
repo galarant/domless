@@ -18,6 +18,7 @@ class Keyboard extends Phaser.GameObjects.Container {
     {
       x=scene.game.config.width/2,
       y=scene.game.config.height/2,
+      enterLabel="\u23CE" // carriage return symbol
     } = {}
   ) {
 
@@ -175,7 +176,7 @@ class Keyboard extends Phaser.GameObjects.Container {
         [",", Phaser.Input.Keyboard.KeyCodes.COMMA],
         ["", Phaser.Input.Keyboard.KeyCodes.SPACE, 4, " "],
         [".", Phaser.Input.Keyboard.KeyCodes.PERIOD],
-        ["\u23CE", Phaser.Input.Keyboard.KeyCodes.ENTER, 1.5, "\n"], //unicode return symbol
+        [enterLabel, Phaser.Input.Keyboard.KeyCodes.ENTER, 1.5, "\n"], //unicode return symbol
       ],
     ]
 
@@ -193,7 +194,7 @@ class Keyboard extends Phaser.GameObjects.Container {
         [",", Phaser.Input.Keyboard.KeyCodes.COMMA],
         ["", Phaser.Input.Keyboard.KeyCodes.SPACE, 4, " "],
         [".", Phaser.Input.Keyboard.KeyCodes.PERIOD],
-        ["\u23CE", Phaser.Input.Keyboard.KeyCodes.ENTER, 1.5, "\n"], //unicode return symbol
+        [enterLabel, Phaser.Input.Keyboard.KeyCodes.ENTER, 1.5, "\n"], //unicode return symbol
       ],
     ]
 
@@ -239,7 +240,7 @@ class Keyboard extends Phaser.GameObjects.Container {
         [",", Phaser.Input.Keyboard.KeyCodes.COMMA],
         ["", Phaser.Input.Keyboard.KeyCodes.SPACE, 4, " "],
         [".", Phaser.Input.Keyboard.KeyCodes.PERIOD],
-        ["\u23CE", Phaser.Input.Keyboard.KeyCodes.ENTER, 1.5, "\n"], //unicode return symbol
+        [enterLabel, Phaser.Input.Keyboard.KeyCodes.ENTER, 1.5, "\n"], //unicode return symbol
       ],
     ]
 
@@ -270,7 +271,7 @@ class Keyboard extends Phaser.GameObjects.Container {
         [",", Phaser.Input.Keyboard.KeyCodes.COMMA],
         ["", Phaser.Input.Keyboard.KeyCodes.SPACE, 4, " "],
         [".", Phaser.Input.Keyboard.KeyCodes.PERIOD],
-        ["\u23CE", Phaser.Input.Keyboard.KeyCodes.ENTER, 1.5, "\n"], //unicode return symbol
+        [enterLabel, Phaser.Input.Keyboard.KeyCodes.ENTER, 1.5, "\n"], //unicode return symbol
       ],
     ]
 
@@ -310,7 +311,7 @@ class Keyboard extends Phaser.GameObjects.Container {
         ["<", Phaser.Input.Keyboard.KeyCodes.COMMA],
         ["", Phaser.Input.Keyboard.KeyCodes.SPACE, 4, " "],
         [">", Phaser.Input.Keyboard.KeyCodes.PERIOD],
-        ["\u23CE", Phaser.Input.Keyboard.KeyCodes.ENTER, 1.5, "\n"], //unicode return symbol
+        [enterLabel, Phaser.Input.Keyboard.KeyCodes.ENTER, 1.5, "\n"], //unicode return symbol
       ],
     ]
 

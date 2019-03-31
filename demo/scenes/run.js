@@ -59,8 +59,9 @@ class DemoRunScene extends Phaser.Scene {
       this,
       {
         x: 300,
-        y: 200,
-        height: 50
+        y: 400,
+        height: 100,
+        submitOnEnter: true
       }
     )
 

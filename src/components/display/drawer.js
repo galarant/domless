@@ -1,9 +1,11 @@
 import _ from "lodash"
 import Phaser from "phaser"
+import Element from "src/components/element"
+
 /**
  * Creates a drawer component with variable content
  */
-class Drawer extends Phaser.GameObjects.Container {
+class Drawer extends Element {
   /**
    * @param {object} scene - The container Phaser.Scene
    * @param {number} x - The x position of the TextDisplay in the game world
@@ -58,10 +60,16 @@ class Drawer extends Phaser.GameObjects.Container {
     }
 
     // initialize it
-    super(scene, x, y)
-    scene.sys.displayList.add(this)
-    this.width = width
-    this.height = height
+    super(
+      scene,
+      {
+        x: x,
+        y: y,
+        width: width,
+        height: height,
+        outline: false
+      }
+    )
 
     // set up background rectangle
     this.backgroundRect = scene.add.rectangle(
@@ -81,7 +89,7 @@ class Drawer extends Phaser.GameObjects.Container {
     this.add(this.content)
 
     // set up initial state
-    this.activated = false
+    super.deactivate()
     this.activateTweenData = activateTweenData
     this.deactivateTweenData = deactivateTweenData
   }
@@ -100,11 +108,7 @@ class Drawer extends Phaser.GameObjects.Container {
         )
       )
       this.slideTween.setCallback(
-        "onComplete",
-        function() {
-          this.activated = true
-        },
-        [], this
+        "onComplete", super.activate, [], this
       )
     }
   }
@@ -121,11 +125,7 @@ class Drawer extends Phaser.GameObjects.Container {
         )
       )
       this.slideTween.setCallback(
-        "onComplete",
-        function() {
-          this.activated = false
-        },
-        [], this
+        "onComplete", super.deactivate, [], this
       )
     }
   }
