@@ -42,15 +42,14 @@ class Element extends Phaser.GameObjects.Container {
       this.generateFill()
     }
 
-    // all elements start out active on initialization
+    // all elements start out inactive on initialization
     this.setActive(false)
-    this.activate()
 
   }
 
   // provides common activation behavior for all elements
-  activate() {
-    if (!this.active) {
+  activate(force=false) {
+    if (!this.active || force) {
 
       // show the element
       this.setAlpha(1)
@@ -65,14 +64,12 @@ class Element extends Phaser.GameObjects.Container {
       if (this.keyCode && this.handleInput) {
         this.scene.input.keyboard.on("keydown", this.handleInput, this)
       }
-
-      this.active = true
     }
   }
 
   // provides common deactivation behavior for all elements
-  deactivate(hide=false, disableInteractive=true) {
-    if (this.active) {
+  deactivate(hide=false, disableInteractive=true, force=false) {
+    if (this.active || force) {
       // hide the element if desired
       if (hide) {
         this.setAlpha(0)
@@ -90,8 +87,6 @@ class Element extends Phaser.GameObjects.Container {
       if (this.keyCode && this.handleInput) {
         this.scene.input.keyboard.removeListener("keydown", this.handleInput, this)
       }
-
-      this.active = false
     }
   }
 

@@ -394,22 +394,22 @@ class Keyboard extends Phaser.GameObjects.Container {
       keyContainer.add(keyRow)
       keyConfigRowCounter += 1
     })
-    this.disableKeys(keyContainer)
+    this.disableKeys(keyContainer, true)
     return keyContainer
   }
 
-  disableKeys(keyContainer) {
+  disableKeys(keyContainer, force=false) {
     _.each(keyContainer.list, function(keyRow) {
       _.each(keyRow.list, function(key) {
-        key.deactivate(true)
+        key.deactivate(true, true, force)
       })
     })
   }
 
-  enableKeys(keyContainer) {
+  enableKeys(keyContainer, force=false) {
     _.each(keyContainer.list, function(keyRow) {
       _.each(keyRow.list, function(key) {
-        key.activate(true)
+        key.activate(true, force)
       })
     })
   }

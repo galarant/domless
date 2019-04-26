@@ -100,7 +100,9 @@ class TextField extends TextDisplay {
       )
     }
 
-    this.deactivate()
+    // force deactivation to initialize properly
+    this.deactivate(true)
+    this.setInteractive()
     
   }
 
@@ -108,6 +110,7 @@ class TextField extends TextDisplay {
     // don't do anything if we are tweening the keyboard drawer
     if (
       this.scene.keyboardDrawer &&
+      this.scene.keyboardDrawer.slideTween &&
       this.scene.keyboardDrawer.slideTween.progress > 0 &&
       this.scene.keyboardDrawer.slideTween.progress < 1
     ) {
@@ -118,51 +121,63 @@ class TextField extends TextDisplay {
     if (_.includes(currentlyOver, this)) {
       this.activate()
     } else {
-      this.deactivate()
+      // is the cursor over any other TextFields besides this one?
+      let deactivateTo = _.find(currentlyOver, o => o.constructor.name === "TextField" && o.id !== this.id)
+      this.deactivate(false, deactivateTo)
     }
   }
     
 
-  activate() {
-    if (!this.active) {
+  activate(force=false) {
+    if (!this.active || force) {
+      console.log("activating textField " + this.id)
       super.activate()
-      if (this.cursor) {
-        this.cursor.setAlpha(1)
-        this.cursorTween = this.scene.add.tween(
-          {
-            targets: [this.cursor],
-            alpha: 0,
-            duration: 250,
-            yoyo: true,
-            repeat: -1
-          }
-        )
-      }
-      if (this.helpText) {
-        this.helpText.setAlpha(0)
-      }
+      this.cursor.setAlpha(1)
+      this.cursorTween = this.scene.add.tween(
+        {
+          targets: [this.cursor],
+          alpha: 0,
+          duration: 250,
+          yoyo: true,
+          repeat: -1
+        }
+      )
+      this.helpText.setAlpha(0)
       if (this.editMode === "drawer") {
         this.scene.keyboardDrawer.activate(this)
       }
     }
   }  
 
-  deactivate() {
-    if (this.active) {
+  deactivate(force=false, to=null) {
+    if (this.active || force) {
+      console.log("deactivating textField " + this.id)
       // deactivate but don't disable interactive
       super.deactivate(false, false)
-      if (this.cursor) {
-        this.cursor.setAlpha(0)
-      }
+      this.cursor.setAlpha(0)
       if (this.cursorTween) {
         this.cursorTween.stop()
       }
-      if (this.helpText && !this.content.text) {
+      if (!this.content.text) {
         this.helpText.setAlpha(1)
       }
+      // Deactivate the keyboard drawer
+      // Or move it to the next textField
       if (this.editMode === "drawer") {
-        this.scene.keyboardDrawer.deactivate(this)
+        if (to) {
+          this.scene.keyboardDrawer.reFocus(to)
+        } else {
+          this.scene.keyboardDrawer.deactivate(this)
+        }
       }
+    }
+  }
+
+  submit() {
+    if (this.form && this.form.nextField(this)) {
+      this.deactivate(false, this.form.nextField(this))
+    } else {
+      this.deactivate()
     }
   }
 
@@ -199,7 +214,7 @@ class TextField extends TextDisplay {
     if (keyCode === Phaser.Input.Keyboard.KeyCodes.BACKSPACE) {
       this.content.setText(this.content.text.slice(0, -1))
     } else if (keyCode === Phaser.Input.Keyboard.KeyCodes.ENTER && this.submitOnEnter) {
-      this.deactivate()
+      this.submit()
     } else if (extraText) {
       this.content.setText(this.content.text + extraText)
     }

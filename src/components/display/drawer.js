@@ -89,44 +89,39 @@ class Drawer extends Element {
     this.add(this.content)
 
     // set up initial state
-    super.deactivate()
+    this.disableInteractive()
     this.activateTweenData = activateTweenData
     this.deactivateTweenData = deactivateTweenData
   }
 
-  activate() {
+  slide(tweenData, callback=_.noop) {
     if (!this.slideTween || this.slideTween.progress === 1) {
-      let maxZ = _.maxBy(this.scene.children.list, "z").z
-      this.setDepth(maxZ + 1)
       this.slideTween = this.scene.add.tween(
         Object.assign(
           {
             targets: [this],
             ease: Phaser.Math.Easing.Cubic.InOut,
             duration: 500,
-          }, this.activateTweenData
+          }, tweenData
         )
       )
       this.slideTween.setCallback(
-        "onComplete", super.activate, [], this
+        "onComplete", callback, [], this
       )
     }
   }
 
-  deactivate() {
-    if (!this.slideTween || this.slideTween.progress === 1) {
-      this.slideTween = this.scene.add.tween(
-        Object.assign(
-          {
-            targets: [this],
-            ease: Phaser.Math.Easing.Cubic.InOut,
-            duration: 500,
-          }, this.deactivateTweenData
-        )
-      )
-      this.slideTween.setCallback(
-        "onComplete", super.deactivate, [], this
-      )
+  activate(activateData=this.activateTweenData) {
+    if (!this.active) {
+      let maxZ = _.maxBy(this.scene.children.list, "z").z
+      this.setDepth(maxZ + 1)
+      this.slide(activateData, super.activate)
+    }
+  }
+
+  deactivate(deactivateData=this.deactivateTweenData) {
+    if (this.active) {
+      this.slide(deactivateData, super.deactivate)
     }
   }
 

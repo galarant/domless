@@ -1,6 +1,8 @@
 import Phaser from "phaser"
+
 import Button from "../input/button"
 import Element from "../element"
+
 /**
  * Draws an interactive button in the display
  */
@@ -43,7 +45,6 @@ class TextDisplay extends Element {
     )
 
     scene.sys.displayList.add(this)
-    scene.sys.updateList.add(this)
 
     this.width = width
     this.height = height
@@ -100,8 +101,7 @@ class TextDisplay extends Element {
       }
     )
     this.add(this.pageUpButton)
-    this.pageUpButton.clearMask()
-    this.pageUpButton.deactivate(true)
+    this.pageUpButton.setAlpha(0)
 
     // add pageDown button
     this.pageDownButton = new Button(
@@ -116,6 +116,7 @@ class TextDisplay extends Element {
       }
     )
     this.add(this.pageDownButton)
+    this.pageDownButton.setAlpha(0)
 
     this.content.setText(initialText)
     this.content.updateText()
@@ -177,10 +178,6 @@ class TextDisplay extends Element {
         }, [], this
       )
     }
-  }
-
-  preUpdate() {
-    // delegated to child classes that need it
   }
 
 }
