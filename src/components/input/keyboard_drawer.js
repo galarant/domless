@@ -34,17 +34,17 @@ class KeyboardDrawer extends Drawer {
 
     // errant taps inside the drawer should not propagate
     this.on("pointerdown", this.pointerListener)
-    this.setInteractive()
   }
 
   pointerListener(pointer, localX, localY, event) {
     event.stopPropagation()
   }
 
-  activate(forElement=null) {
-    super.activate()
-    if (forElement) {
-      this.forElement = forElement
+  activate(toElement=null) {
+    if (!this.active) {
+      console.log("activating keyboarDrawer")
+      this.toElement = toElement 
+      super.activate()
       this.slideTween.setCallback(
         "onUpdate",
         function() {
@@ -55,10 +55,11 @@ class KeyboardDrawer extends Drawer {
     }
   }
 
-  deactivate(forElement=null) {
-    super.deactivate()
-    if (forElement) {
-      this.forElement = forElement
+  deactivate(fromElement=null) {
+    if (this.active) {
+      console.log("deactivating keyboarDrawer")
+      this.fromElement = fromElement
+      super.deactivate()
       this.slideTween.setCallback(
         "onUpdate",
         function() {
@@ -69,12 +70,39 @@ class KeyboardDrawer extends Drawer {
     }
   }
 
+  reFocus(toElement) {
+    // if next element is below the keyboard drawer, pull it up to focus
+    // otherwise do nothing
+    console.log("refocusing keyboardDrawer")
+    let
+      myTop = this.y - this.displayOriginY,
+      elementBottom = toElement.y - toElement.displayOriginY + toElement.height,
+      distanceToFocus = elementBottom - (myTop - 20)
+    let tweenData = {y: `+=${distanceToFocus}`}
+    if (distanceToFocus > 0) {
+      super.slide(tweenData, () => {toElement.activate()})
+      // move the camera up as we are doing this
+      // so it looks like the keyboard stays put
+      this.scene.add.tween(
+        {
+          targets: this.scene.cameras.main,
+          ease: Phaser.Math.Easing.Cubic.InOut,
+          duration: 500,
+          scrollY: `+=${distanceToFocus}`
+        }
+      )
+    }
+  }
+
   pushElementUp() {
     // if the drawer is getting too close, we need to "push it up"
     // by moving the camera and the drawer down
+    if (!this.toElement) {
+      return
+    }
     let
       myTop = this.y - this.displayOriginY,
-      elementBottom = this.forElement.y - this.forElement.displayOriginY + this.forElement.height,
+      elementBottom = this.toElement.y - this.toElement.displayOriginY + this.toElement.height,
       distance = myTop - elementBottom
 
     if (distance < 20) {
@@ -88,9 +116,12 @@ class KeyboardDrawer extends Drawer {
     // if the drawer pushed an element up during activate
     // pull it back down during deactivate
     // by moving the camera and the drawer tween target up
+    if (!this.fromElement) {
+      return
+    }
     let
       myTop = this.y - this.displayOriginY,
-      elementBottom = this.forElement.y - this.forElement.displayOriginY + this.forElement.height,
+      elementBottom = this.fromElement.y - this.fromElement.displayOriginY + this.fromElement.height,
       distance = myTop - elementBottom
 
     if (distance > 20 && this.scene.cameras.main.scrollY > 0) {

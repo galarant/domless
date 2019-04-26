@@ -2,7 +2,9 @@ import Phaser from "phaser"
 
 import Avatar from "../world/avatar"
 import Ground from "../world/ground"
+
 import TextField from "src/components/input/text_field"
+import Form from "src/components/input/form"
 
 
 /**
@@ -55,13 +57,33 @@ class DemoRunScene extends Phaser.Scene {
     this.physics.add.collider(this.avatar, this.ground)
 
     // add textField as test
-    this.textField = new TextField(
+    let formFields = [
+      new TextField(
+        this,
+        {
+          x: 300,
+          y: 300,
+          height: 50,
+          submitOnEnter: true,
+          helpText: "First Name"
+        }
+      ),
+      new TextField(
+        this,
+        {
+          x: 300,
+          y: 375,
+          height: 50,
+          submitOnEnter: true,
+          helpText: "Last Name"
+        }
+      ),
+    ]
+
+    this.testForm = new Form(
       this,
       {
-        x: 300,
-        y: 400,
-        height: 100,
-        submitOnEnter: true
+        fields: formFields
       }
     )
 
