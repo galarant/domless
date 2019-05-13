@@ -5,6 +5,7 @@ import Ground from "../world/ground"
 
 import TextField from "src/components/input/text_field"
 import Form from "src/components/input/form"
+import ScrollablePlugin from "src/plugins/scrollable"
 
 
 /**
@@ -32,6 +33,8 @@ class DemoRunScene extends Phaser.Scene {
   preload() {
     this.input.maxPointers = 1
     this.cursors = this.input.keyboard.createCursorKeys()
+    this.scrollable = new ScrollablePlugin(this, this.plugins)
+    this.scrollable.start(-100, 100)
   }
 
   /**
@@ -87,7 +90,10 @@ class DemoRunScene extends Phaser.Scene {
       }
     )
 
+    this.debugText = this.add.text(10, 10).setText("Camera Debug").setScrollFactor(0)
+
     console.log(this)
+    console.log("LISTENING FOR: ", this.events.eventNames())
 
   }
 
@@ -107,6 +113,9 @@ class DemoRunScene extends Phaser.Scene {
     if (this.cursors.up.isDown) {
       this.avatar.body.velocity.y -= 10
     }
+
+    var cam = this.cameras.main
+    this.debugText.setText(["Camera Debug", "x: " + cam.scrollX, "y: " + cam.scrollY ])
 
   }
 
