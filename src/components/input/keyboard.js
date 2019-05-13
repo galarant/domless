@@ -387,6 +387,7 @@ class Keyboard extends Phaser.GameObjects.Container {
         }
         let button = new Button(keyboard.scene, buttonConfig)
         keyPosX += thisKeyWidth + keyboard.keySpacing
+        button.setScrollFactor(0)
         keyRow.add(button)
       })
       keyRow.x = (keyboard.keySpacing - keyPosX) / 2

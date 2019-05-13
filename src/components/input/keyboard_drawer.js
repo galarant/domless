@@ -52,6 +52,9 @@ class KeyboardDrawer extends Drawer {
         },
         [], this
       )
+      if (this.scene.maxScroll !== undefined) {
+        this.scene.maxScroll += this.height
+      }
     }
   }
 
@@ -67,6 +70,9 @@ class KeyboardDrawer extends Drawer {
         },
         [], this
       )
+      if (this.scene.maxScroll !== undefined) {
+        this.scene.maxScroll -= this.height
+      }
     }
   }
 
@@ -78,18 +84,22 @@ class KeyboardDrawer extends Drawer {
       myTop = this.y - this.displayOriginY,
       elementBottom = toElement.y - toElement.displayOriginY + toElement.height,
       distanceToFocus = elementBottom - (myTop - 20)
-    let tweenData = {y: `+=${distanceToFocus}`}
     if (distanceToFocus > 0) {
-      super.slide(tweenData, () => {toElement.activate()})
-      // move the camera up as we are doing this
-      // so it looks like the keyboard stays put
-      this.scene.add.tween(
+      // move the camera up to focus on the new element
+      this.reFocusTween = this.scene.add.tween(
         {
           targets: this.scene.cameras.main,
           ease: Phaser.Math.Easing.Cubic.InOut,
           duration: 500,
           scrollY: `+=${distanceToFocus}`
         }
+      )
+      this.reFocusTween.setCallback(
+        "onComplete",
+        function() {
+          toElement.activate()
+        },
+        [], this
       )
     }
   }
@@ -107,7 +117,6 @@ class KeyboardDrawer extends Drawer {
 
     if (distance < 20) {
       this.scene.cameras.main.scrollY = 20 - distance
-      this.y += 20 - distance
     }
   }
 
@@ -127,10 +136,7 @@ class KeyboardDrawer extends Drawer {
     if (distance > 20 && this.scene.cameras.main.scrollY > 0) {
       this.scene.cameras.main.scrollY -= distance - 20
       if (this.scene.cameras.main.scrollY < 0) {
-        this.slideTween.data[0].end -= distance - 20 + this.scene.cameras.main.scrollY
         this.scene.cameras.main.scrollY = 0
-      } else {
-        this.slideTween.data[0].end -= distance - 20
       }
     }
   }

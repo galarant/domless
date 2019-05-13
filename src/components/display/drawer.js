@@ -92,6 +92,9 @@ class Drawer extends Element {
     this.disableInteractive()
     this.activateTweenData = activateTweenData
     this.deactivateTweenData = deactivateTweenData
+
+    // make sure this thing moves along with the camera
+    this.setScrollFactor(0)
   }
 
   slide(tweenData, callback=_.noop) {

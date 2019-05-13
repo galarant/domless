@@ -17,6 +17,7 @@ class Element extends Phaser.GameObjects.Container {
       height=60,
       outline=true,
       fill=false,
+      arcRadius=15,
     } = {}
   ) {
 
@@ -31,6 +32,7 @@ class Element extends Phaser.GameObjects.Container {
     this.id = "_" + Math.random().toString(36).substr(2, 9) + "_"
     this.width = width
     this.height = height
+    this.arcRadius = arcRadius
 
     // add the outline sprite if needed
     if (outline) {
@@ -105,7 +107,7 @@ class Element extends Phaser.GameObjects.Container {
       this.scene.domlessGraphics
         .clear()
         .lineStyle(1.2, 0xffffff)
-        .strokeRoundedRect(2, 2, this.width, this.height, 15)
+        .strokeRoundedRect(2, 2, this.width, this.height, this.arcRadius)
         .generateTexture(outlineKey, this.width + 4, this.height + 4)
         .clear()
     }
@@ -130,7 +132,7 @@ class Element extends Phaser.GameObjects.Container {
       this.scene.domlessGraphics
         .clear()
         .fillStyle(0xffffff)
-        .fillRoundedRect(2, 2, this.width, this.height, 15)
+        .fillRoundedRect(2, 2, this.width, this.height, this.arcRadius)
         .generateTexture(fillKey, this.width + 4, this.height + 4)
         .clear()
     }
