@@ -144,7 +144,17 @@ class TextField extends TextDisplay {
       )
       this.helpText.setAlpha(0)
       if (this.editMode === "drawer") {
-        this.scene.keyboardDrawer.activate(this)
+        // if this field is part of a form
+        // the drawer should push the whole form up
+        let drawerPushElement = this
+        if (this.form) {
+          drawerPushElement = this.form.submitButton
+        }
+        // but don't push me above the top of the viewport
+        let 
+          myTop = this.y - this.height,
+          maxPush = myTop
+        this.scene.keyboardDrawer.activate(drawerPushElement, maxPush)
       }
     }
   }  

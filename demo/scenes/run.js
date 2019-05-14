@@ -65,20 +65,40 @@ class DemoRunScene extends Phaser.Scene {
         this,
         {
           x: 300,
-          y: 300,
+          y: 200,
           height: 50,
           submitOnEnter: true,
-          helpText: "First Name"
+          helpText: "First Field"
         }
       ),
       new TextField(
         this,
         {
           x: 300,
-          y: 375,
+          y: 275,
           height: 50,
           submitOnEnter: true,
-          helpText: "Last Name"
+          helpText: "Second Field"
+        }
+      ),
+      new TextField(
+        this,
+        {
+          x: 300,
+          y: 350,
+          height: 50,
+          submitOnEnter: true,
+          helpText: "Third Field"
+        }
+      ),
+      new TextField(
+        this,
+        {
+          x: 300,
+          y: 425,
+          height: 50,
+          submitOnEnter: true,
+          helpText: "Fourth Field"
         }
       ),
     ]
