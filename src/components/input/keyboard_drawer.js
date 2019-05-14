@@ -40,15 +40,14 @@ class KeyboardDrawer extends Drawer {
     event.stopPropagation()
   }
 
-  activate(toElement=null) {
+  activate(toElement=null, maxPush=null) {
     if (!this.active) {
       console.log("activating keyboarDrawer")
-      this.toElement = toElement 
       super.activate()
       this.slideTween.setCallback(
         "onUpdate",
         function() {
-          this.pushElementUp()
+          this.pushElementUp(toElement, maxPush)
         },
         [], this
       )
@@ -83,14 +82,14 @@ class KeyboardDrawer extends Drawer {
     let
       myTop = this.y - this.displayOriginY,
       elementBottom = toElement.y - toElement.displayOriginY + toElement.height,
-      distanceToFocus = elementBottom - (myTop - 20)
+      distanceToFocus = elementBottom - (myTop - 20) - this.scene.cameras.main.scrollY
     if (distanceToFocus > 0) {
       // move the camera up to focus on the new element
       this.reFocusTween = this.scene.add.tween(
         {
           targets: this.scene.cameras.main,
           ease: Phaser.Math.Easing.Cubic.InOut,
-          duration: 500,
+          duration: 250,
           scrollY: `+=${distanceToFocus}`
         }
       )
@@ -101,22 +100,33 @@ class KeyboardDrawer extends Drawer {
         },
         [], this
       )
+    } else {
+      // delay activation of the next element by 50 milliseconds
+      // so it doesn't pick up the submit button press from the previous element
+      // TODO: figure out how to stop propagation on custom events
+      // so this hack is not needed. this makes me nauseous
+      this.scene.time.delayedCall(
+        50,
+        toElement.activate,
+        [], toElement
+      )
     }
   }
 
-  pushElementUp() {
+  pushElementUp(toElement, maxPush=null) {
     // if the drawer is getting too close, we need to "push it up"
     // by moving the camera and the drawer down
-    if (!this.toElement) {
-      return
-    }
     let
       myTop = this.y - this.displayOriginY,
-      elementBottom = this.toElement.y - this.toElement.displayOriginY + this.toElement.height,
+      elementBottom = toElement.y - toElement.displayOriginY + toElement.height,
       distance = myTop - elementBottom
 
-    if (distance < 20) {
-      this.scene.cameras.main.scrollY = 20 - distance
+    if ((20 - distance) < maxPush) {
+      if (distance < 20) {
+        this.scene.cameras.main.scrollY = 20 - distance
+      }
+    } else {
+      this.scene.cameras.main.scrollY = maxPush
     }
   }
 
