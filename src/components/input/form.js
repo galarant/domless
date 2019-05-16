@@ -57,6 +57,13 @@ class Form extends Phaser.GameObjects.Group {
     return nextField
   }
 
+  previousField(field) {
+    // given a field, gets the previous one in the form
+    let fieldIndex = _.findIndex(this.children.entries, f => f.id == field.id)
+    let nextField = this.children.entries[fieldIndex - 1]
+    return nextField
+  }
+
 }
 
 export default Form

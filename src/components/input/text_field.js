@@ -100,10 +100,28 @@ class TextField extends TextDisplay {
       )
     }
 
+    //submit on TAB
+    if (!this.scene.tabKey) {
+      this.scene.tabKey = this.scene.input.keyboard.addKey("TAB")
+    }
+
+    if (!this.scene.shiftKey) {
+      this.scene.shiftKey = this.scene.input.keyboard.addKey("SHIFT")
+    }
+
+    this.scene.input.keyboard.on("keydown-TAB", this.handleTab, this)
+
     // force deactivation to initialize properly
     this.deactivate(true)
     this.setInteractive()
     
+  }
+
+  handleTab(event) {
+    event.preventDefault()
+    if (this.active) {
+      this.submit()
+    }
   }
 
   pointerListener(pointer, currentlyOver) {
@@ -184,11 +202,13 @@ class TextField extends TextDisplay {
   }
 
   submit() {
-    if (this.form && this.form.nextField(this)) {
-      this.deactivate(false, this.form.nextField(this))
-    } else {
-      this.deactivate()
+    let nextField = null
+    if (this.scene.shiftKey.isDown && this.scene.tabKey.isDown && this.form.previousField(this)) {
+      nextField = this.form.previousField(this)
+    } else if (!this.scene.shiftKey.isDown && this.form && this.form.nextField(this)) {
+      nextField = this.form.nextField(this)
     }
+    this.deactivate(false, nextField)
   }
 
   placeCursor() {
