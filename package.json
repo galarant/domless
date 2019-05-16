@@ -31,6 +31,6 @@
   },
   "dependencies": {
     "lodash": "^4.17.11",
-    "phaser": "^3.14.0"
+    "phaser": "^3.16.2"
   }
 }
