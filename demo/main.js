@@ -5,8 +5,6 @@ import DemoRunScene from "./scenes/run.js"
 
 const CONFIG = {
   type: Phaser.AUTO,
-  width: 800,
-  height: 600,
   physics: {
     default: "arcade",
     arcade: {
@@ -15,6 +13,13 @@ const CONFIG = {
       },
       debug: false
     }
+  },
+  scale: {
+    parent: "body",
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+    width: 800,
+    height: 600
   }
 }
 
@@ -25,8 +30,6 @@ const CONFIG = {
  */
 window.onload = function() {
   window.focus()
-  resizeApp()
-  window.addEventListener("resize", resizeApp)
 }
 
 /**
@@ -39,22 +42,5 @@ demoApp.scene.add("boot", DemoBootScene)
 demoApp.scene.add("load", DemoLoadScene)
 demoApp.scene.add("run", DemoRunScene)
 demoApp.scene.start("boot")
-
-let resizeApp = function() {
-  let canvas = document.querySelector("canvas")
-  let windowWidth = window.innerWidth
-  let windowHeight = window.innerHeight
-  let windowRatio = windowWidth / windowHeight
-  let appRatio = demoApp.config.width / demoApp.config.height
-  if(windowRatio < appRatio) {
-    canvas.style.width = windowWidth + "px"
-    canvas.style.height = (windowWidth / appRatio) + "px"
-  } else {
-    canvas.style.width = (windowHeight * appRatio) + "px"
-    canvas.style.height = windowHeight + "px"
-  }
-
-}
-
 
 export default demoApp

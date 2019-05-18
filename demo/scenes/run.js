@@ -134,8 +134,18 @@ class DemoRunScene extends Phaser.Scene {
       this.avatar.body.velocity.y -= 10
     }
 
-    var cam = this.cameras.main
-    this.debugText.setText(["Camera Debug", "x: " + cam.scrollX, "y: " + cam.scrollY ])
+    var
+      cam = this.cameras.main,
+      pointer = this.input.mousePointer
+    
+    this.debugText.setText(
+      [
+        "Camera " + " x: " + cam.scrollX + " y: " + cam.scrollY + "\n" +
+        "Pointer " + " x: " + pointer.x + " y: " + pointer.y
+      ]
+    )
+
+
 
   }
 

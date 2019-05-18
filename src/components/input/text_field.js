@@ -85,7 +85,7 @@ class TextField extends TextDisplay {
     }, this)
 
     // activate on click inside / deactivate on click outside
-    this.scene.input.on("pointerdown", this.pointerListener, this)
+    this.scene.input.on("pointerup", this.pointerListener, this)
 
     this.addText(initialText)
 
@@ -125,6 +125,12 @@ class TextField extends TextDisplay {
   }
 
   pointerListener(pointer, currentlyOver) {
+    // don't do anything if we were just dragging
+    console.log(pointer)
+    if (pointer.wasDragged) {
+      return
+    }
+
     // don't do anything if we are tweening the keyboard drawer
     if (
       this.scene.keyboardDrawer &&
