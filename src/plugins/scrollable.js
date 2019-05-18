@@ -76,6 +76,7 @@ class ScrollablePlugin extends Phaser.Plugins.ScenePlugin {
     this.scene.input.setDraggable(this.scene.dragZone)
     this.scene.dragZone.on("drag", this.handleDrag, this)
     this.scene.dragZone.on("dragstart", this.handleDragStart, this)
+    this.scene.dragZone.on("dragend", this.handleDragEnd, this)
     this.scene.input.keyboard.on("keydown", this.handleKey, this)
 
     // add a scrollbar
@@ -103,6 +104,16 @@ class ScrollablePlugin extends Phaser.Plugins.ScenePlugin {
   handleDrag(pointer, dragX, dragY) {
     this.scrollCamera(this.lastDrag - dragY)
     this.lastDrag = dragY
+  }
+
+  handleDragEnd(pointer) {
+    // add the wasDragged flag to the pointer for 50ms
+    pointer.wasDragged = true
+    this.scene.time.delayedCall(
+      50,
+      function(o) { o.wasDragged = false },
+      [pointer], this
+    )
   }
 
   scrollCamera(scrollDelta) {
