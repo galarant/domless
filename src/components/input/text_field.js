@@ -126,7 +126,6 @@ class TextField extends TextDisplay {
 
   pointerListener(pointer, currentlyOver) {
     // don't do anything if we were just dragging
-    console.log(pointer)
     if (pointer.wasDragged) {
       return
     }

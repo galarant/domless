@@ -108,12 +108,15 @@ class ScrollablePlugin extends Phaser.Plugins.ScenePlugin {
 
   handleDragEnd(pointer) {
     // add the wasDragged flag to the pointer for 50ms
-    pointer.wasDragged = true
-    this.scene.time.delayedCall(
-      50,
-      function(o) { o.wasDragged = false },
-      [pointer], this
-    )
+    let dragDistance = Math.abs(pointer.downY - pointer.upY)
+    if (dragDistance > 1) {
+      pointer.wasDragged = true
+      this.scene.time.delayedCall(
+        50,
+        function(o) { o.wasDragged = false },
+        [pointer], this
+      )
+    }
   }
 
   scrollCamera(scrollDelta) {
