@@ -62,7 +62,7 @@ class Button extends Element {
       this.callbackScope = this
     }
 
-    this.on("pointerdown", this.handleInput)
+    this.on("pointerup", this.handleInput)
 
     if (callback) {
       this.callback = callback

@@ -80,37 +80,37 @@ class KeyboardDrawer extends Drawer {
     // otherwise do nothing
     console.log("refocusing keyboardDrawer")
     let
+      activateElement = toElement,
+      drawerPadding = 80
+
+    // if the next field is the last in the form
+    // scroll to the submit button instead of the field
+    if (toElement.form && !toElement.form.nextField(toElement)) {
+      toElement = toElement.form.submitButton
+      drawerPadding = 20
+    }
+
+    let
       myTop = this.y - this.displayOriginY,
       elementBottom = toElement.y - toElement.displayOriginY + toElement.height,
-      distanceToFocus = elementBottom - (myTop - 20) - this.scene.cameras.main.scrollY
-    if (distanceToFocus > 0) {
-      // move the camera up to focus on the new element
-      this.reFocusTween = this.scene.add.tween(
-        {
-          targets: this.scene.cameras.main,
-          ease: Phaser.Math.Easing.Cubic.InOut,
-          duration: 250,
-          scrollY: `+=${distanceToFocus}`
-        }
-      )
-      this.reFocusTween.setCallback(
-        "onComplete",
-        function() {
-          toElement.activate()
-        },
-        [], this
-      )
-    } else {
-      // delay activation of the next element by 50 milliseconds
-      // so it doesn't pick up the submit button press from the previous element
-      // TODO: figure out how to stop propagation on custom events
-      // so this hack is not needed. this makes me nauseous
-      this.scene.time.delayedCall(
-        50,
-        toElement.activate,
-        [], toElement
-      )
-    }
+      distanceToFocus = elementBottom - myTop - this.scene.cameras.main.scrollY + drawerPadding
+
+    // move the camera up to focus on the new element
+    this.reFocusTween = this.scene.add.tween(
+      {
+        targets: this.scene.cameras.main,
+        ease: Phaser.Math.Easing.Cubic.InOut,
+        duration: 250,
+        scrollY: `+=${distanceToFocus}`
+      }
+    )
+    this.reFocusTween.setCallback(
+      "onComplete",
+      function() {
+        activateElement.activate()
+      },
+      [], this
+    )
   }
 
   pushElementUp(toElement, maxPush=null) {
@@ -132,9 +132,8 @@ class KeyboardDrawer extends Drawer {
 
 
   pullElementDown() {
-    // if the drawer pushed an element up during activate
+    // if the drawer pushed the camera up during activate
     // pull it back down during deactivate
-    // by moving the camera and the drawer tween target up
     if (!this.fromElement) {
       return
     }
