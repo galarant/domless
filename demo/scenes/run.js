@@ -34,7 +34,7 @@ class DemoRunScene extends Phaser.Scene {
     this.input.maxPointers = 1
     this.cursors = this.input.keyboard.createCursorKeys()
     this.scrollable = new ScrollablePlugin(this, this.plugins)
-    this.scrollable.start(-100, 100)
+    this.scrollable.start(-300, 300)
   }
 
   /**
@@ -141,7 +141,8 @@ class DemoRunScene extends Phaser.Scene {
     this.debugText.setText(
       [
         "Camera " + " x: " + cam.scrollX + " y: " + cam.scrollY + "\n" +
-        "Pointer " + " x: " + pointer.x + " y: " + pointer.y
+        "Pointer " + " x: " + pointer.x + " y: " + pointer.y + "\n" +
+        "FPS " + this.game.loop.actualFps
       ]
     )
 

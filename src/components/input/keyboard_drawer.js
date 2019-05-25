@@ -11,7 +11,8 @@ class KeyboardDrawer extends Drawer {
   constructor(
     scene,
     {
-      enterLabel="\u23CE"
+      enterLabel="\u23CE",
+      elementPadding=20
     }
   ) {
 
@@ -31,6 +32,8 @@ class KeyboardDrawer extends Drawer {
       }
     )
     content.y -= content.keyHeight + content.keySpacing
+    this.elementPadding = elementPadding
+    this.activateCameraPos = null
 
     // errant taps inside the drawer should not propagate
     this.on("pointerdown", this.pointerListener)
@@ -44,16 +47,8 @@ class KeyboardDrawer extends Drawer {
     if (!this.active) {
       console.log("activating keyboarDrawer")
       super.activate()
-      this.slideTween.setCallback(
-        "onUpdate",
-        function() {
-          this.pushElementUp(toElement, maxPush)
-        },
-        [], this
-      )
-      if (this.scene.maxScroll !== undefined) {
-        this.scene.maxScroll += this.height
-      }
+      this.activateCameraPos = this.scene.cameras.main.scrollY
+      this.pushCameraUp(toElement, maxPush)
     }
   }
 
@@ -62,91 +57,118 @@ class KeyboardDrawer extends Drawer {
       console.log("deactivating keyboarDrawer")
       this.fromElement = fromElement
       super.deactivate()
-      this.slideTween.setCallback(
-        "onUpdate",
-        function() {
-          this.pullElementDown()
-        },
-        [], this
-      )
-      if (this.scene.maxScroll !== undefined) {
-        this.scene.maxScroll -= this.height
-      }
+      this.pullCameraDown()
     }
   }
 
   reFocus(toElement) {
-    // if next element is below the keyboard drawer, pull it up to focus
-    // otherwise do nothing
+    // if element is above the screen, pull it down so it's visible
+    // if element is below the keyboardDrawer, pull it up so it's visible
+    // if element is visible, do nothing
     console.log("refocusing keyboardDrawer")
-    let
-      activateElement = toElement,
-      drawerPadding = 80
+    let activateElement = toElement
 
-    // if the next field is the last in the form
-    // scroll to the submit button instead of the field
     if (toElement.form && !toElement.form.nextField(toElement)) {
       toElement = toElement.form.submitButton
-      drawerPadding = 20
     }
 
     let
-      myTop = this.y - this.displayOriginY,
-      elementBottom = toElement.y - toElement.displayOriginY + toElement.height,
-      distanceToFocus = elementBottom - myTop - this.scene.cameras.main.scrollY + drawerPadding
+      camera = this.scene.cameras.main,
+      elementTopPos = toElement.y - toElement.displayOriginY - camera.scrollY,
+      visibleHeight = this.scene.game.config.height - (this.height + this.elementPadding),
+      pushDistance = 0
 
-    // move the camera up to focus on the new element
-    this.reFocusTween = this.scene.add.tween(
+    if (elementTopPos < 0) {
+      pushDistance = elementTopPos - this.elementPadding
+    } else if (elementTopPos > visibleHeight) {
+      pushDistance = elementTopPos + toElement.height - visibleHeight
+    }
+
+    this.pushCameraTween = this.scene.add.tween(
       {
-        targets: this.scene.cameras.main,
+        targets: camera,
         ease: Phaser.Math.Easing.Cubic.InOut,
-        duration: 250,
-        scrollY: `+=${distanceToFocus}`
+        duration: 100,
+        scrollY: `+=${pushDistance}`
       }
     )
-    this.reFocusTween.setCallback(
+    this.pushCameraTween.setCallback(
       "onComplete",
       function() {
         activateElement.activate()
       },
       [], this
     )
+
   }
 
-  pushElementUp(toElement, maxPush=null) {
-    // if the drawer is getting too close, we need to "push it up"
-    // by moving the camera and the drawer down
+  pushCameraUp(toElement, maxPush=null) {
     let
-      myTop = this.y - this.displayOriginY,
-      elementBottom = toElement.y - toElement.displayOriginY + toElement.height,
-      distance = myTop - elementBottom
+      camera = this.scene.cameras.main,
+      elementBottomPos = toElement.y + toElement.displayOriginY - camera.scrollY,
+      distanceToBottom = this.scene.game.config.height - elementBottomPos,
+      rawPushDistance = this.height + this.elementPadding - distanceToBottom,
+      pushDistance = Math.min(rawPushDistance, maxPush)
 
-    if ((20 - distance) < maxPush) {
-      if (distance < 20) {
-        this.scene.cameras.main.scrollY = 20 - distance
-      }
-    } else {
-      this.scene.cameras.main.scrollY = maxPush
+    // if the drawer is going to cover an element
+    // we need to scroll the camera up so that it won't cover it
+    if (pushDistance > 0) {
+      this.pushCameraTween = this.scene.add.tween(
+        {
+          targets: camera,
+          ease: Phaser.Math.Easing.Cubic.InOut,
+          duration: 250,
+          scrollY: `+=${pushDistance}`
+        }
+      )
+    }
+    // if scene is scrollabe
+    // change the scroll distance and metric height to account for drawer
+    if (this.scene.scrollable) {
+      this.scene.add.tween(
+        {
+          targets: this.scene.scrollable,
+          ease: Phaser.Math.Easing.Cubic.InOut,
+          duration: 250,
+          props: {
+            maxScroll: `+=${this.height}`,
+            scrollBarMetricHeight: `-=${this.height}`
+          }
+        }
+      )
     }
   }
 
 
-  pullElementDown() {
-    // if the drawer pushed the camera up during activate
-    // pull it back down during deactivate
-    if (!this.fromElement) {
-      return
+  pullCameraDown() {
+    // if the drawer moved the camera around while it was active
+    // move it back to its original position on activation
+    let camera = this.scene.cameras.main
+    if (this.activateCameraPos !== null) {
+      this.pushCameraTween = this.scene.add.tween(
+        {
+          targets: camera,
+          ease: Phaser.Math.Easing.Cubic.InOut,
+          duration: 250,
+          scrollY: this.activateCameraPos
+        }
+      )
+      this.activateCameraPos = null
     }
-    let
-      myTop = this.y - this.displayOriginY,
-      elementBottom = this.fromElement.y - this.fromElement.displayOriginY + this.fromElement.height,
-      distance = myTop - elementBottom
-
-    if (distance > 20 && this.scene.cameras.main.scrollY > 0) {
-      this.scene.cameras.main.scrollY -= distance - 20
-      if (this.scene.cameras.main.scrollY < 0) {
-        this.scene.cameras.main.scrollY = 0
-      }
+    // if scene is scrollabe
+    // reset the scroll distance and metric height back to normal
+    if (this.scene.scrollable) {
+      this.scene.add.tween(
+        {
+          targets: this.scene.scrollable,
+          ease: Phaser.Math.Easing.Cubic.InOut,
+          duration: 250,
+          props: {
+            maxScroll: `-=${this.height}`,
+            scrollBarMetricHeight: `+=${this.height}`
+          }
+        }
+      )
     }
   }
 
