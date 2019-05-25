@@ -176,7 +176,7 @@ class TextField extends TextDisplay {
         // but don't push me above the top of the viewport
         let 
           myTop = this.y - this.height,
-          maxPush = myTop
+          maxPush = myTop - this.scene.cameras.main.scrollY
         this.scene.keyboardDrawer.activate(drawerPushElement, maxPush)
       }
     }

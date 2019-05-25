@@ -9,33 +9,25 @@ import Element from  "src/components/element"
 
 class ScrollBar extends Element {
 
-  constructor(scene) {
-    let
-      camera = scene.cameras.main,
-      scrollBarWidth = 5,
-      scrollBarHeight = (camera.height / scene.scrollableHeight) * camera.height - 3
+  constructor(scene, plugin) {
 
     super(
       scene,
       {
-        width: scrollBarWidth,
-        height: scrollBarHeight,
-        x: scene.game.config.width - scrollBarWidth / 2,
-        y: scrollBarHeight / 2,
         outline: false,
         fill: true,
         arcRadius: 3
       }
     )
+    this.plugin = plugin
     this.setScrollFactor(0)
+    this.resize()
     this.reposition()
-
-    // always bring scrollbar to top when things are added to the scene
-    // I hate doing this on every frame but it seems like the only way
-    this.scene.events.on("update", this.bringMeToTop, this)
+    this.x = this.scene.game.config.width - this.plugin.scrollBarWidth / 2
   }
 
-  bringMeToTop() {
+  bringToFront() {
+    // bring scrollbar to top z pos if any renderable objects have been addd to the scene
     if (this.sceneChildren !== this.scene.children.length) {
       let maxZ = _.maxBy(this.scene.children.list, "z").z
       this.setDepth(maxZ + 1)
@@ -44,29 +36,41 @@ class ScrollBar extends Element {
   }
 
   reposition() {
+    // reposition the srollbar if any relevant vars have changed
     let
       camera = this.scene.cameras.main,
-      scrollPercent = (camera.scrollY - this.scene.minScroll) / this.scene.scrollableHeight
-    this.y = scrollPercent * camera.height + this.height / 2
+      scrollPercent = (camera.scrollY - this.plugin.minScroll) / this.plugin.scrollableHeight
+    if (!_.isEqual(this.repositionArgs, [scrollPercent, this.plugin.scrollBarMetricHeight, this.height])) {
+      this.y = scrollPercent * this.plugin.scrollBarMetricHeight + this.height / 2
+      this.repositionArgs = [scrollPercent, this.plugin.scrollBarMetricHeight, this.height]
+    }
   }
 
   resize() {
-    // TODO: left off here
-    
+    // resize the srollbar if any relevant vars have changed
+    let metricHeight = this.plugin.scrollBarMetricHeight
+    if (!_.isEqual(this.resizeArgs, [metricHeight, this.plugin.scrollableHeight, this.plugin.scrollBarWidth])) {
+      this.width = this.plugin.scrollBarWidth
+      this.height = (metricHeight / this.plugin.scrollableHeight * metricHeight - 3)
+      this.generateFill()
+      this.resizeArgs = [metricHeight, this.plugin.scrollableHeight, this.plugin.scrollBarWidth]
+    }
   }
-
 }
 
 class ScrollablePlugin extends Phaser.Plugins.ScenePlugin {
 
 
   start(minScroll, maxScroll) {
+    let camera = this.scene.cameras.main
     // handle mouse wheel inputs
     this.scene.scrollable = this
     this.game.canvas.addEventListener("wheel", () => this.handleMouseWheel(event))
-    this.scene.minScroll = minScroll
-    this.scene.maxScroll = maxScroll
-    this.scene.scrollableHeight = this.scene.cameras.main.height - minScroll + maxScroll
+    this.minScroll = minScroll
+    this.maxScroll = maxScroll
+    this.scrollableHeight = camera.height - minScroll + maxScroll
+    this.scrollBarWidth = 5
+    this.scrollBarMetricHeight = camera.height
     
     // handle drag inputs
     this.scene.dragZone = this.scene.add.zone(0, 0, this.game.config.width, this.game.config.height)
@@ -80,7 +84,10 @@ class ScrollablePlugin extends Phaser.Plugins.ScenePlugin {
     this.scene.input.keyboard.on("keydown", this.handleKey, this)
 
     // add a scrollbar
-    this.scene.scrollbar = new ScrollBar(this.scene)
+    this.scrollbar = new ScrollBar(this.scene, this)
+
+    // I hate doing this on every frame but it seems like the only way
+    this.scene.events.on("update", this.handleUpdate, this)
 
   }
 
@@ -119,18 +126,23 @@ class ScrollablePlugin extends Phaser.Plugins.ScenePlugin {
     }
   }
 
+  handleUpdate() {
+    this.scrollbar.bringToFront()
+    this.scrollbar.reposition()
+    this.scrollbar.resize()
+  }
+
   scrollCamera(scrollDelta) {
     let
       camera = this.scene.cameras.main
 
-    if (this.scene.minScroll !== undefined && camera.scrollY + scrollDelta < this.scene.minScroll) {
-      camera.setScroll(0, this.scene.minScroll)
-    } else if (this.scene.maxScroll !== undefined && camera.scrollY + scrollDelta > this.scene.maxScroll) {
-      camera.setScroll(0, this.scene.maxScroll)
+    if (this.minScroll !== undefined && camera.scrollY + scrollDelta < this.minScroll) {
+      camera.setScroll(0, this.minScroll)
+    } else if (this.maxScroll !== undefined && camera.scrollY + scrollDelta > this.maxScroll) {
+      camera.setScroll(0, this.maxScroll)
     } else {
       camera.setScroll(0, camera.scrollY + scrollDelta / 2)
     }
-    this.scene.scrollbar.reposition()
   }
 
 }
