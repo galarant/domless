@@ -6,6 +6,7 @@ import Ground from "../world/ground"
 import TextField from "src/components/input/text_field"
 import Form from "src/components/input/form"
 import ScrollablePlugin from "src/plugins/scrollable"
+import DebugText from "src/components/debug_text"
 
 
 /**
@@ -59,6 +60,9 @@ class DemoRunScene extends Phaser.Scene {
     // add collision between avatar and ground
     this.physics.add.collider(this.avatar, this.ground)
 
+    // add debug text
+    this.debugText = new DebugText(this)
+
     // add textField as test
     let formFields = [
       new TextField(
@@ -110,8 +114,6 @@ class DemoRunScene extends Phaser.Scene {
       }
     )
 
-    this.debugText = this.add.text(10, 10).setText("Camera Debug").setScrollFactor(0)
-
     console.log(this)
     console.log("LISTENING FOR: ", this.events.eventNames())
 
@@ -133,20 +135,6 @@ class DemoRunScene extends Phaser.Scene {
     if (this.cursors.up.isDown) {
       this.avatar.body.velocity.y -= 10
     }
-
-    var
-      cam = this.cameras.main,
-      pointer = this.input.mousePointer
-    
-    this.debugText.setText(
-      [
-        "Camera " + " x: " + cam.scrollX + " y: " + cam.scrollY + "\n" +
-        "Pointer " + " x: " + pointer.x + " y: " + pointer.y + "\n" +
-        "FPS " + this.game.loop.actualFps
-      ]
-    )
-
-
 
   }
 
