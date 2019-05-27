@@ -63,8 +63,8 @@ class Element extends Phaser.GameObjects.Container {
       this.setInteractive()
 
       // accept keyboard input
-      if (this.keyCode && this.handleInput) {
-        this.scene.input.keyboard.on("keydown", this.handleInput, this)
+      if (this.key && this.handleKeyboardInput) {
+        this.key.on("down", this.handleKeyboardInput, this)
       }
     }
   }
@@ -84,11 +84,12 @@ class Element extends Phaser.GameObjects.Container {
       if (disableInteractive) {
         this.disableInteractive()
       }
-        
+
       // disable keyboard input
-      if (this.keyCode && this.handleInput) {
-        this.scene.input.keyboard.removeListener("keydown", this.handleInput, this)
+      if (this.key && this.handleKeyboardInput) {
+        this.key.removeListener("down", this.handleKeyboardInput, this)
       }
+
     }
   }
 
