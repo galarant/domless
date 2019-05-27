@@ -301,7 +301,7 @@ class Keyboard extends Phaser.GameObjects.Container {
         [["\"", Phaser.Input.Keyboard.KeyCodes.QUOTES]]
       ),
       _.concat(
-        [["\u21E7", Phaser.Input.Keyboard.KeyCodes.CAPS_LOCK, 1.5, "", false, desktopCapsButtonCallback, keyboard]], // unicode uppercase arrow white
+        [["\u2B06", Phaser.Input.Keyboard.KeyCodes.CAPS_LOCK, 1.5, "", false, desktopCapsButtonCallback, keyboard]], // unicode uppercase arrow white
         uppercaseLettersRowThreeConfig,
         [["?", Phaser.Input.Keyboard.KeyCodes.FORWARD_SLASH]],
         [["\u232B", Phaser.Input.Keyboard.KeyCodes.BACKSPACE, 1.5]] // unicode backspace symbol
@@ -395,22 +395,24 @@ class Keyboard extends Phaser.GameObjects.Container {
       keyContainer.add(keyRow)
       keyConfigRowCounter += 1
     })
-    this.disableKeys(keyContainer, true)
+    // enable then disable to initialize properly
+    this.enableKeys(keyContainer)
+    this.disableKeys(keyContainer)
     return keyContainer
   }
 
-  disableKeys(keyContainer, force=false) {
+  disableKeys(keyContainer) {
     _.each(keyContainer.list, function(keyRow) {
       _.each(keyRow.list, function(key) {
-        key.deactivate(true, true, force)
+        key.deactivate(true, true, true)
       })
     })
   }
 
-  enableKeys(keyContainer, force=false) {
+  enableKeys(keyContainer) {
     _.each(keyContainer.list, function(keyRow) {
       _.each(keyRow.list, function(key) {
-        key.activate(true, force)
+        key.activate(true)
       })
     })
   }

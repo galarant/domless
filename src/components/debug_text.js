@@ -37,7 +37,7 @@ class DebugText extends Phaser.GameObjects.Text {
       },
       "fps": { 
         "": () => {return this.scene.game.loop.actualFps.toFixed(2)}
-      }
+      },
     }
 
     // update the debug info on each frame

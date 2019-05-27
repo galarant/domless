@@ -62,7 +62,14 @@ class Button extends Element {
       this.callbackScope = this
     }
 
-    this.on("pointerup", this.handleInput)
+    // add Phaser keyboard key if keyCode exists
+    // this gives some useful default behavior like enableCapture and emitOnRepeat
+    if (keyCode) {
+      this.key = this.scene.input.keyboard.addKey(keyCode, true, true)
+      this.key.on("down", this.handleKeyboardInput, this)
+    }
+
+    this.on("pointerup", this.handlePointerInput)
 
     if (callback) {
       this.callback = callback
@@ -73,21 +80,38 @@ class Button extends Element {
 
   }
 
-  handleInput(pointer, localX, localY, event) {
-    if (pointer.type === "keydown" && pointer.keyCode !== this.keyCode) {
-      return
-    }
-    if (this.eventName) {
-      this.scene.events.emit(this.eventName, ...this.eventArgs)
-    }
-    this.flashFill()
+  handleKeyboardInput(key) {
+    if (this.active) {
+      if (key.repeats == 2) {
+        // don't do anything on first repeat
+        // this heads off occasional "double tap" bugs
+        return
+      }
+      if (this.eventName) {
+        this.scene.events.emit(this.eventName, ...this.eventArgs)
+      }
+      this.flashFill()
 
-    if (this.callback) {
-      this.callback.call(this.callbackScope, ...this.callbackArgs)
+      if (this.callback) {
+        this.callback.call(this.callbackScope, ...this.callbackArgs)
+      }
     }
+  }
 
-    if (event && this.stopPropagation) {
-      event.stopPropagation()
+  handlePointerInput(pointer, localX, localY, event) {
+    if (this.active) {
+      if (this.eventName) {
+        this.scene.events.emit(this.eventName, ...this.eventArgs)
+      }
+      this.flashFill()
+
+      if (this.callback) {
+        this.callback.call(this.callbackScope, ...this.callbackArgs)
+      }
+
+      if (event && this.stopPropagation) {
+        event.stopPropagation()
+      }
     }
 
   }
