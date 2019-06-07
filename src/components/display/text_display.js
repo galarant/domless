@@ -60,35 +60,61 @@ class TextDisplay extends Element {
     this.lineHeight = testlineHeight.height
     testlineHeight.destroy()
 
-    // add content
-    /**
-     * TODO: Unfortunately because of the container child masking issue in Phaser 3,
-     * we have to constrain the entire container with the same mask
-     * For more info refer to: https://github.com/photonstorm/phaser/issues/3673
-     */ 
+    this.initComponents()
+
+  }
+
+  /**
+   * Initialize all the stuff that makes this object work
+   * If you change anything about the parent object: position, size, styles etc
+   * You should re-run this method
+   */
+  initComponents() {
+
+    // reset the wordWrap width
+    this.styles.wordWrap.width = this.width
+
+    // add the content Text object
+    let contentText = this.initialText
+    if (this.content) {
+      contentText = this.content.text
+      this.content.destroy()
+    }
+
     this.content = this.scene.add.text(-this.width / 2, -this.height / 2, "", this.styles)
     this.content.setOrigin(0, 0)
-    //this.content.setBackgroundColor("purple")
+    this.content.setText(contentText)
+    this.add(this.content)
 
     // set up a mask on the content
     // this will hide overflow text when we scroll
-    let maskShape = scene.add.graphics(x, y)
+    if (this.contentMask) {
+      this.contentMask.destroy()
+    }
+    let maskShape = this.scene.add.graphics(0, 0)
+    this.add(maskShape)
 
     maskShape
       .clear()
       .fillStyle(0x000000, 0)
-      .fillRect(x - this.width / 2 - 1, y - this.height / 2 - 1, this.width + 50, this.height + 2)
+      .fillRect(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height)
     this.contentMask = this.createGeometryMask(maskShape)
-    this.setMask(this.contentMask)
-    this.add(this.content)
+    this.content.setMask(this.contentMask)
 
     // add pagination buttons
-    let pageUpPosition = [this.width / 2 + 2, -this.height / 2 + 8]
+    let buttonShift = 0
+    if (this.form && this.form.drawer) {
+      buttonShift = -8
+    } 
+    let pageUpPosition = [this.width / 2 + 2 + buttonShift, -this.height / 2 + 8]
     let pageUpLabel = "\u2BAD"
-    let pageDownPosition = [this.width / 2 + 2, this.height / 2 - 7]
+    let pageDownPosition = [this.width / 2 + 2 + buttonShift, this.height / 2 - 7]
     let pageDownLabel = "\u2BAF"
 
     // add pageUp button
+    if (this.pageUpButton) {
+      this.pageUpButton.destroy()
+    }
     this.pageUpButton = new Button(
       this.scene,
       {
@@ -104,6 +130,9 @@ class TextDisplay extends Element {
     this.pageUpButton.setAlpha(0)
 
     // add pageDown button
+    if (this.pageDownButton) {
+      this.pageDownButton.destroy()
+    }
     this.pageDownButton = new Button(
       this.scene,
       {
@@ -118,9 +147,8 @@ class TextDisplay extends Element {
     this.add(this.pageDownButton)
     this.pageDownButton.setAlpha(0)
 
-    this.content.setText(initialText)
+    this.content.setText(this.initialText)
     this.content.updateText()
-    
   }
 
   pageUp(scrollY, scrollTweenCallback=null, disablePageUp=false) {

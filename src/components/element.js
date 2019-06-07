@@ -1,3 +1,4 @@
+import _ from "lodash"
 import Phaser from "phaser"
 
 /**
@@ -149,6 +150,41 @@ class Element extends Phaser.GameObjects.Container {
   }
 
   /**
+   * Recursively runs setScrollFactor on the element
+   * And its entire child tree
+   */
+  setScrollFactor(factor, recurse=false) {
+    super.setScrollFactor(factor)
+    if (recurse) {
+      _.forEach(
+        this.list,
+        (child) => {
+          child.setScrollFactor(factor, true)
+        }
+      )
+    }
+  }
+
+
+  /**
+   * Generate a randomly colored Rectangle on this element
+   * to debug position / size etc
+   */
+  debug() {
+    if (this.debugRectangle) {
+      this.debugRectangle.destroy()
+    }
+    this.debugRectangle = this.scene.add.rectangle(
+      0, 0,
+      this.width,
+      this.height,
+      Phaser.Display.Color.RandomRGB().color,
+      0.3
+    )
+    this.add(this.debugRectangle)
+  }
+
+  /**
    * Runs an animation to stretch the outline.
    * Element itself will be resized after the animation finishes
    * dimensions = {x: targetWidth, y: targetHeight}
@@ -190,8 +226,6 @@ class Element extends Phaser.GameObjects.Container {
       },
       this
     )
-
-    console.log(anim)
 
     // play the animation
     this.outline.play(animKey, true)
