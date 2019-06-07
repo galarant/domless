@@ -124,8 +124,6 @@ class FormDrawer extends Drawer {
         this.content.add(formField)
         yPos += formField.height
         formField.debug()
-        // TODO: left off here
-        // something weird is going on with these elements and the camera
       }
     )
   }
@@ -144,28 +142,40 @@ class FormDrawer extends Drawer {
   }
 
   activate() {
+    let camera = this.scene.cameras.main
+    this.scene.add.tween(
+      {
+        targets: this.scene.scrollable,
+        ease: Phaser.Math.Easing.Cubic.InOut,
+        duration: 500,
+        props: {
+          minScroll: 0,
+          maxScroll: Math.max(this.contentHeight, camera.height)
+        }
+      }
+    )
     let activateCallback = () => {
-      let camera = this.scene.cameras.main
       this.setScrollFactor(1, true)
       this.cameraShift = camera.scrollY
       camera.scrollY -= this.cameraShift
-      if (this.scene.scrollable) {
-        let scrollOverflow = Math.max(0, this.contentHeight - this.scene.game.config.height)
-        this.scene.scrollable.minScroll = 0
-        this.scene.scrollable.maxScroll = scrollOverflow
-        this.scene.scrollable.scrollBarMetricHeight += scrollOverflow
-      }
     }
     super.activate(activateCallback)
   }
 
   deactivate() {
     this.setScrollFactor(0, true)
-    if (this.scene.scrollable) {
-      this.scene.scrollable.minScroll = this.initMinScroll 
-      this.scene.scrollable.maxScroll = this.initMaxScroll 
-      this.scene.scrollable.scrollBarMetricHeight = this.initMetricHeight
-    }
+    this.scene.add.tween(
+      {
+        targets: this.scene.scrollable,
+        ease: Phaser.Math.Easing.Cubic.InOut,
+        duration: 500,
+        props: {
+          minScroll: this.initMinScroll,
+          maxScroll: this.initMaxScroll,
+          scrollBarMetricHeight: this.initMetricHeight
+        }
+      }
+    )
     if (this.scene.keyboardDrawer && this.scene.keyboardDrawer.active) {
       this.scene.keyboardDrawer.deactivate(null, this.cameraShift)
     } else {

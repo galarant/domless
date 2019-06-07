@@ -37,7 +37,7 @@ class DemoRunScene extends Phaser.Scene {
     this.input.maxPointers = 1
     this.cursors = this.input.keyboard.createCursorKeys()
     this.scrollable = new ScrollablePlugin(this, this.plugins)
-    this.scrollable.start(-300, 300)
+    this.scrollable.start(-300, 800)
   }
 
   /**
@@ -92,7 +92,7 @@ class DemoRunScene extends Phaser.Scene {
         {
           x: 300,
           y: 350,
-          height: 300,
+          height: 100,
           submitOnEnter: true,
           helpTextValue: "Third Field"
         }
@@ -102,7 +102,7 @@ class DemoRunScene extends Phaser.Scene {
         {
           x: 300,
           y: 425,
-          height: 400,
+          height: 100,
           submitOnEnter: true,
           helpTextValue: "Fourth Field"
         }
@@ -129,22 +129,9 @@ class DemoRunScene extends Phaser.Scene {
       }
     )
 
-    this.openKeyboardButton = new Button(
-      this,
-      {
-        x: 200, y: 100, label: "keyb",
-        callback: this.openKeyboardDrawer,
-        callbackScope: this
-      }
-    )
-
     console.log(this)
     console.log("LISTENING FOR: ", this.events.eventNames())
 
-  }
-
-  openKeyboardDrawer() {
-    this.keyboardDrawer.activate()
   }
 
   openFormDrawer() {

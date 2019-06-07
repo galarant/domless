@@ -48,12 +48,6 @@ class KeyboardDrawer extends Drawer {
 
   activate(toElement=null, maxPush=null) {
     if (!this.active) {
-      // bring to top z pos
-      /*
-      let maxZ = _.maxBy(this.scene.children.list, "z").z
-      this.setDepth(maxZ + 1)
-      */
-
       console.log("activating keyboarDrawer")
       super.activate()
       this.activateCameraPos = this.scene.cameras.main.scrollY
