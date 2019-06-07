@@ -383,7 +383,8 @@ class Keyboard extends Phaser.GameObjects.Container {
           value: (keyConfig[3] !== undefined ? keyConfig[3] : keyConfig[0]),
           fill: (keyConfig[4] !== undefined ? keyConfig[4] : true),
           callback: (keyConfig[5] !== undefined ? keyConfig[5] : null),
-          callbackScope: (keyConfig[6] !== undefined ? keyConfig[6] : null)
+          callbackScope: (keyConfig[6] !== undefined ? keyConfig[6] : null),
+          eventName: "domlessKeyboardButtonPress"
         }
         let button = new Button(keyboard.scene, buttonConfig)
         keyPosX += thisKeyWidth + keyboard.keySpacing

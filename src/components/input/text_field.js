@@ -30,7 +30,7 @@ class TextField extends TextDisplay {
         wordWrap: {width: width}
       },
       outline=true,
-      helpText="This is the help text",
+      helpTextValue="This is the help text",
       editMode="drawer",
       submitOnEnter=false,
     }
@@ -42,33 +42,13 @@ class TextField extends TextDisplay {
       {
         x: x, y: y,
         width: width, height: height,
-        initialText: "",
+        initialText: initialText,
         styles: styles,
         outline: outline,
       }
     )
 
-    // add cursor
-    this.cursor = this.scene.add.text(x - this.width / 2, y - this.height / 2, "_", this.styles)
-    this.cursor.setOrigin(0, 0)
-    this.add(this.cursor)
-
-    // set up help text
-    this.helpText = this.scene.add.text(-this.width / 2, -this.height / 2, helpText, this.styles)
-    this.helpText.setColor("gray")
-    this.add(this.helpText)
-
-    // set custom word wrapping to account for cursor
-    this.content.setWordWrapCallback(
-      function(text) {
-        let wrappedText = this.content.advancedWordWrap(
-          (this.cursor ? text + "_" : text),
-          this.content.context,
-          this.width - this.content.padding.right * 2
-        ).trimRight().slice(0, -1)
-        return wrappedText
-      }, this
-    )
+    this.helpTextValue = helpTextValue
 
     // calc pixel width of space char, for cursor
     let testNoSpace = this.scene.add.text(0, 0, "II", this.styles)
@@ -77,8 +57,10 @@ class TextField extends TextDisplay {
     testNoSpace.destroy()
     testSpace.destroy()
 
+    this.initComponents(false)
+
     // set up listener for button press event
-    this.scene.events.on("domlessButtonPress", function(buttonChar, keyCode) {
+    this.scene.events.on("domlessKeyboardButtonPress", function(buttonChar, keyCode) {
       if (this.active) {
         this.addText(buttonChar, keyCode)
       }
@@ -86,8 +68,6 @@ class TextField extends TextDisplay {
 
     // activate on click inside / deactivate on click outside
     this.scene.input.on("pointerup", this.pointerListener, this)
-
-    this.addText(initialText)
 
     this.editMode = editMode
     this.submitOnEnter = submitOnEnter
@@ -111,6 +91,42 @@ class TextField extends TextDisplay {
 
     this.scene.input.keyboard.on("keydown-TAB", this.handleTab, this)
 
+  }
+
+  initComponents(initSuper=true) {
+    if (initSuper) {
+      super.initComponents()
+    }
+
+    // add cursor
+    if (this.cursor) {
+      this.cursor.destroy()
+    }
+    this.cursor = this.scene.add.text(-this.width / 2, -this.height / 2, "_", this.styles)
+    this.cursor.setOrigin(0, 0)
+    this.cursor.setMask(this.contentMask)
+    this.add(this.cursor)
+
+    // set custom word wrapping to account for cursor
+    this.content.setWordWrapCallback(
+      function(text) {
+        let wrappedText = this.content.advancedWordWrap(
+          (this.cursor ? text + "_" : text),
+          this.content.context,
+          this.width - this.content.padding.right * 2
+        ).trimRight().slice(0, -1)
+        return wrappedText
+      }, this
+    )
+
+    // set up help text
+    if (this.helpText) {
+      this.helpText.destroy()
+    }
+    this.helpText = this.scene.add.text(-this.width / 2, -this.height / 2, this.helpTextValue, this.styles)
+    this.helpText.setColor("gray")
+    this.add(this.helpText)
+
     // force deactivation to initialize properly
     this.deactivate(true)
     this.setInteractive()
@@ -126,7 +142,7 @@ class TextField extends TextDisplay {
 
   pointerListener(pointer, currentlyOver) {
     // don't do anything if we were just dragging
-    if (pointer.wasDragged) {
+    if (pointer.isDragging) {
       return
     }
 
@@ -170,7 +186,7 @@ class TextField extends TextDisplay {
         // if this field is part of a form
         // the drawer should push the whole form up
         let drawerPushElement = this
-        if (this.form) {
+        if (this.form && !this.form.drawer) {
           drawerPushElement = this.form.submitButton
         }
         // but don't push me above the top of the viewport
@@ -235,7 +251,7 @@ class TextField extends TextDisplay {
     this.cursor.y = -this.height / 2 + contentHeight - this.cursor.height
 
     // modify cursor position if we overflowed a line
-    if (this.cursor.x + this.cursor.width > this.x + this.width / 2) {
+    if (this.cursor.x + this.cursor.width > this.width / 2) {
       this.cursor.x = this.content.x - this.content.width / 2
       this.cursor.y = -this.height / 2 + contentHeight
     }

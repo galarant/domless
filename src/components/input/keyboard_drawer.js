@@ -1,3 +1,5 @@
+//import _ from "lodash"
+
 import Keyboard from "./keyboard"
 import Drawer from "../display/drawer"
 
@@ -29,6 +31,7 @@ class KeyboardDrawer extends Drawer {
         edge: "bottom",
         content: content,
         size: content.height,
+        cancelButton: false
       }
     )
     content.y -= content.keyHeight + content.keySpacing
@@ -45,19 +48,26 @@ class KeyboardDrawer extends Drawer {
 
   activate(toElement=null, maxPush=null) {
     if (!this.active) {
+      // bring to top z pos
+      /*
+      let maxZ = _.maxBy(this.scene.children.list, "z").z
+      this.setDepth(maxZ + 1)
+      */
+
       console.log("activating keyboarDrawer")
       super.activate()
       this.activateCameraPos = this.scene.cameras.main.scrollY
       this.pushCameraUp(toElement, maxPush)
+
     }
   }
 
-  deactivate(fromElement=null) {
+  deactivate(fromElement=null, pullDistance=0) {
     if (this.active) {
       console.log("deactivating keyboarDrawer")
       this.fromElement = fromElement
       super.deactivate()
-      this.pullCameraDown()
+      this.pullCameraDown(pullDistance)
     }
   }
 
@@ -68,7 +78,7 @@ class KeyboardDrawer extends Drawer {
     console.log("refocusing keyboardDrawer")
     let activateElement = toElement
 
-    if (toElement.form && !toElement.form.nextField(toElement)) {
+    if (toElement.form && !toElement.form.drawer && !toElement.form.nextField(toElement)) {
       toElement = toElement.form.submitButton
     }
 
@@ -140,7 +150,7 @@ class KeyboardDrawer extends Drawer {
   }
 
 
-  pullCameraDown() {
+  pullCameraDown(pullDistance=0) {
     // if the drawer moved the camera around while it was active
     // move it back to its original position on activation
     let camera = this.scene.cameras.main
@@ -150,7 +160,7 @@ class KeyboardDrawer extends Drawer {
           targets: camera,
           ease: Phaser.Math.Easing.Cubic.InOut,
           duration: 250,
-          scrollY: this.activateCameraPos
+          scrollY: this.activateCameraPos + pullDistance
         }
       )
       this.activateCameraPos = null

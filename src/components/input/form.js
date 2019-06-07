@@ -13,11 +13,12 @@ class Form extends Phaser.GameObjects.Group {
     {
       fields=[],
       onSubmit=function() {},
+      name="Form Name",
       submitButtonConfig={
         label: "Submit",
         width: 100,
         height: 60,
-        topPadding: 20
+        topPadding: 20,
       }
     }
   ) {
@@ -47,6 +48,7 @@ class Form extends Phaser.GameObjects.Group {
       }
     )
     this.submitButton.activate()
+    this.name = name
     fields.forEach(field => {field.form = this})
   }  
 

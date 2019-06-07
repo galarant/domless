@@ -26,15 +26,6 @@ class ScrollBar extends Element {
     this.x = this.scene.game.config.width - this.plugin.scrollBarWidth / 2
   }
 
-  bringToFront() {
-    // bring scrollbar to top z pos if any renderable objects have been addd to the scene
-    if (this.sceneChildren !== this.scene.children.length) {
-      let maxZ = _.maxBy(this.scene.children.list, "z").z
-      this.setDepth(maxZ + 1)
-      this.sceneChildren = this.scene.children.length
-    }
-  }
-
   reposition() {
     // reposition the srollbar if any relevant vars have changed
     let
@@ -49,6 +40,11 @@ class ScrollBar extends Element {
   resize() {
     // resize the srollbar if any relevant vars have changed
     let metricHeight = this.plugin.scrollBarMetricHeight
+    if (this.plugin.minScroll === 0 && this.plugin.maxScroll === 0) {
+      this.setAlpha(0)
+    } else {
+      this.setAlpha(1)
+    }
     if (!_.isEqual(this.resizeArgs, [metricHeight, this.plugin.scrollableHeight, this.plugin.scrollBarWidth])) {
       this.width = this.plugin.scrollBarWidth
       this.height = (metricHeight / this.plugin.scrollableHeight * metricHeight - 3)
@@ -73,14 +69,6 @@ class ScrollablePlugin extends Phaser.Plugins.ScenePlugin {
     this.scrollBarMetricHeight = camera.height
     
     // handle drag inputs
-    this.scene.dragZone = this.scene.add.zone(0, 0, this.game.config.width, this.game.config.height)
-    this.scene.dragZone.setOrigin(0, 0)
-    this.scene.dragZone.setInteractive()
-    this.scene.dragZone.setScrollFactor(0)
-    this.scene.input.setDraggable(this.scene.dragZone)
-    this.scene.dragZone.on("drag", this.handleDrag, this)
-    this.scene.dragZone.on("dragstart", this.handleDragStart, this)
-    this.scene.dragZone.on("dragend", this.handleDragEnd, this)
     this.scene.input.keyboard.on("keydown", this.handleKey, this)
 
     // add a scrollbar
@@ -127,9 +115,31 @@ class ScrollablePlugin extends Phaser.Plugins.ScenePlugin {
   }
 
   handleUpdate() {
-    this.scrollbar.bringToFront()
+    let pointer = this.scene.input.activePointer
+    if (pointer.isDown && pointer.getDuration() > 100) {
+      if (!pointer.isDragging) {
+        this.handleDragStart()
+      }
+      pointer.isDragging = true
+      this.handleDrag(pointer, 0, pointer.y - pointer.downY)
+    } else if (pointer.isDragging) {
+      pointer.isDragging = false
+      this.handleDragEnd(pointer)
+    }
+    this.bringToFront()
     this.scrollbar.reposition()
     this.scrollbar.resize()
+  }
+
+  bringToFront() {
+    // bring scrollbar to top z pos if any renderable objects have been added to the scene
+    let maxZ = _.maxBy(this.scene.children.list, "depth").depth
+    if (this.sceneChildren !== this.scene.children.length || this.maxZ != maxZ) {
+      this.scrollbar.setDepth(maxZ + 1)
+      this.sceneChildren = this.scene.children.length
+      this.maxZ = maxZ + 1
+      console.log("bringing scrollable to front")
+    }
   }
 
   scrollCamera(scrollDelta) {

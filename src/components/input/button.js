@@ -1,3 +1,5 @@
+import Phaser from "phaser"
+
 import Element from "../element"
 /**
  * Draws an interactive button in the display
@@ -24,7 +26,9 @@ class Button extends Element {
       callback=null, callbackArgs=[], callbackScope=null,
       eventName="domlessButtonPress",
       eventArgs=[value, keyCode],
-      stopPropagation=true
+      stopPropagation=true,
+      initializeActive=true,
+      arcRadius=15
     }
   ) {
 
@@ -37,7 +41,8 @@ class Button extends Element {
         width: width,
         height: height,
         outline: outline,
-        fill: fill
+        fill: fill,
+        arcRadius: arcRadius
       }
     )
 
@@ -65,7 +70,11 @@ class Button extends Element {
     // add Phaser keyboard key if keyCode exists
     // this gives some useful default behavior like enableCapture and emitOnRepeat
     if (keyCode) {
-      this.key = this.scene.input.keyboard.addKey(keyCode, true, true)
+      let emitOnRepeat = true
+      if (keyCode === Phaser.Input.Keyboard.KeyCodes.CAPS_LOCK) {
+        emitOnRepeat = false
+      }
+      this.key = this.scene.input.keyboard.addKey(keyCode, true, emitOnRepeat)
       this.key.on("down", this.handleKeyboardInput, this)
     }
 
@@ -77,6 +86,10 @@ class Button extends Element {
 
     this.callbackArgs = callbackArgs
     this.stopPropagation = stopPropagation
+
+    if (initializeActive) {
+      this.activate(true)
+    }
 
   }
 

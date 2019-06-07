@@ -5,6 +5,8 @@ import Ground from "../world/ground"
 
 import TextField from "src/components/input/text_field"
 import Form from "src/components/input/form"
+import FormDrawer from "src/components/input/form_drawer"
+import Button from "src/components/input/button"
 import ScrollablePlugin from "src/plugins/scrollable"
 import DebugText from "src/components/debug_text"
 
@@ -70,9 +72,9 @@ class DemoRunScene extends Phaser.Scene {
         {
           x: 300,
           y: 200,
-          height: 50,
-          submitOnEnter: true,
-          helpText: "First Field"
+          height: 100,
+          //submitOnEnter: true,
+          helpTextValue: "First Field"
         }
       ),
       new TextField(
@@ -80,9 +82,9 @@ class DemoRunScene extends Phaser.Scene {
         {
           x: 300,
           y: 275,
-          height: 50,
+          height: 100,
           submitOnEnter: true,
-          helpText: "Second Field"
+          helpTextValue: "Second Field"
         }
       ),
       new TextField(
@@ -90,9 +92,9 @@ class DemoRunScene extends Phaser.Scene {
         {
           x: 300,
           y: 350,
-          height: 50,
+          height: 300,
           submitOnEnter: true,
-          helpText: "Third Field"
+          helpTextValue: "Third Field"
         }
       ),
       new TextField(
@@ -100,9 +102,9 @@ class DemoRunScene extends Phaser.Scene {
         {
           x: 300,
           y: 425,
-          height: 50,
+          height: 400,
           submitOnEnter: true,
-          helpText: "Fourth Field"
+          helpTextValue: "Fourth Field"
         }
       ),
     ]
@@ -114,9 +116,39 @@ class DemoRunScene extends Phaser.Scene {
       }
     )
 
+    this.formDrawer = new FormDrawer(
+      this, this.testForm
+    )
+
+    this.openFormButton = new Button(
+      this,
+      {
+        x: 100, y: 100, label: "form",
+        callback: this.openFormDrawer,
+        callbackScope: this
+      }
+    )
+
+    this.openKeyboardButton = new Button(
+      this,
+      {
+        x: 200, y: 100, label: "keyb",
+        callback: this.openKeyboardDrawer,
+        callbackScope: this
+      }
+    )
+
     console.log(this)
     console.log("LISTENING FOR: ", this.events.eventNames())
 
+  }
+
+  openKeyboardDrawer() {
+    this.keyboardDrawer.activate()
+  }
+
+  openFormDrawer() {
+    this.formDrawer.activate()
   }
 
   /**

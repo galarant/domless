@@ -1,6 +1,7 @@
 import _ from "lodash"
 import Phaser from "phaser"
 import Element from "src/components/element"
+import Button from "src/components/input/button"
 
 /**
  * Creates a drawer component with variable content
@@ -20,6 +21,7 @@ class Drawer extends Element {
       edge="bottom",
       size=300,
       content=scene.add.text(0, 0, "DRAWER CONTENT"),
+      cancelButton=true,
     } = {} 
   ) {
     let
@@ -93,6 +95,25 @@ class Drawer extends Element {
     this.activateTweenData = activateTweenData
     this.deactivateTweenData = deactivateTweenData
 
+    // add cancel button if needed
+    if (cancelButton) {
+      let cancelButtonSize = 30
+      this.cancelButton = new Button(
+        scene,
+        {
+          x: -this.width / 2 + cancelButtonSize,
+          y: -this.height / 2 + cancelButtonSize,
+          width: cancelButtonSize, height: cancelButtonSize,
+          label: "X", arcRadius: 5, outline: false,
+          callback: this.deactivate,
+          callbackScope: this,
+          eventName: "domlessDrawerClose",
+          stopPropagation: false
+        }
+      )
+      this.add(this.cancelButton)
+    }
+
     // make sure this thing moves along with the camera
     this.setScrollFactor(0)
   }
@@ -114,17 +135,27 @@ class Drawer extends Element {
     }
   }
 
-  activate(activateData=this.activateTweenData) {
+  activate(callback=_.noop) {
+    let slideCallback = () => {
+      callback()
+      super.activate()
+    }
     if (!this.active) {
-      let maxZ = _.maxBy(this.scene.children.list, "z").z
-      this.setDepth(maxZ + 1)
-      this.slide(activateData, super.activate)
+      let maxDepth = _.maxBy(this.scene.children.list, "depth").depth
+      if (this.depth < maxDepth) {
+        this.setDepth(maxDepth + 1)
+      }
+      this.slide(this.activateTweenData, slideCallback)
     }
   }
 
-  deactivate(deactivateData=this.deactivateTweenData) {
+  deactivate(callback=_.noop) {
+    let slideCallback = () => {
+      callback()
+      super.deactivate()
+    }
     if (this.active) {
-      this.slide(deactivateData, super.deactivate)
+      this.slide(this.deactivateTweenData, slideCallback)
     }
   }
 
