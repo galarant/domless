@@ -29,27 +29,34 @@ class ScrollBar extends Element {
   reposition() {
     // reposition the srollbar if any relevant vars have changed
     let
+      metricHeight = this.plugin.scrollBarMetricHeight,
       camera = this.scene.cameras.main,
-      scrollPercent = (camera.scrollY - this.plugin.minScroll) / this.plugin.scrollableHeight
-    if (!_.isEqual(this.repositionArgs, [scrollPercent, this.plugin.scrollBarMetricHeight, this.height])) {
-      this.y = scrollPercent * this.plugin.scrollBarMetricHeight + this.height / 2
-      this.repositionArgs = [scrollPercent, this.plugin.scrollBarMetricHeight, this.height]
+      scrollableHeight = this.plugin.maxScroll - this.plugin.minScroll,
+      scrollPercent = (camera.scrollY - this.plugin.minScroll) / scrollableHeight
+
+    if (!_.isEqual(this.repositionArgs, [scrollPercent, metricHeight, this.height])) {
+      this.y = scrollPercent * metricHeight + this.height / 2
+      this.repositionArgs = [scrollPercent, metricHeight, this.height]
     }
   }
 
   resize() {
     // resize the srollbar if any relevant vars have changed
-    let metricHeight = this.plugin.scrollBarMetricHeight
-    if (this.plugin.minScroll === 0 && this.plugin.maxScroll === 0) {
+    let
+      metricHeight = this.plugin.scrollBarMetricHeight,
+      scrollableHeight = this.plugin.maxScroll - this.plugin.minScroll,
+      camera = this.scene.cameras.main
+
+    if (Math.abs(this.plugin.minScroll) < 1 && Math.abs(this.plugin.maxScroll - camera.height) < 1) {
       this.setAlpha(0)
     } else {
       this.setAlpha(1)
     }
-    if (!_.isEqual(this.resizeArgs, [metricHeight, this.plugin.scrollableHeight, this.plugin.scrollBarWidth])) {
+    if (!_.isEqual(this.resizeArgs, [metricHeight, scrollableHeight, this.plugin.scrollBarWidth])) {
       this.width = this.plugin.scrollBarWidth
-      this.height = (metricHeight / this.plugin.scrollableHeight * metricHeight - 3)
+      this.height = (metricHeight / scrollableHeight * camera.height - 3)
       this.generateFill()
-      this.resizeArgs = [metricHeight, this.plugin.scrollableHeight, this.plugin.scrollBarWidth]
+      this.resizeArgs = [metricHeight, scrollableHeight, this.plugin.scrollBarWidth]
     }
   }
 }
@@ -62,9 +69,8 @@ class ScrollablePlugin extends Phaser.Plugins.ScenePlugin {
     // handle mouse wheel inputs
     this.scene.scrollable = this
     this.game.canvas.addEventListener("wheel", () => this.handleMouseWheel(event))
-    this.minScroll = minScroll
-    this.maxScroll = maxScroll
-    this.scrollableHeight = camera.height - minScroll + maxScroll
+    this.minScroll = Math.min(0, minScroll)
+    this.maxScroll = Math.max(camera.height, maxScroll)
     this.scrollBarWidth = 5
     this.scrollBarMetricHeight = camera.height
     
@@ -102,21 +108,13 @@ class ScrollablePlugin extends Phaser.Plugins.ScenePlugin {
   }
 
   handleDragEnd(pointer) {
-    // add the wasDragged flag to the pointer for 50ms
-    let dragDistance = Math.abs(pointer.downY - pointer.upY)
-    if (dragDistance > 1) {
-      pointer.wasDragged = true
-      this.scene.time.delayedCall(
-        50,
-        function(o) { o.wasDragged = false },
-        [pointer], this
-      )
-    }
+    // delegated for the user
+    pointer
   }
 
   handleUpdate() {
     let pointer = this.scene.input.activePointer
-    if (pointer.isDown && pointer.getDuration() > 100) {
+    if (pointer.isDown && pointer.getDistanceY() > 5 && pointer.getDuration() > 25) {
       if (!pointer.isDragging) {
         this.handleDragStart()
       }
@@ -148,8 +146,8 @@ class ScrollablePlugin extends Phaser.Plugins.ScenePlugin {
 
     if (this.minScroll !== undefined && camera.scrollY + scrollDelta < this.minScroll) {
       camera.setScroll(0, this.minScroll)
-    } else if (this.maxScroll !== undefined && camera.scrollY + scrollDelta > this.maxScroll) {
-      camera.setScroll(0, this.maxScroll)
+    } else if (this.maxScroll !== undefined && camera.scrollY + scrollDelta + camera.height > this.maxScroll) {
+      camera.setScroll(0, this.maxScroll - camera.height)
     } else {
       camera.setScroll(0, camera.scrollY + scrollDelta / 2)
     }
