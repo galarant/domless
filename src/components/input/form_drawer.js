@@ -58,7 +58,6 @@ class FormDrawer extends Drawer {
     this.addHeader()
     this.addFields()
 
-    this.formHeader.debug()
     this.cameraShift = 0
     if (this.scene.scrollable) {
       this.initMinScroll = this.scene.scrollable.minScroll
@@ -102,6 +101,14 @@ class FormDrawer extends Drawer {
     this.form.submitButton.setPosition(xPos, yPos)
     this.formHeader.add(this.form.submitButton)
 
+    this.formHeader.divider = this.scene.add.line(
+      0, 0,
+      0, this.formHeader.height / 2,
+      this.formHeader.width, this.formHeader.height / 2,
+      0xffffff, 0.4
+    )
+    this.formHeader.add(this.formHeader.divider)
+
     this.content.add(this.formHeader)
   }
 
@@ -123,7 +130,14 @@ class FormDrawer extends Drawer {
         formField.initComponents()
         this.content.add(formField)
         yPos += formField.height
-        formField.debug()
+        formField.divider = this.scene.add.line(
+          0, 0,
+          0, formField.height / 2,
+          formField.width, formField.height / 2,
+          0xffffff, 0.4
+        )
+        formField.add(formField.divider)
+
       }
     )
   }
