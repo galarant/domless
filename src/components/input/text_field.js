@@ -121,7 +121,7 @@ class TextField extends TextDisplay {
     // set custom word wrapping to account for cursor
     this.content.setWordWrapCallback(
       function(text) {
-        let wrappedText = this.content.advancedWordWrap(
+        let wrappedText = this.content.basicWordWrap(
           (this.cursor ? text + "_" : text),
           this.content.context,
           this.width - this.content.padding.right * 2
@@ -242,7 +242,7 @@ class TextField extends TextDisplay {
   }
 
   placeCursor() {
-    let wrappedText = this.content.advancedWordWrap(
+    let wrappedText = this.content.basicWordWrap(
       this.content.text + "_",
       this.content.context,
       this.width - this.content.padding.right * 2).split("\n")
