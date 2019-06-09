@@ -43,7 +43,6 @@ class ScrollBar extends Element {
       return
     }
 
-    console.log("initScrollBarComponents")
     super.initElementComponents()
 
     this.reposition()
