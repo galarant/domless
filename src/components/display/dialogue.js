@@ -19,7 +19,7 @@ class Dialogue extends TextDisplay {
       width=400, height=400,
       pages=[], fontSize=24,
       fontFamily="Helvetica",
-      outline=true,
+      hasOutline=true,
       progressive=false,
       progressiveDelay=75
     }
@@ -33,7 +33,7 @@ class Dialogue extends TextDisplay {
         width: width, height: height,
         initialText: "",
         fontSize: fontSize, fontFamily: fontFamily,
-        outline: outline
+        hasOutline: hasOutline
       }
     )
 

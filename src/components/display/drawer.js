@@ -69,7 +69,7 @@ class Drawer extends Element {
         y: y,
         width: width,
         height: height,
-        outline: false
+        hasOutline: false
       }
     )
 
@@ -104,7 +104,7 @@ class Drawer extends Element {
           x: -this.width / 2 + cancelButtonSize,
           y: -this.height / 2 + cancelButtonSize,
           width: cancelButtonSize, height: cancelButtonSize,
-          label: "X", arcRadius: 5, outline: false,
+          label: "X", arcRadius: 5, hasOutline: false,
           callback: this.deactivate,
           callbackScope: this,
           eventName: "domlessDrawerClose",

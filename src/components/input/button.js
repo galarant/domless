@@ -22,7 +22,7 @@ class Button extends Element {
       x, y,
       width=60, height=60, fontSize=24,
       label="OK", keyCode=null, value=label,
-      fill=true, outline=true,
+      hasFill=true, hasOutline=true,
       callback=null, callbackArgs=[], callbackScope=null,
       eventName="domlessButtonPress",
       eventArgs=[value, keyCode],
@@ -40,8 +40,8 @@ class Button extends Element {
         y: y, 
         width: width,
         height: height,
-        outline: outline,
-        fill: fill,
+        hasOutline: hasOutline,
+        hasFill: hasFill,
         arcRadius: arcRadius
       }
     )

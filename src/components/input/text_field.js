@@ -29,7 +29,7 @@ class TextField extends TextDisplay {
         padding: {top: 10, left: 10, right: 10, bottom: 10},
         wordWrap: {width: width}
       },
-      outline=true,
+      hasOutline=true,
       helpTextValue="This is the help text",
       editMode="drawer",
       submitOnEnter=false,
@@ -44,20 +44,11 @@ class TextField extends TextDisplay {
         width: width, height: height,
         initialText: initialText,
         styles: styles,
-        outline: outline,
+        hasOutline: hasOutline,
       }
     )
 
     this.helpTextValue = helpTextValue
-
-    // calc pixel width of space char, for cursor
-    let testNoSpace = this.scene.add.text(0, 0, "II", this.styles)
-    let testSpace = this.scene.add.text(0, 0, "I I", this.styles)
-    this.spacePixelWidth = testSpace.width - testNoSpace.width
-    testNoSpace.destroy()
-    testSpace.destroy()
-
-    this.initComponents(false)
 
     // set up listener for button press event
     this.scene.events.on("domlessKeyboardButtonPress", function(buttonChar, keyCode) {
@@ -89,24 +80,44 @@ class TextField extends TextDisplay {
       this.scene.shiftKey = this.scene.input.keyboard.addKey("SHIFT")
     }
 
+    // calc pixel width of space char, for cursor
+    let testNoSpace = this.scene.add.text(0, 0, "II", this.styles)
+    let testSpace = this.scene.add.text(0, 0, "I I", this.styles)
+    this.spacePixelWidth = testSpace.width - testNoSpace.width
+    testNoSpace.destroy()
+    testSpace.destroy()
+
     this.scene.input.keyboard.on("keydown-TAB", this.handleTab, this)
+    this.setInteractive()
+    this.updateOn = _.union(this.updateOn, ["x", "y", "width", "height", "styles"])
+    this.updateCallback = this.initTextFieldComponents
+    this.initTextFieldComponents()
 
   }
 
-  initComponents(initSuper=true) {
-    if (initSuper) {
-      super.initComponents()
+  initTextFieldComponents() {
+
+    // don't do anything if I'm not yet initialized
+    if (!this.initialized) {
+      return
     }
 
-    // add cursor
+    console.log("initTextFieldComponents")
+
+    super.initTextDisplayComponents()
+
+    // add or reinit cursor Text object
     if (this.cursor) {
-      this.cursor.destroy()
+      this.cursor.setStyle(this.styles)
+      this.placeCursor()
+    } else {
+      this.cursor = this.scene.add.text(-this.width / 2, -this.height / 2, "_", this.styles)
+      this.cursor.setOrigin(0, 0)
+      this.add(this.cursor)
+      this.cursor.setAlpha(0)
     }
-    this.cursor = this.scene.add.text(-this.width / 2, -this.height / 2, "_", this.styles)
-    this.cursor.setOrigin(0, 0)
     this.cursor.setMask(this.contentMask)
-    this.add(this.cursor)
-
+    
     // set custom word wrapping to account for cursor
     this.content.setWordWrapCallback(
       function(text) {
@@ -121,16 +132,14 @@ class TextField extends TextDisplay {
 
     // set up help text
     if (this.helpText) {
-      this.helpText.destroy()
+      this.helpText.setStyle(this.styles)
+      this.helpText.setPosition(-this.width / 2, -this.height / 2)
+    } else {
+      this.helpText = this.scene.add.text(-this.width / 2, -this.height / 2, this.helpTextValue, this.styles)
+      this.helpText.setColor("gray")
+      this.add(this.helpText)
     }
-    this.helpText = this.scene.add.text(-this.width / 2, -this.height / 2, this.helpTextValue, this.styles)
-    this.helpText.setColor("gray")
-    this.add(this.helpText)
 
-    // force deactivation to initialize properly
-    this.deactivate(true)
-    this.setInteractive()
-    
   }
 
   handleTab(event) {

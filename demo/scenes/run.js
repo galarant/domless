@@ -74,9 +74,10 @@ class DemoRunScene extends Phaser.Scene {
           y: 200,
           height: 100,
           //submitOnEnter: true,
-          helpTextValue: "First Field"
+          helpTextValue: "First Field",
         }
       ),
+      /*
       new TextField(
         this,
         {
@@ -107,6 +108,7 @@ class DemoRunScene extends Phaser.Scene {
           helpTextValue: "Fourth Field"
         }
       ),
+      */
     ]
 
     this.testForm = new Form(
@@ -128,6 +130,7 @@ class DemoRunScene extends Phaser.Scene {
         callbackScope: this
       }
     )
+
 
     console.log(this)
     console.log("LISTENING FOR: ", this.events.eventNames())

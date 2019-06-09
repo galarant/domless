@@ -79,7 +79,7 @@ class FormDrawer extends Drawer {
       xPos = 0,
       yPos = 0
 
-    this.formHeader = new Element(this.scene, {outline: false}),
+    this.formHeader = new Element(this.scene, {hasOutline: false}),
     this.formHeader.width = this.width
     this.formHeader.height = this.form.submitButton.height + this.styles.padding.top + this.styles.padding.bottom
     this.formHeader.setPosition(this.formHeader.width / 2, yPos + this.formHeader.height / 2)
@@ -98,6 +98,7 @@ class FormDrawer extends Drawer {
     // add the submit button to the header
     xPos = (this.width - this.form.submitButton.width) / 2 - this.styles.padding.right
     this.form.submitButton.outline.destroy()
+    this.form.submitButton.hasOutline = false
     this.form.submitButton.setPosition(xPos, yPos)
     this.formHeader.add(this.form.submitButton)
 
@@ -125,9 +126,10 @@ class FormDrawer extends Drawer {
       formFields,
       (formField) => {
         formField.outline.destroy()
+        formField.hasOutline = false
         formField.width = this.width
         formField.setPosition(xPos + formField.width / 2, yPos + formField.height / 2)
-        formField.initComponents()
+        formField.initTextFieldComponents()
         this.content.add(formField)
         yPos += formField.height
         formField.divider = this.scene.add.line(
@@ -138,19 +140,6 @@ class FormDrawer extends Drawer {
         )
         formField.add(formField.divider)
 
-      }
-    )
-  }
-
-  /**
-   * Re-initialize the fields
-   * Run this when we change anything about the container
-   */
-  initFields() {
-    _.forEach(
-      this.form.children.entries,
-      (formField) => {
-        formField.initComponents()
       }
     )
   }

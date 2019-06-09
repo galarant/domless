@@ -1,3 +1,4 @@
+import _ from "lodash"
 import Phaser from "phaser"
 
 import Button from "../input/button"
@@ -21,7 +22,7 @@ class TextDisplay extends Element {
       x, y,
       width=400, height=200,
       initialText="",
-      outline=true,
+      hasOutline=true,
       styles={
         fontSize: 24,
         fontFamily: "Helvetica",
@@ -40,7 +41,7 @@ class TextDisplay extends Element {
         y: y,
         width: width,
         height: height,
-        outline: outline
+        hasOutline: hasOutline
       }
     )
 
@@ -60,7 +61,10 @@ class TextDisplay extends Element {
     this.lineHeight = testlineHeight.height
     testlineHeight.destroy()
 
-    this.initComponents()
+    this.initialized = true
+    this.updateOn = _.union(this.updateOn, ["x", "y", "width", "height", "styles"])
+    this.updateCallback = this.initTextDisplayComponents
+    this.initTextDisplayComponents()
 
   }
 
@@ -69,86 +73,92 @@ class TextDisplay extends Element {
    * If you change anything about the parent object: position, size, styles etc
    * You should re-run this method
    */
-  initComponents() {
+  initTextDisplayComponents() {
+
+    // don't do anything if I'm not yet initialized
+    if (!this.initialized) {
+      return
+    }
+
+    console.log("initTextDisplayComponents")
+
+    super.initElementComponents()
 
     // reset the wordWrap width
     this.styles.wordWrap.width = this.width
 
-    // add the content Text object
-    let contentText = this.initialText
+    // add or reinit the content Text object
     if (this.content) {
-      contentText = this.content.text
-      this.content.destroy()
+      this.content.setStyle(this.styles)
+      this.content.setPosition(-this.width / 2, -this.height / 2)
+    } else {
+      this.content = this.scene.add.text(-this.width / 2, -this.height / 2, "", this.styles)
+      this.content.setOrigin(0, 0)
+      this.content.setText(this.initialText)
+      this.add(this.content)
     }
-
-    this.content = this.scene.add.text(-this.width / 2, -this.height / 2, "", this.styles)
-    this.content.setOrigin(0, 0)
-    this.content.setText(contentText)
-    this.add(this.content)
 
     // set up a mask on the content
     // this will hide overflow text when we scroll
-    if (this.contentMask) {
-      this.contentMask.destroy()
+    if (!this.maskGraphics) {
+      this.maskGraphics = this.scene.add.graphics(0, 0)
+      this.add(this.maskGraphics)
     }
-    let maskShape = this.scene.add.graphics(0, 0)
-    this.add(maskShape)
 
-    maskShape
+    this.maskGraphics
       .clear()
       .fillStyle(0x000000, 0)
       .fillRect(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height)
-    this.contentMask = this.createGeometryMask(maskShape)
+
+    if (this.contentMask) {
+      this.contentMask.destroy()
+    }
+    this.contentMask = this.createGeometryMask(this.maskGraphics)
     this.content.setMask(this.contentMask)
 
     // add pagination buttons
-    let buttonShift = 0
-    if (this.form && this.form.drawer) {
-      buttonShift = -8
-    } 
-    let pageUpPosition = [this.width / 2 + 2 + buttonShift, -this.height / 2 + 8]
+    let pageUpPosition = [this.width / 2 - 10, -this.height / 2 + 8]
     let pageUpLabel = "\u2BAD"
-    let pageDownPosition = [this.width / 2 + 2 + buttonShift, this.height / 2 - 7]
+    let pageDownPosition = [this.width / 2 - 10, this.height / 2 - 8]
     let pageDownLabel = "\u2BAF"
 
-    // add pageUp button
+    // add pageUp button if it doesn't exist
     if (this.pageUpButton) {
-      this.pageUpButton.destroy()
+      this.pageUpButton.setPosition(pageUpPosition[0], pageUpPosition[1])
+    } else {
+      this.pageUpButton = new Button(
+        this.scene,
+        {
+          x: pageUpPosition[0], y: pageUpPosition[1],
+          width: 30, height: 30,
+          label: pageUpLabel, keyCode: Phaser.Input.Keyboard.KeyCodes.UP, value: null, 
+          hasFill: false, hasOutline: false,
+          callback: this.pageUp, callbackScope: this,
+          eventName: "domlessTextDisplayPageUp", eventArgs: []
+        }
+      )
+      this.add(this.pageUpButton)
+      this.pageUpButton.setAlpha(0)
     }
-    this.pageUpButton = new Button(
-      this.scene,
-      {
-        x: pageUpPosition[0], y: pageUpPosition[1],
-        width: 30, height: 30,
-        label: pageUpLabel, keyCode: Phaser.Input.Keyboard.KeyCodes.UP, value: null, 
-        fill: false, outline: false,
-        callback: this.pageUp, callbackScope: this,
-        eventName: "domlessTextDisplayPageUp", eventArgs: []
-      }
-    )
-    this.add(this.pageUpButton)
-    this.pageUpButton.setAlpha(0)
 
-    // add pageDown button
+    // add pageDown button if it doesn't exist
     if (this.pageDownButton) {
-      this.pageDownButton.destroy()
+      this.pageDownButton.setPosition(pageDownPosition[0], pageDownPosition[1])
+    } else {
+      this.pageDownButton = new Button(
+        this.scene,
+        {
+          x: pageDownPosition[0], y: pageDownPosition[1],
+          width: 30, height: 30,
+          label: pageDownLabel, keyCode: Phaser.Input.Keyboard.KeyCodes.DOWN, value: null, 
+          hasFill: false, hasOutline: false,
+          callback: this.pageDown, callbackScope: this,
+          eventName: "domlessTextDisplayPageDown", eventArgs: []
+        }
+      )
+      this.add(this.pageDownButton)
+      this.pageDownButton.setAlpha(0)
     }
-    this.pageDownButton = new Button(
-      this.scene,
-      {
-        x: pageDownPosition[0], y: pageDownPosition[1],
-        width: 30, height: 30,
-        label: pageDownLabel, keyCode: Phaser.Input.Keyboard.KeyCodes.DOWN, value: null, 
-        fill: false, outline: false,
-        callback: this.pageDown, callbackScope: this,
-        eventName: "domlessTextDisplayPageDown", eventArgs: []
-      }
-    )
-    this.add(this.pageDownButton)
-    this.pageDownButton.setAlpha(0)
-
-    this.content.setText(this.initialText)
-    this.content.updateText()
   }
 
   pageUp(scrollY, scrollTweenCallback=null, disablePageUp=false) {
