@@ -14,8 +14,8 @@ class ScrollBar extends Element {
     super(
       scene,
       {
-        outline: false,
-        fill: true,
+        hasOutline: false,
+        hasFill: true,
         arcRadius: 3
       }
     )
@@ -24,6 +24,31 @@ class ScrollBar extends Element {
     this.resize()
     this.reposition()
     this.x = this.scene.game.config.width - this.plugin.scrollBarWidth / 2
+    this.updateOn = _.union(
+      this.updateOn,
+      [
+        "x", "y", "plugin.scrollbarMetricHeight",
+        "plugin.minScroll", "plugin.maxScroll",
+        "scene.cameras.main.scrollY", "scene.maxDepth"
+      ]
+    )
+    this.updateCallback = this.initScrollBarComponents
+    this.initScrollBarComponents()
+
+  }
+
+  initScrollBarComponents() {
+    // don't do anything if I'm not yet initialized
+    if (!this.initialized && this.plugin.initialized) {
+      return
+    }
+
+    console.log("initScrollBarComponents")
+    super.initElementComponents()
+
+    this.reposition()
+    this.resize()
+    this.bringToFront()
   }
 
   reposition() {
@@ -34,10 +59,7 @@ class ScrollBar extends Element {
       scrollableHeight = this.plugin.maxScroll - this.plugin.minScroll,
       scrollPercent = (camera.scrollY - this.plugin.minScroll) / scrollableHeight
 
-    if (!_.isEqual(this.repositionArgs, [scrollPercent, metricHeight, this.height])) {
-      this.y = scrollPercent * metricHeight + this.height / 2
-      this.repositionArgs = [scrollPercent, metricHeight, this.height]
-    }
+    this.y = scrollPercent * metricHeight + this.height / 2
   }
 
   resize() {
@@ -52,13 +74,16 @@ class ScrollBar extends Element {
     } else {
       this.setAlpha(1)
     }
-    if (!_.isEqual(this.resizeArgs, [metricHeight, scrollableHeight, this.plugin.scrollBarWidth])) {
-      this.width = this.plugin.scrollBarWidth
-      this.height = (metricHeight / scrollableHeight * camera.height - 3)
-      this.generateFill()
-      this.resizeArgs = [metricHeight, scrollableHeight, this.plugin.scrollBarWidth]
-    }
+    this.width = this.plugin.scrollBarWidth
+    this.height = (metricHeight / scrollableHeight * camera.height - 3)
   }
+
+  bringToFront() {
+    // bring scrollbar to top z pos if any renderable objects have been added to the scene
+    this.setDepth(this.scene.maxDepth + 1)
+  }
+
+
 }
 
 class ScrollablePlugin extends Phaser.Plugins.ScenePlugin {
@@ -80,8 +105,16 @@ class ScrollablePlugin extends Phaser.Plugins.ScenePlugin {
     // add a scrollbar
     this.scrollbar = new ScrollBar(this.scene, this)
 
-    // I hate doing this on every frame but it seems like the only way
     this.scene.events.on("update", this.handleUpdate, this)
+    Object.defineProperty(
+      this.scene, "maxDepth",
+      {
+        get: function() {
+          return _.maxBy(this.children.list, "depth").depth
+        }
+      }
+    )
+    this.initialized = true
 
   }
 
@@ -123,20 +156,6 @@ class ScrollablePlugin extends Phaser.Plugins.ScenePlugin {
     } else if (pointer.isDragging) {
       pointer.isDragging = false
       this.handleDragEnd(pointer)
-    }
-    this.bringToFront()
-    this.scrollbar.reposition()
-    this.scrollbar.resize()
-  }
-
-  bringToFront() {
-    // bring scrollbar to top z pos if any renderable objects have been added to the scene
-    let maxZ = _.maxBy(this.scene.children.list, "depth").depth
-    if (this.sceneChildren !== this.scene.children.length || this.maxZ != maxZ) {
-      this.scrollbar.setDepth(maxZ + 1)
-      this.sceneChildren = this.scene.children.length
-      this.maxZ = maxZ + 1
-      console.log("bringing scrollable to front")
     }
   }
 
