@@ -52,7 +52,6 @@ class Element extends Phaser.GameObjects.Container {
 
   handleUpdate() {
     if (!_.isEqual(this.updateTriggers, _.map(this.updateOn, (key) => { return _.get(this, key) }))) {
-      console.log("Element handleUpdate ", this.id)
       this.updateCallback()
       this.updateTriggers = _.map(this.updateOn, (key) => { return _.get(this, key) })
     }

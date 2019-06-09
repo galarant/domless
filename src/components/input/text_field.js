@@ -102,8 +102,6 @@ class TextField extends TextDisplay {
       return
     }
 
-    console.log("initTextFieldComponents")
-
     super.initTextDisplayComponents()
 
     // add or reinit cursor Text object

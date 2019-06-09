@@ -138,9 +138,9 @@ class Drawer extends Element {
   activate(callback=_.noop) {
     let slideCallback = () => {
       callback()
-      super.activate()
     }
     if (!this.active) {
+      super.activate()
       let maxDepth = _.maxBy(this.scene.children.list, "depth").depth
       if (this.depth < maxDepth) {
         this.setDepth(maxDepth + 1)
@@ -152,9 +152,9 @@ class Drawer extends Element {
   deactivate(callback=_.noop) {
     let slideCallback = () => {
       callback()
-      super.deactivate()
     }
     if (this.active) {
+      super.deactivate()
       this.slide(this.deactivateTweenData, slideCallback)
     }
   }

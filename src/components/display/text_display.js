@@ -80,8 +80,6 @@ class TextDisplay extends Element {
       return
     }
 
-    console.log("initTextDisplayComponents")
-
     super.initElementComponents()
 
     // reset the wordWrap width
