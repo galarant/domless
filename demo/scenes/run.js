@@ -118,9 +118,11 @@ class DemoRunScene extends Phaser.Scene {
       }
     )
 
+    /*
     this.formDrawer = new FormDrawer(
       this, this.testForm
     )
+    */
 
     this.openFormButton = new Button(
       this,
