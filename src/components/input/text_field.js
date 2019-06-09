@@ -27,7 +27,7 @@ class TextField extends TextDisplay {
         fontFamily: "Helvetica",
         align: "left",
         padding: {top: 10, left: 10, right: 10, bottom: 10},
-        wordWrap: {width: width}
+        wordWrap: {width: width - 10}
       },
       hasOutline=true,
       helpTextValue="This is the help text",

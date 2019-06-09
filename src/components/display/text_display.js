@@ -28,7 +28,7 @@ class TextDisplay extends Element {
         fontFamily: "Helvetica",
         align: "left",
         padding: {top: 10, left: 10, right: 10, bottom: 10},
-        wordWrap: {width: width}
+        wordWrap: {width: width - 10}
       }
     }
   ) {
@@ -117,10 +117,10 @@ class TextDisplay extends Element {
     this.content.setMask(this.contentMask)
 
     // add pagination buttons
-    let pageUpPosition = [this.width / 2 - 10, -this.height / 2 + 8]
-    let pageUpLabel = "\u2BAD"
-    let pageDownPosition = [this.width / 2 - 10, this.height / 2 - 8]
-    let pageDownLabel = "\u2BAF"
+    let pageUpPosition = [this.width / 2 - 15, -this.height / 2 + 15]
+    let pageUpLabel = "\u2BC5"
+    let pageDownPosition = [this.width / 2 - 15, this.height / 2 - 15]
+    let pageDownLabel = "\u2BC6"
 
     // add pageUp button if it doesn't exist
     if (this.pageUpButton) {
@@ -131,7 +131,7 @@ class TextDisplay extends Element {
         {
           x: pageUpPosition[0], y: pageUpPosition[1],
           width: 30, height: 30,
-          label: pageUpLabel, keyCode: Phaser.Input.Keyboard.KeyCodes.UP, value: null, 
+          label: pageUpLabel, value: null, 
           hasFill: false, hasOutline: false,
           callback: this.pageUp, callbackScope: this,
           eventName: "domlessTextDisplayPageUp", eventArgs: []
@@ -150,7 +150,7 @@ class TextDisplay extends Element {
         {
           x: pageDownPosition[0], y: pageDownPosition[1],
           width: 30, height: 30,
-          label: pageDownLabel, keyCode: Phaser.Input.Keyboard.KeyCodes.DOWN, value: null, 
+          label: pageDownLabel, value: null, 
           hasFill: false, hasOutline: false,
           callback: this.pageDown, callbackScope: this,
           eventName: "domlessTextDisplayPageDown", eventArgs: []
@@ -163,7 +163,10 @@ class TextDisplay extends Element {
 
   pageUp(scrollY, scrollTweenCallback=null, disablePageUp=false) {
     // tween the page up
-    if (!this.scrollTween || this.scrollTween.progress === 1) {
+    if (
+      this.active && this.content.y < this.y &&
+      !this.scrollTween || this.scrollTween.progress === 1
+    ) {
       this.scrollTween = this.scene.add.tween({
         targets: [this.content, this.cursor],
         ease: Phaser.Math.Easing.Cubic.InOut,
@@ -192,7 +195,10 @@ class TextDisplay extends Element {
 
   pageDown(scrollY, scrollTweenCallback=null, disablePageDown=false) {
     // tween the page down
-    if (!this.scrollTween || this.scrollTween.progress === 1) {
+    if (
+      this.active && this.content.y + this.content.height > this.y + this.height &&
+      !this.scrollTween || this.scrollTween.progress === 1
+    ) {
       this.scrollTween = this.scene.add.tween({
         targets: [this.content, this.cursor],
         ease: Phaser.Math.Easing.Cubic.InOut,
