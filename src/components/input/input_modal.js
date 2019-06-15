@@ -57,7 +57,7 @@ class InputModal extends Modal {
       this,
       {
         x: 0, y: 0,
-        width: this.width / 12, height: this.width / 12, fontSize: this.width / 12,
+        width: this.width / 12, height: this.width / 12,
         label: "\u27A4", keyCode: Phaser.Input.Keyboard.KeyCodes.RIGHT,
         hasFill: false, hasOutline: false,
         eventName: this.deactivateEvent, eventArgs: []

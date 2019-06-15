@@ -127,9 +127,9 @@ class FormDrawer extends Drawer {
       (formField) => {
         formField.outline.destroy()
         formField.hasOutline = false
-        formField.width = this.width
-        formField.setPosition(xPos + formField.width / 2, yPos + formField.height / 2)
-        formField.initTextFieldComponents()
+        formField.width = this.width - 2
+        formField.setPosition(xPos + formField.width / 2 + 1, yPos + formField.height / 2)
+        formField.updateCallback()
         this.content.add(formField)
         yPos += formField.height
         formField.divider = this.scene.add.line(
@@ -139,7 +139,6 @@ class FormDrawer extends Drawer {
           0xffffff, 0.4
         )
         formField.add(formField.divider)
-
       }
     )
   }
