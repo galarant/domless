@@ -18,6 +18,9 @@ class Element extends Phaser.GameObjects.Container {
       height=60,
       hasOutline=true,
       hasFill=false,
+      outlineColor=0xffffff,
+      fillColor=0xffffff,
+      fillAlpha=1,
       arcRadius=15,
     } = {}
   ) {
@@ -36,6 +39,9 @@ class Element extends Phaser.GameObjects.Container {
     this.arcRadius = arcRadius
     this.hasOutline = hasOutline
     this.hasFill = hasFill
+    this.outlineColor = outlineColor
+    this.fillColor = fillColor
+    this.fillAlpha = fillAlpha
 
     // all elements start out inactive on initialization
     this.setActive(false)
@@ -66,6 +72,12 @@ class Element extends Phaser.GameObjects.Container {
 
     this.generateFill()
     this.generateOutline()
+    if (this.fill) {
+      this.sendToBack(this.fill)
+    }
+    if (this.input) {
+      this.input.hitArea.setSize(this.width, this.height)
+    }
 
   }
 
@@ -91,7 +103,7 @@ class Element extends Phaser.GameObjects.Container {
   }
 
   // provides common deactivation behavior for all elements
-  deactivate(hide=false, disableInteractive=true, force=false) {
+  deactivate(hide=false, disableInteractive=false, force=false) {
     if (this.active || force) {
       // hide the element if desired
       if (hide) {
@@ -132,7 +144,7 @@ class Element extends Phaser.GameObjects.Container {
     if (!this.scene.textures.exists(outlineKey)) {
       this.scene.domlessGraphics
         .clear()
-        .lineStyle(1.2, 0xffffff)
+        .lineStyle(1.2, this.outlineColor)
         .strokeRoundedRect(2, 2, this.width, this.height, this.arcRadius)
         .generateTexture(outlineKey, this.width + 4, this.height + 4)
         .clear()
@@ -162,7 +174,7 @@ class Element extends Phaser.GameObjects.Container {
     if (!this.scene.textures.exists(fillKey)) {
       this.scene.domlessGraphics
         .clear()
-        .fillStyle(0xffffff)
+        .fillStyle(this.fillColor)
         .fillRoundedRect(2, 2, this.width, this.height, this.arcRadius)
         .generateTexture(fillKey, this.width + 4, this.height + 4)
         .clear()
@@ -172,10 +184,8 @@ class Element extends Phaser.GameObjects.Container {
     this.fill = this.scene.add.sprite(0, 0, fillKey)
     this.add(this.fill)
 
-    // set the fill invisible if we are flashing it
-    if (this.flashFill) {
-      this.fill.setAlpha(0)
-    }
+    // set the fill alpha
+    this.fill.setAlpha(this.fillAlpha)
   }
 
   /**
@@ -193,7 +203,6 @@ class Element extends Phaser.GameObjects.Container {
       )
     }
   }
-
 
   /**
    * Generate a randomly colored Rectangle on this element

@@ -4,6 +4,7 @@ import Avatar from "../world/avatar"
 import Ground from "../world/ground"
 
 import TextField from "src/components/input/text_field"
+import DropDownField from "src/components/input/dropdown_field"
 import Form from "src/components/input/form"
 import FormDrawer from "src/components/input/form_drawer"
 import Button from "src/components/input/button"
@@ -65,6 +66,8 @@ class DemoRunScene extends Phaser.Scene {
     // add debug text
     this.debugText = new DebugText(this)
 
+
+
     // add textField as test
     let formFields = [
       new TextField(
@@ -74,17 +77,16 @@ class DemoRunScene extends Phaser.Scene {
           y: 200,
           height: 50,
           //submitOnEnter: true,
-          helpTextValue: "First Field",
+          helpTextValue: "Text Field",
         }
       ),
-      new TextField(
+      new DropDownField(
         this,
         {
           x: 300,
           y: 275,
-          height: 50,
-          submitOnEnter: true,
-          helpTextValue: "Second Field"
+          width: 400,
+          selectedOption: {id: "option_1", value: "Option 1"}
         }
       ),
       /*
@@ -118,11 +120,9 @@ class DemoRunScene extends Phaser.Scene {
       }
     )
 
-    /*
     this.formDrawer = new FormDrawer(
       this, this.testForm
     )
-    */
 
     this.openFormButton = new Button(
       this,

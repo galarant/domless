@@ -20,15 +20,20 @@ class Button extends Element {
     scene,
     {
       x, y,
-      width=60, height=60, fontSize=24,
+      width=60, height=60,
+      styles={
+        fontSize: 24,
+        fontFamily: "Helvetica",
+        padding: {top: 10, left: 10, right: 10, bottom: 10},
+      },
       label="OK", keyCode=null, value=label,
-      hasFill=true, hasOutline=true,
+      hasFill=true, hasOutline=true, fillAlpha=0, 
       callback=null, callbackArgs=[], callbackScope=null,
       eventName="domlessButtonPress",
       eventArgs=[value, keyCode],
       stopPropagation=true,
       initializeActive=true,
-      arcRadius=15
+      arcRadius=15,
     }
   ) {
 
@@ -42,7 +47,8 @@ class Button extends Element {
         height: height,
         hasOutline: hasOutline,
         hasFill: hasFill,
-        arcRadius: arcRadius
+        arcRadius: arcRadius,
+        fillAlpha: fillAlpha
       }
     )
 
@@ -51,13 +57,11 @@ class Button extends Element {
     this.keyCode = keyCode
     this.eventName = eventName
     this.eventArgs = eventArgs
-    this.fontSize = fontSize
+    this.styles = styles
 
     //add label
-    this.label = scene.add.text(0, 0, label)
+    this.label = scene.add.text(0, 0, label, styles)
     this.label.setOrigin(0.5, 0.5)
-    this.label.setFontSize(this.fontSize)
-    this.label.setFontFamily("Helvetica")
     this.add(this.label)
 
     //set up callback functionality
@@ -112,6 +116,11 @@ class Button extends Element {
   }
 
   handlePointerInput(pointer, localX, localY, event) {
+    // don't do anything if we were just dragging
+    if (pointer.isDragging) {
+      return
+    }
+
     if (this.active) {
       if (this.eventName) {
         this.scene.events.emit(this.eventName, ...this.eventArgs)
@@ -133,7 +142,7 @@ class Button extends Element {
     //flash the fill sprite with a quick yoyo tween
     if (this.fill) {
       this.scene.tweens.killTweensOf(this.fill)
-      this.fill.alpha = 0
+      this.fill.setAlpha(this.fillAlpha)
       this.fillTween = this.scene.add.tween({
         targets: [this.fill],
         ease: "Linear",
