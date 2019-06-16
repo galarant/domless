@@ -207,6 +207,7 @@ class DropDownField extends Element {
       this.optionsContainer.generateOutline()
       this.optionsContainer.y += this.optionsContainer.height / 2
       this.maskGraphics = this.scene.add.graphics(0, 0)
+      this.add(this.maskGraphics)
       this.maskGraphics
         .clear()
         .fillStyle(0x000000, 0)
@@ -216,8 +217,9 @@ class DropDownField extends Element {
           this.optionsContainer.width + 2, this.optionsContainer.height + 2, 15
         )
 
-      this.optionsMask = this.maskGraphics.createGeometryMask()
+      this.optionsMask = this.createGeometryMask(this.maskGraphics)
       this.optionsContainer.setMask(this.optionsMask)
+      this.deactivateOptions()
     }
   }
 
@@ -321,6 +323,7 @@ class DropDownField extends Element {
           counter += 1
         }
       )
+      this.activateOptions()
       super.activate()
     }
   }
@@ -328,7 +331,7 @@ class DropDownField extends Element {
   deactivate() {
     if (this.active) {
       console.log("deactivating dropDown ", this.id)
-      this.scene.tweens.timeline(
+      this.closeTween = this.scene.tweens.timeline(
         {
           tweens: [
             {
@@ -370,8 +373,39 @@ class DropDownField extends Element {
           }
         }
       )
+      this.closeTween.setCallback(
+        "onComplete", function() {
+          this.deactivateOptions()
+        }, [], this
+      )
       super.deactivate()
     }
+  }
+
+  // enable interactivity of options and container
+  activateOptions() {
+    this.optionsContainer.activate()
+    this.optionsContainer.setAlpha(1)
+    _.forEach(
+      this.optionElements,
+      (optionElement) => {
+        optionElement.activate()
+        optionElement.setAlpha(0)
+      }
+    )
+  }
+
+  // disable interactivity of options and container
+  deactivateOptions() {
+    this.optionsContainer.deactivate(false, true, true)
+    this.optionsContainer.setAlpha(0)
+    _.forEach(
+      this.optionElements,
+      (optionElement) => {
+        optionElement.deactivate(false, true, true)
+      }
+    )
+    
   }
 
 }
