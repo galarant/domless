@@ -6,7 +6,7 @@ import Ground from "../world/ground"
 import TextField from "src/components/input/text_field"
 import DropDownField from "src/components/input/dropdown_field"
 import Form from "src/components/input/form"
-import FormDrawer from "src/components/input/form_drawer"
+// import FormDrawer from "src/components/input/form_drawer"
 import Button from "src/components/input/button"
 import ScrollablePlugin from "src/plugins/scrollable"
 import DebugText from "src/components/debug_text"
@@ -38,7 +38,7 @@ class DemoRunScene extends Phaser.Scene {
     this.input.maxPointers = 1
     this.cursors = this.input.keyboard.createCursorKeys()
     this.scrollable = new ScrollablePlugin(this, this.plugins)
-    this.scrollable.start(-300, 800)
+    this.scrollable.start(-300, 800, ["drag", "wheel"])
   }
 
   /**
@@ -120,9 +120,11 @@ class DemoRunScene extends Phaser.Scene {
       }
     )
 
+    /*
     this.formDrawer = new FormDrawer(
       this, this.testForm
     )
+    */
 
     this.openFormButton = new Button(
       this,

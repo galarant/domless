@@ -141,10 +141,7 @@ class Drawer extends Element {
     }
     if (!this.active) {
       super.activate()
-      let maxDepth = _.maxBy(this.scene.children.list, "depth").depth
-      if (this.depth < maxDepth) {
-        this.setDepth(maxDepth + 1)
-      }
+      this.scene.children.bringToTop(this)
       this.slide(this.activateTweenData, slideCallback)
     }
   }
