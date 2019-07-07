@@ -20,6 +20,7 @@ class DropDownField extends Element {
     {
       x, y,
       width=200,
+      height=null,
       helpTextValue="Help Text",
       expandSpeed=375,
       styles={
@@ -50,10 +51,12 @@ class DropDownField extends Element {
     }
   ) {
 
-    // set the height based on font size
-    let testText = scene.add.text(0, 0, "II", styles)
-    let height = testText.height
-    testText.destroy()
+    // if we didn't pass a height, set it based on font size
+    if (height === null) {
+      let testText = scene.add.text(0, 0, "II", styles)
+      height = testText.height
+      testText.destroy()
+    }
 
     super(
       scene,
@@ -69,36 +72,42 @@ class DropDownField extends Element {
     this.styles = styles
     this.expandSpeed = expandSpeed
     this.optionElements = []
+    this.optionRowHeight = this.height
+    this.maskGraphics = this.scene.add.graphics()
+    this.optionsOpen = false
 
     // activate on click inside / deactivate on click outside
     this.scene.input.on("pointerup", this.pointerListener, this)
 
     this.setInteractive()
-    this.updateOn = _.union(this.updateOn, ["x", "y", "width", "height", "styles"])
+    this.updateOn = _.union(
+      this.updateOn,
+      [
+        "x", "y", "width", "height", "styles",
+        "options.length", "localTransform.tx", "localTransform.ty",
+      ]
+    )
     this.updateCallback = this.initDropDownComponents
     this.initDropDownComponents()
-    let selectedOptionElement = _.find(
-      this.optionElements,
-      (optionElement) => {
-        return optionElement.option.id === selectedOption.id
-      }
-    )
-    this.selectOption(selectedOptionElement, false)
+    if (selectedOption) {
+      let selectedOptionElement = _.find(
+        this.optionElements,
+        (optionElement) => {
+          return optionElement.option.id === selectedOption.id
+        }
+      )
+      this.selectOption(selectedOptionElement, false)
+    }
   }
 
-  initDropDownComponents() {
+  initDropDownComponents(diffObject, diffOld) {
 
     // don't do anything if I'm not yet initialized
     if (!this.initialized) {
       return
     }
 
-    super.initElementComponents()
-
-    // set the height based on font size
-    let testText = this.scene.add.text(0, 0, "II", this.styles)
-    this.height = testText.height
-    testText.destroy()
+    super.initElementComponents(diffObject, diffOld)
 
     // set up help text
     if (this.helpText) {
@@ -122,35 +131,37 @@ class DropDownField extends Element {
     // set up carat
     if (this.carat) {
       this.carat.setStyle(this.styles)
-      this.caratDivider.setPosition(this.width / 2 - this.carat.width, 0)
+      this.caratDivider.destroy()
     } else {
       this.carat = this.scene.add.text(0, 0, "\u2BC8", this.styles)
       this.carat.setOrigin(0.5, 0.5)
       this.add(this.carat)
-      this.caratDivider = this.scene.add.line(
-        this.width / 2 - this.carat.width, 0,
-        0, 0,
-        0, this.height,
-        0xffffff, 1
-      )
-      this.caratDivider.setLineWidth(0.5)
-      this.add(this.caratDivider)
     }
+    this.caratDivider = this.scene.add.line(
+      this.width / 2 - this.carat.width, 0,
+      0, 0,
+      0, this.height,
+      0xffffff, 1
+    )
+    this.caratDivider.setLineWidth(0.5)
+    this.add(this.caratDivider)
     this.carat.setPosition((this.width - this.carat.width) / 2, 0)
 
+    // if my y or height changed, move the form row below me
+    if (diffObject && (diffObject.height || diffObject.y) && this.formRow) {
+      let nextRow = this.form.nextRow(this.formRow)
+      if (nextRow) {
+        let tallestField = _.maxBy(this.formRow.list, "height")
+        nextRow.y = this.formRow.y + tallestField.height + this.form.rowPadding
+      }
+    }
+
     // set up the options container
-    if (this.optionsContainer) {
+    if (this.optionsContainer && diffObject && (diffObject.height || diffObject.y)) {
       this.optionsContainer.setX(0)
       this.optionsContainer.width = this.width
       this.optionsContainer.generateOutline()
-      this.maskGraphics
-        .clear()
-        .fillStyle(0x000000, 0)
-        .fillRoundedRect(
-          this.x - this.optionsContainer.width / 2 - 1,
-          this.y + this.optionsContainer.y - this.optionsContainer.height * 1.5 - 3, 
-          this.optionsContainer.width + 2, this.optionsContainer.height + 2, 15
-        )
+
       _.forEach(
         this.optionElements,
         (optionElement) => {
@@ -160,7 +171,8 @@ class DropDownField extends Element {
           optionElement.label.x = (optionElement.label.width - optionElement.width ) / 2
         }
       )
-    } else {
+    } 
+    if (!this.optionsContainer) {
       this.optionsContainer = new Element(
         this.scene,
         {
@@ -170,56 +182,91 @@ class DropDownField extends Element {
         }
       )
       this.add(this.optionsContainer)
-      this.optionsContainer.height = this.height * this.options.length
-      let
-        yPos = (this.height - this.optionsContainer.height) / 2,
-        counter = 0
+      this.setOptionsContainer()
+      this.deactivateOptions()
+    }
 
-      _.forEach(
-        this.options,
-        (option) => {
-          let fillAlpha = 0.1
-          if (counter % 2) {
-            fillAlpha = 0.2
-          }
-          let optionElement = new Button(
-            this.scene,
-            {
-              x: 0, y: yPos,
-              width: this.width, height: this.height,
-              hasOutline: false, label: option.value,
-              callback: this.selectOption, callbackScope: this,
-              fillAlpha: fillAlpha, arcRadius: 0
-            }
-          )
-          optionElement.label.setStyle(this.styles)
-          optionElement.label.setPadding(this.styles.padding)
-          optionElement.label.x = (optionElement.label.width - optionElement.width ) / 2
-          optionElement.callbackArgs = [optionElement]
-          optionElement.option = option
-          optionElement.flashFill = _.noop
-          this.optionsContainer.add(optionElement)
-          this.optionElements.push(optionElement)
-          yPos += optionElement.height
-          counter += 1
+    if (diffObject && (diffObject["options.length"] !== undefined || diffObject.width)) {
+      this.setOptionsContainer()
+    }
+
+    this.repositionMask()
+
+  }
+
+  repositionMask() {
+    // reposition the mask
+    let
+      maskX = this.localTransform.tx - this.optionsContainer.width / 2 - 1,
+      maskY = this.localTransform.ty + this.optionsContainer.y - this.optionsContainer.height * 1.5 - 3
+
+    if (this.optionsOpened) {
+      this.maskGraphics.setPosition(maskX, maskY + this.optionsContainer.height + 2)
+    } else {
+      this.maskGraphics.setPosition(maskX, maskY)
+    }
+  }
+
+  setOptionsContainer() {
+    this.optionsContainer.y = this.height / 2 + 5
+    this.optionsContainer.height = this.optionRowHeight * this.options.length
+    _.forEach(
+      this.optionElements,
+      (e) => {
+        e.updateCallback = _.noop
+        e.destroy()
+      }
+    )
+    this.optionElements = []
+    let
+      yPos = (this.optionRowHeight - this.optionsContainer.height) / 2,
+      counter = 0
+    _.forEach(
+      this.options,
+      (option) => {
+        let fillAlpha = 0.1
+        if (counter % 2) {
+          fillAlpha = 0.2
         }
-      )
-      this.optionsContainer.generateOutline()
-      this.optionsContainer.y += this.optionsContainer.height / 2
-      this.maskGraphics = this.scene.add.graphics(0, 0)
-      this.add(this.maskGraphics)
-      this.maskGraphics
-        .clear()
-        .fillStyle(0x000000, 0)
-        .fillRoundedRect(
-          this.x - this.optionsContainer.width / 2 - 1,
-          this.y + this.optionsContainer.y - this.optionsContainer.height * 1.5 - 3, 
-          this.optionsContainer.width + 2, this.optionsContainer.height + 2, 15
+        let optionElement = new Button(
+          this.scene,
+          {
+            x: 0, y: yPos,
+            width: this.width, height: this.optionRowHeight,
+            hasOutline: false, label: option.value,
+            callback: this.selectOption, callbackScope: this,
+            fillAlpha: fillAlpha, arcRadius: 0
+          }
         )
+        optionElement.label.setStyle(this.styles)
+        optionElement.label.setPadding(this.styles.padding)
+        optionElement.label.x = (optionElement.label.width - optionElement.width ) / 2
+        optionElement.callbackArgs = [optionElement]
+        optionElement.option = option
+        optionElement.flashFill = _.noop
+        this.optionsContainer.add(optionElement)
+        this.optionElements.push(optionElement)
+        yPos += optionElement.height
+        counter += 1
+      }
+    )
+    this.optionsContainer.generateOutline()
+    this.optionsContainer.y += this.optionsContainer.height / 2
 
+    // set up a mask on the options container
+    // this will hide the container normally, and reveal it on activation
+    
+    this.maskGraphics
+      .clear()
+      .fillStyle(0x000000, 0.25)
+      .fillRoundedRect(
+        0, 0,
+        this.optionsContainer.width + 2, this.optionsContainer.height + 2, 15
+      )
+
+    if (!this.optionsMask) {
       this.optionsMask = this.createGeometryMask(this.maskGraphics)
       this.optionsContainer.setMask(this.optionsMask)
-      this.deactivateOptions()
     }
   }
 
@@ -272,12 +319,15 @@ class DropDownField extends Element {
     if (!this.active) {
       console.log("activating dropDown ", this.id)
       this.scene.children.bringToTop(this)
+      if (this.formRow) {
+        this.formRow.parentContainer.bringToTop(this.formRow)
+      }
       if (this.parentContainer) {
         this.parentContainer.bringToTop(this)
       }
       
       // tween the geometry mask
-      this.activateTween = this.scene.add.tween(
+      this.scene.add.tween(
         {
           targets: this.maskGraphics,
           ease: Phaser.Math.Easing.Cubic.InOut,
@@ -287,9 +337,8 @@ class DropDownField extends Element {
           }
         }
       )
-      
       // tween the carat
-      this.scene.add.tween(
+      this.activateTween = this.scene.add.tween(
         {
           targets: this.carat,
           ease: Phaser.Math.Easing.Cubic.InOut,
@@ -300,6 +349,12 @@ class DropDownField extends Element {
         }
       )
 
+      this.activateTween.setCallback(
+        "onComplete", function() {
+          this.optionsOpened = true
+        }, [], this
+      )
+      
       // tween the optionElements
       let
         counter = 0,
@@ -323,7 +378,9 @@ class DropDownField extends Element {
           counter += 1
         }
       )
-      this.activateOptions()
+      if (this.options.length) {
+        this.activateOptions()
+      }
       super.activate()
     }
   }
@@ -363,6 +420,15 @@ class DropDownField extends Element {
           ]
         }
       )
+
+      this.closeTween.setCallback(
+        "onComplete", function() {
+          this.optionsOpened = false
+          this.deactivateOptions()
+          this.repositionMask()
+        }, [], this
+      )
+
       this.activateTween = this.scene.add.tween(
         {
           targets: this.carat,
@@ -372,11 +438,6 @@ class DropDownField extends Element {
             angle: 0
           }
         }
-      )
-      this.closeTween.setCallback(
-        "onComplete", function() {
-          this.deactivateOptions()
-        }, [], this
       )
       super.deactivate()
     }

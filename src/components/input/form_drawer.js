@@ -32,7 +32,13 @@ class FormDrawer extends Drawer {
     // set up the size
     let
       size = null,
-      contentContainer = scene.add.container()
+      contentContainer = new Element(
+        scene,
+        {
+          x: 0, y: 0, width: 0, height: 0,
+          hasOutline: false, hasFill: false, responsive: false
+        }
+      )
 
     if (["right", "left"].includes(edge)) {
       size = scene.game.config.width * Math.min(sizeFactor, 1.0)
@@ -52,11 +58,12 @@ class FormDrawer extends Drawer {
       }
     )
     this.form = form
+    this.form.rowPadding = 0
     this.form.drawer = this
     this.styles = styles
-    this.content.setPosition((this.content.width - this.width) / 2, (this.content.height - this.height) / 2)
     this.addHeader()
-    this.addFields()
+    this.addForm()
+    this.content.setPosition((this.content.width - this.width) / 2, (this.content.height - this.height) / 2)
 
     this.cameraShift = 0
     if (this.scene.scrollable) {
@@ -99,16 +106,16 @@ class FormDrawer extends Drawer {
     xPos = (this.width - this.form.submitButton.width) / 2 - this.styles.padding.right
     this.form.submitButton.outline.destroy()
     this.form.submitButton.hasOutline = false
-    this.form.submitButton.setPosition(xPos, yPos)
     this.formHeader.add(this.form.submitButton)
+    this.form.submitButton.setPosition(xPos, yPos)
 
-    this.formHeader.divider = this.scene.add.line(
+    this.formHeader.bottomBorder = this.scene.add.line(
       0, 0,
       0, this.formHeader.height / 2,
       this.formHeader.width, this.formHeader.height / 2,
       0xffffff, 0.4
     )
-    this.formHeader.add(this.formHeader.divider)
+    this.formHeader.add(this.formHeader.bottomBorder)
 
     this.content.add(this.formHeader)
   }
@@ -116,31 +123,46 @@ class FormDrawer extends Drawer {
   /**
    * Add the form fields to the drawer content
    */
-  addFields() {
+  addForm() {
     let
       xPos = 0,
       yPos = this.formHeader.height,
-      formFields = this.form.children.entries
+      widestField = _.maxBy(this.form.fields, (field) => { return field.x + field.width }),
+      formWidth = widestField.x + widestField.width / 2,
+      widthFactor = Math.max(this.width / formWidth),
+      sbRow = this.form.submitButton.formRow
+
+    // pop off the submitButton row since we are moving that to the header
+    _.remove(this.form.rows, (formRow) => { return formRow.id === sbRow.id })
+    sbRow.removeAll()
+    sbRow.destroy()
 
     _.forEach(
-      formFields,
-      (formField) => {
-        formField.outline.destroy()
-        formField.hasOutline = false
-        formField.width = this.width - 2
-        formField.setPosition(xPos + formField.width / 2 + 1, yPos + formField.height / 2)
-        formField.updateCallback()
-        this.content.add(formField)
-        yPos += formField.height
-        formField.divider = this.scene.add.line(
+      this.form.rows,
+      (formRow) => {
+        _.forEach(
+          formRow.fields,
+          (formField) => {
+            formField.x *= widthFactor
+            formField.width *= widthFactor
+            if (formField.outline) {
+              formField.outline.destroy()
+              formField.hasOutline = false
+            }
+          }
+        )
+        formRow.bottomBorder = this.scene.add.line(
+          this.width / 2, formRow.innerHeight,
           0, 0,
-          0, formField.height / 2,
-          formField.width, formField.height / 2,
+          this.width, 0,
           0xffffff, 0.4
         )
-        formField.add(formField.divider)
+        formRow.add(formRow.bottomBorder)
+        formRow.showFieldDividers = true
       }
     )
+    this.form.setPosition(xPos, yPos)
+    this.content.add(this.form)
   }
 
   activate() {

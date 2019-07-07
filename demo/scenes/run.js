@@ -4,9 +4,10 @@ import Avatar from "../world/avatar"
 import Ground from "../world/ground"
 
 import TextField from "src/components/input/text_field"
+import MultiSelectField from "src/components/input/multiselect_field"
 import DropDownField from "src/components/input/dropdown_field"
 import Form from "src/components/input/form"
-// import FormDrawer from "src/components/input/form_drawer"
+import FormDrawer from "src/components/input/form_drawer"
 import Button from "src/components/input/button"
 import ScrollablePlugin from "src/plugins/scrollable"
 import DebugText from "src/components/debug_text"
@@ -69,62 +70,78 @@ class DemoRunScene extends Phaser.Scene {
 
 
     // add textField as test
-    let formFields = [
-      new TextField(
-        this,
-        {
-          x: 300,
-          y: 200,
-          height: 50,
-          //submitOnEnter: true,
-          helpTextValue: "Text Field",
-        }
-      ),
-      new DropDownField(
-        this,
-        {
-          x: 300,
-          y: 275,
-          width: 400,
-          selectedOption: {id: "option_1", value: "Option 1"}
-        }
-      ),
-      /*
-      new TextField(
-        this,
-        {
-          x: 300,
-          y: 350,
-          height: 100,
-          submitOnEnter: true,
-          helpTextValue: "Third Field"
-        }
-      ),
-      new TextField(
-        this,
-        {
-          x: 300,
-          y: 425,
-          height: 100,
-          submitOnEnter: true,
-          helpTextValue: "Fourth Field"
-        }
-      ),
-      */
+    let formRows = [
+      [
+        new DropDownField(
+          this,
+          {
+            x: 0,
+            width: 200,
+            helpTextValue: "DropDown Field",
+          }
+        ),
+        new TextField(
+          this,
+          {
+            x: 200,
+            height: 50,
+            width: 200,
+            helpTextValue: "Text Field 1",
+          }
+        ),
+      ],
+      [
+        new MultiSelectField(
+          this,
+          {
+            x: 0,
+            width: 200,
+            helpTextValue: "MultiSelect Field"
+          }
+        ),
+        new TextField(
+          this,
+          {
+            x: 200,
+            height: 50,
+            width: 200,
+            helpTextValue: "Text Field 2",
+          }
+        ),
+      ],
+      [
+        new TextField(
+          this,
+          {
+            x: 0,
+            height: 100,
+            width: 400,
+            helpTextValue: "Text Field 3",
+          }
+        ),
+      ]
     ]
 
     this.testForm = new Form(
       this,
       {
-        fields: formFields
+        x: 100, y: 250,
+        rows: formRows,
+        submitButtonConfig: {
+          x: 300,
+          width: 100,
+          height: 60,
+          label: "Submit",
+        }
       }
     )
 
-    /*
+    //this.formContainer = this.add.container(100, 100, [this.testForm])
+
+
     this.formDrawer = new FormDrawer(
       this, this.testForm
     )
-    */
 
     this.openFormButton = new Button(
       this,
@@ -134,10 +151,10 @@ class DemoRunScene extends Phaser.Scene {
         callbackScope: this
       }
     )
+    this.openFormButton.testProp = true
 
 
     console.log(this)
-    console.log("LISTENING FOR: ", this.events.eventNames())
 
   }
 

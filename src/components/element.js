@@ -22,6 +22,9 @@ class Element extends Phaser.GameObjects.Container {
       fillColor=0xffffff,
       fillAlpha=1,
       arcRadius=15,
+      initComponents=false,
+      interactive=false,
+      responsive=true
     } = {}
   ) {
 
@@ -42,6 +45,8 @@ class Element extends Phaser.GameObjects.Container {
     this.outlineColor = outlineColor
     this.fillColor = fillColor
     this.fillAlpha = fillAlpha
+    this.responsive = responsive
+    this.interactive = interactive
 
     // all elements start out inactive on initialization
     this.setActive(false)
@@ -50,37 +55,114 @@ class Element extends Phaser.GameObjects.Container {
     this.updateOn = ["width", "height", "arcRadius"]
     this.updateCallback = this.initElementComponents
     this.scene.events.on("update", this.handleUpdate, this)
+    if (this.interactive) {
+      this.scene.input.on("gameobjectup", this.handleGameObjectUp, this)
+      this.scene.input.on("pointerup", this.handlePointerUp, this)
+    }
 
     this.initialized = true
-    this.initElementComponents()
-
-  }
-
-  handleUpdate() {
-    if (!_.isEqual(this.updateTriggers, _.map(this.updateOn, (key) => { return _.get(this, key) }))) {
-      this.updateCallback()
-      this.updateTriggers = _.map(this.updateOn, (key) => { return _.get(this, key) })
+    if (initComponents) {
+      this.initElementComponents()
     }
+
   }
 
-  initElementComponents() {
+  initElementComponents(diffObject) {
     
     // don't do anything if I'm not yet initialized
     if (!this.initialized) {
       return
     }
 
-    this.generateFill()
-    this.generateOutline()
-    if (this.fill) {
-      this.sendToBack(this.fill)
+    // regenerate the fill and outline
+    if (!this.outline || (diffObject && (diffObject.width || diffObject.height))) {
+      this.generateOutline()
     }
-    if (this.input) {
+    if (!this.fill || (diffObject && (diffObject.width || diffObject.height))) {
+      this.generateFill()
+      if (this.fill) {
+        this.sendToBack(this.fill)
+      }
+    }
+    if (this.input && diffObject && (diffObject.width || diffObject.height)) {
       this.input.hitArea.setSize(this.width, this.height)
     }
 
+    this.updateTriggers = []
+    _.forEach(this.updateOn, (key) => { this.updateTriggers.push({[key]: _.get(this, key)}) })
   }
 
+  // runs on each new frame render
+  handleUpdate() {
+    if (!this.responsive) {
+      return
+    }
+    let currentValues = []
+    _.forEach(this.updateOn, (key) => { currentValues.push({[key]: _.get(this, key)}) })
+    let diff = _.differenceWith(currentValues, this.updateTriggers, _.isEqual)
+    if (diff.length) {
+      let
+        diffObject = {},
+        diffOld = {}
+      _.forEach(diff, (d) => { _.merge(diffObject, d ) })
+      _.forEach(this.updateTriggers, (d) => { _.merge(diffOld, d ) })
+      this.updateCallback(diffObject, diffOld)
+      this.updateTriggers = []
+      _.forEach(this.updateOn, (key) => { this.updateTriggers.push({[key]: _.get(this, key)}) })
+    }
+  }
+
+  // interactive functionality for gameobjectup
+  // there is a bug with Phaser's container handling and pointer inputs
+  // so we should really use this function when possible
+  handleGameObjectUp(pointer, currentlyOver, event) {
+    // don't bother with the rest if I have no handlers
+    if (!this.handleGameObjectUpIn && !this.handleGameObjectUpOut) {
+      return
+    }
+
+    // don't do anything if we were just dragging
+    if (pointer.isDragging) {
+      return
+    }
+
+    // handle pointer input when it's inside or outside the element
+    if (currentlyOver === this) {
+      if (this.handleGameObjectUpIn) {
+        this.handleGameObjectUpIn(pointer, currentlyOver, event)
+      }
+    } else {
+      if (this.handleGameObjectUpOut) {
+        this.handleGameObjectUpOut(pointer, currentlyOver, event)
+      }
+    }
+  }
+
+  // interactive functionality for pointerup
+  // there is a bug with Phaser's container handling and pointer inputs
+  // so we should really use this function when possible
+  handlePointerUp(pointer, currentlyOver) {
+    // don't bother with the rest if I have no handlers
+    if (!this.handlePointerUpIn && !this.handlePointerUpOut) {
+      return
+    }
+
+    // don't do anything if we were just dragging
+    if (pointer.isDragging) {
+      return
+    }
+
+    // handle pointer input when it's inside or outside the element
+    if (_.includes(currentlyOver, this)) {
+      if (this.handlePointerUpIn) {
+        this.handleGameObjectUpIn(pointer, currentlyOver)
+      }
+    } else {
+      if (this.handlePointerUpOut) {
+        this.handleGameObjectUpOut(pointer, currentlyOver)
+      }
+    }
+  }
 
   // provides common activation behavior for all elements
   activate(force=false) {
@@ -93,7 +175,9 @@ class Element extends Phaser.GameObjects.Container {
       this.setActive(true)
 
       // accept pointer input
-      this.setInteractive()
+      if (this.interactive) {
+        this.setInteractive()
+      }
 
       // accept keyboard input
       if (this.key && this.handleKeyboardInput) {
@@ -114,7 +198,7 @@ class Element extends Phaser.GameObjects.Container {
       this.setActive(false)
 
       // disable pointer input
-      if (disableInteractive) {
+      if (this.interactive && disableInteractive) {
         this.disableInteractive()
       }
 
@@ -139,7 +223,7 @@ class Element extends Phaser.GameObjects.Container {
     if (this.outline) {
       this.outline.destroy()
     }
-    let outlineKey = `outlineSquircle${this.width}${this.height}`
+    let outlineKey = `outlineSquircle${this.width}${this.height}arc${this.arcRadius}`
 
     if (!this.scene.textures.exists(outlineKey)) {
       this.scene.domlessGraphics
@@ -149,9 +233,9 @@ class Element extends Phaser.GameObjects.Container {
         .generateTexture(outlineKey, this.width + 4, this.height + 4)
         .clear()
     }
+    this.outline = this.scene.add.sprite(0, 0, outlineKey)
 
     // add the outline sprite to the container
-    this.outline = this.scene.add.sprite(0, 0, outlineKey)
     this.add(this.outline)
   }
 
@@ -169,7 +253,7 @@ class Element extends Phaser.GameObjects.Container {
     if (this.fill) {
       this.fill.destroy()
     }
-    let fillKey = `fillSquircle${this.width}${this.height}`
+    let fillKey = `fillSquircle${this.width}${this.height}arc${this.arcRadius}`
     
     if (!this.scene.textures.exists(fillKey)) {
       this.scene.domlessGraphics
