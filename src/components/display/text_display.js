@@ -51,6 +51,7 @@ class TextDisplay extends Element {
     this.height = height
     this.initialText = initialText
     this.styles = styles
+    this.maskGraphics = this.scene.add.graphics()
 
     if (!this.scene.domlessGraphics) {
       this.scene.domlessGraphics = this.scene.add.graphics()
@@ -62,7 +63,13 @@ class TextDisplay extends Element {
     testlineHeight.destroy()
 
     this.initialized = true
-    this.updateOn = _.union(this.updateOn, ["x", "y", "width", "height", "styles"])
+    this.updateOn = _.union(
+      this.updateOn,
+      [
+        "x", "y", "width", "height",
+        "styles", "localTransform.tx", "localTransform.ty"
+      ]
+    )
     this.updateCallback = this.initTextDisplayComponents
     this.initTextDisplayComponents()
 
@@ -73,14 +80,14 @@ class TextDisplay extends Element {
    * If you change anything about the parent object: position, size, styles etc
    * You should re-run this method
    */
-  initTextDisplayComponents() {
+  initTextDisplayComponents(diffObject, diffOld) {
 
     // don't do anything if I'm not yet initialized
     if (!this.initialized) {
       return
     }
 
-    super.initElementComponents()
+    super.initElementComponents(diffObject, diffOld)
 
     // reset the wordWrap width
     this.styles.wordWrap.width = this.width
@@ -98,21 +105,32 @@ class TextDisplay extends Element {
 
     // set up a mask on the content
     // this will hide overflow text when we scroll
-    if (!this.maskGraphics) {
-      this.maskGraphics = this.scene.add.graphics(0, 0)
-      this.add(this.maskGraphics)
+    if (!this.contentMask) {
+      this.maskGraphics
+        .clear()
+        .fillStyle(0x000000, 0.25)
+        .fillRect(0, 0, this.width, this.height)
+
+      this.contentMask = this.content.createGeometryMask(this.maskGraphics)
+      this.content.setMask(this.contentMask)
     }
 
-    this.maskGraphics
-      .clear()
-      .fillStyle(0x000000, 0)
-      .fillRect(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height)
-
-    if (this.contentMask) {
-      this.contentMask.destroy()
+    // if my y or height changed, move the form row below me
+    if (diffObject && (diffObject.height || diffObject.y) && this.formRow) {
+      let nextRow = this.form.nextRow(this.formRow)
+      if (nextRow) {
+        let tallestField = _.maxBy(this.formRow.list, "height")
+        nextRow.y = this.formRow.y + tallestField.height + this.form.rowPadding
+      }
     }
-    this.contentMask = this.createGeometryMask(this.maskGraphics)
-    this.content.setMask(this.contentMask)
+
+    // if my shape changed, redraw the mask
+    if (diffObject && (diffObject.height || diffObject.width)) {
+      this.maskGraphics
+        .clear()
+        .fillStyle(0x000000, 0.25)
+        .fillRect(0, 0, this.width, this.height)
+    }
 
     // add pagination buttons
     let pageUpPosition = [this.width / 2 - 15, -this.height / 2 + 15]
@@ -157,13 +175,21 @@ class TextDisplay extends Element {
       this.add(this.pageDownButton)
       this.pageDownButton.setAlpha(0)
     }
+
+    // reposition the mask
+    let
+      maskX = this.localTransform.tx - this.width / 2,
+      maskY = this.localTransform.ty - this.height / 2
+
+    this.maskGraphics.setPosition(maskX, maskY)
+
   }
 
   pageUp(scrollY, scrollTweenCallback=null, disablePageUp=false) {
     // tween the page up
     if (
       this.active && this.content.y < this.y &&
-      !this.scrollTween || this.scrollTween.progress === 1
+      !this.scrollTween || (this.scrollTween && this.scrollTween.progress === 1)
     ) {
       this.scrollTween = this.scene.add.tween({
         targets: [this.content, this.cursor],
@@ -195,7 +221,7 @@ class TextDisplay extends Element {
     // tween the page down
     if (
       this.active && this.content.y + this.content.height > this.y + this.height &&
-      !this.scrollTween || this.scrollTween.progress === 1
+      !this.scrollTween || (this.scrollTween && this.scrollTween.progress === 1)
     ) {
       this.scrollTween = this.scene.add.tween({
         targets: [this.content, this.cursor],

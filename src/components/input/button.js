@@ -34,6 +34,7 @@ class Button extends Element {
       stopPropagation=true,
       initializeActive=true,
       arcRadius=15,
+      responsive=true,
     }
   ) {
 
@@ -48,7 +49,9 @@ class Button extends Element {
         hasOutline: hasOutline,
         hasFill: hasFill,
         arcRadius: arcRadius,
-        fillAlpha: fillAlpha
+        fillAlpha: fillAlpha,
+        responsive: responsive,
+        interactive: true
       }
     )
 
@@ -62,6 +65,7 @@ class Button extends Element {
     //add label
     this.label = scene.add.text(0, 0, label, styles)
     this.label.setOrigin(0.5, 0.5)
+    this.label.setPadding(this.styles.padding)
     this.add(this.label)
 
     //set up callback functionality
@@ -82,8 +86,6 @@ class Button extends Element {
       this.key.on("down", this.handleKeyboardInput, this)
     }
 
-    this.on("pointerup", this.handlePointerInput)
-
     if (callback) {
       this.callback = callback
     }
@@ -94,6 +96,8 @@ class Button extends Element {
     if (initializeActive) {
       this.activate(true)
     }
+
+    this.initElementComponents()
 
   }
 
@@ -115,12 +119,7 @@ class Button extends Element {
     }
   }
 
-  handlePointerInput(pointer, localX, localY, event) {
-    // don't do anything if we were just dragging
-    if (pointer.isDragging) {
-      return
-    }
-
+  handleGameObjectUpIn(pointer, currentlyOver, event) {
     if (this.active) {
       if (this.eventName) {
         this.scene.events.emit(this.eventName, ...this.eventArgs)
@@ -135,7 +134,6 @@ class Button extends Element {
         event.stopPropagation()
       }
     }
-
   }
 
   flashFill() {

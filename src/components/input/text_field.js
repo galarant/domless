@@ -95,14 +95,14 @@ class TextField extends TextDisplay {
 
   }
 
-  initTextFieldComponents() {
+  initTextFieldComponents(diffObject, diffOld) {
 
     // don't do anything if I'm not yet initialized
     if (!this.initialized) {
       return
     }
 
-    super.initTextDisplayComponents()
+    super.initTextDisplayComponents(diffObject, diffOld)
 
     // add or reinit cursor Text object
     if (this.cursor) {

@@ -29,7 +29,8 @@ class ScrollBar extends Element {
       [
         "x", "y", "plugin.scrollbarMetricHeight",
         "plugin.minScroll", "plugin.maxScroll",
-        "scene.cameras.main.scrollY", "scene.maxDepth"
+        "scene.cameras.main.scrollY", "scene.maxDepth",
+        "height", "width"
       ]
     )
     this.updateCallback = this.initScrollBarComponents
@@ -37,17 +38,17 @@ class ScrollBar extends Element {
 
   }
 
-  initScrollBarComponents() {
+  initScrollBarComponents(diffObject, diffOld) {
     // don't do anything if I'm not yet initialized
     if (!this.initialized && this.plugin.initialized) {
       return
     }
 
-    super.initElementComponents()
-
     this.reposition()
     this.resize()
     this.bringToFront()
+    super.initElementComponents(diffObject, diffOld)
+
   }
 
   reposition() {
